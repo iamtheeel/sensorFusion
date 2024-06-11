@@ -1,0 +1,11 @@
+pip install ultralytics
+conda install pytorch torchvision -c pytorch
+
+from ultralytics import YOLO
+got:
+    AttributeError: partially initialized module 'charset_normalizer' has no attribute 'md__mypyc' (most likely due to a circular import)
+Fix:
+    pip install -U --force-reinstall charset-normalizer
+
+
+pip install torchinfo
