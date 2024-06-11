@@ -28,6 +28,8 @@ model = YOLO("models/yolov3-tiny.yaml")  # build a new model from YAML
 
 model.info()
 
+results = model.train(data="coco8.yaml", epochs=100, imgsz=640, device="mps")
+
 '''
 modelSum = summary(model=model, 
             input_size=(1, image_depth, image_width, image_height), # make sure this is "input_size", not "input_shape"
