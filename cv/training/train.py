@@ -13,6 +13,8 @@
 
 from ultralytics import YOLO
 
+from torchinfo import summary
+
 # Training data
 image_depth = 3
 image_width = 96
@@ -23,12 +25,25 @@ image_height = image_width
 #model = YOLO("models/yolov3-tiny.yaml")  # build a new model from YAML
 #model = YOLO("models/yolov5-p6n.yaml")  # build a new model from YAML
 #model = YOLO("models/yolov6n.yaml")  # build a new model from YAML
-model = YOLO("models/yolov8n.yaml")  # build a new model from YAML
+yoloModel = YOLO("models/yolov8n.yaml")  # build a new model from YAML
 #model = YOLO("models/yolov8-p6n.yaml")  # build a new model from YAML
 #model = YOLO("models/yolov8n.pt")  # load a pretrained model (recommended for training)
 #model = YOLO("models/yolov8n.yaml").load("models/yolov8n.pt")  # build from YAML and transfer weights
 
-model.info(detailed=True)
+yoloModel.info(detailed=True)
 
-results = model.train(data="coco8.yaml", epochs=1, imgsz=image_width, device="mps")
+modelSum = summary(model=yoloModel.model, 
+                   #mode=eval
+                   #verbose=2
+                   #input_size=(8, 3, 3, 3), # make sure this is "input_size", not "input_shape"
+             col_names=["num_params", "params_percent", "kernel_size", "trainable"], 
+            #col_names=["input_size", "output_size", "num_params", "trainable"],
+            #col_width=20,
+            row_settings=["var_names"]
+            )
+
+
+# image format
+
+#results = yoloModel.train(data="coco8.yaml", epochs=1, imgsz=image_width, device="mps")
 

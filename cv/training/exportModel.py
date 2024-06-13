@@ -52,6 +52,10 @@ def saveModel(model, imgLayers, imgWidth, imgHeight ):
     # But it barks AFTER it saves the tfLite
     model.export(format="tflite", imgsz=imgHeight, int8=True, data="coco8.yaml", optimize=True) # saved as 3.2MB
 
+    ## The final step os 
+    #  TF Lite     --> C header
+    # xxd -i yolov8n_int8.tflite > yoloV8n_int8.h
+
 model = YOLO("models/yolov8n.yaml" )  # build a new model from YAML
 image_depth = 3
 mean = 0
