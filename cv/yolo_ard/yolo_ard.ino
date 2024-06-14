@@ -1,19 +1,12 @@
 /*
  * Joshua Mehlman
- * ENGR 859 Spring 2024
- * Term Project
+ * MIC Summer 2024
+ * Sensor Fusion
  *
- * Squirrl Or Bird Detector
+ * Determine distance from hand to object
  */
 
-/*
- * ----------------------------------------------------------------------------
- * "THE BEER-WARE LICENSE" (Revision 42, phk@FreeBSD.ORG):
- * <iamtheeel> wrote this file.  As long as you retain this notice you
- * can do whatever you want with this stuff. If we meet some day, and you think
- * this stuff is worth it, you can buy me a beer in return.   Joshua Mehlman
- * ----------------------------------------------------------------------------
- */
+
 // Standard Librarys
 #include <stdio.h>  // sprintf
 
@@ -29,16 +22,13 @@
 #include "tensorflow/lite/schema/schema_generated.h"
 #include "tensorflow/lite/micro/spresense/debug_log_callback.h"
 
-//#include "BGR2BGR_leNetV5.h" ///No
-//#include "RGB2BGR_leNetV5.h"
-//#include "RGB2BGRleNetV5_trained.h"
+
 #include "yoloV8n_int8.h"
 
-//#define STREAMRGB
+#define STREAMRGB
 //#define SAVEJPG
 //#define WRITELOG
-#define DOINFER
-//#define SHOWFULLRGB
+//#define DOINFER
 
 
 // Main Board Pins
@@ -76,7 +66,8 @@ const int iWidth = CAM_IMGSIZE_QVGA_H, iHeight = CAM_IMGSIZE_QVGA_V; //
 // Video
 //const int vWidth = 96, vHeight = 96; // The smallest we can do
 //const int vWidth = CAM_IMGSIZE_QQVGA_H, vHeight = CAM_IMGSIZE_QQVGA_V; // 
-const int vWidth = CAM_IMGSIZE_QVGA_H, vHeight = CAM_IMGSIZE_QVGA_V; // The biggest we can do 
+//const int vWidth = CAM_IMGSIZE_QVGA_H, vHeight = CAM_IMGSIZE_QVGA_V; // The biggest we can do 
+const int vWidth = CAM_IMGSIZE_QVGA_V, vHeight = CAM_IMGSIZE_QVGA_V; // YOLO8 needs square 
 //const int vWidth = CAM_IMGSIZE_VGA_H, vHeight = CAM_IMGSIZE_VGA_V; // No joy(even with minimal memory)
 
 /***      File System     ***/
@@ -93,9 +84,6 @@ char logFileName[16];
 /***      The Model      ***/
 const int nClasses = 3; // Bird, Nothing, Squirrel
 
-// Image Size for ML
-const int mlWidth = 96, mlHeight = 96; //
-
 tflite::ErrorReporter* error_reporter = nullptr;
 const tflite::Model* model = nullptr;
 tflite::MicroInterpreter* interpreter = nullptr;
@@ -103,9 +91,9 @@ TfLiteTensor* input = nullptr;
 TfLiteTensor* output = nullptr;
 int inference_count = 0;
 
-// arena size used (you need to load to find out) + imgW*imgH*2 ...(was 3, but that is wrong, yes?)
+// arena size used (you need to load to find out) + imgW*imgH*2 
 //constexpr int kTensorArenaSize = 350000;
-constexpr int kTensorArenaSize = 165840; // My LeNet from HW4 (400kb)
+constexpr int kTensorArenaSize = 255909; // 
 
 uint8_t tensor_arena[kTensorArenaSize];
 
@@ -172,10 +160,11 @@ void setup() {
       Serial.println("Model version: " + String(model->version()));
     }
 
-    // This pulls in all the operation implementations we need.
-     Serial.println((String)"Start resolver: ");
+    
+    Serial.println((String)"Start resolver: ");
     //static tflite::AllOpsResolver resolver;
-    static tflite::MicroMutableOpResolver<30> resolver; // The number of adds
+    // This pulls in all the operation implementations we need.
+    static tflite::MicroMutableOpResolver<17> resolver; // The number of operations
     resolver.AddMaxPool2D();
     resolver.AddConv2D();
     resolver.AddRelu();
@@ -196,7 +185,6 @@ void setup() {
     resolver.AddSub();
 
     RegisterDebugLogCallback(debug_log_printf);
-
     
     // Build an interpreter to run the model with.
     Serial.println((String)"Alocate Interpriter: ");
@@ -234,8 +222,6 @@ void setup() {
   #endif 
 
 
-
-
     /***             Camera setup              ***/ //Move to seperate file
     // The very last thing in setup is to call startStreaming. This runs the callback
     // Init the camera after the model so we can test the memory
@@ -246,8 +232,8 @@ void setup() {
     Serial.println((String)"Set video format: w = " + vWidth + ", h = " + vHeight); // add the FPS
     // Video streem to the ML: 5 FPS is as slow as we can go
     // RGB 565 is 2 bytes/pixl (R:HB7-HB3, G:HB2-LB5, B: LB4-LB0)
-    err = theCamera.begin(1, CAM_VIDEO_FPS_5, vWidth, vHeight, CAM_IMAGE_PIX_FMT_YUV422); // Must be YUV422 for clip and resize to work
-    //err = theCamera.begin(1, CAM_VIDEO_FPS_5, vWidth, vHeight, CAM_IMAGE_PIX_FMT_RGB565); // Settings we want for the ML Network
+    //err = theCamera.begin(1, CAM_VIDEO_FPS_5, vWidth, vHeight, CAM_IMAGE_PIX_FMT_YUV422); // Must be YUV422 for clip and resize to work
+    err = theCamera.begin(1, CAM_VIDEO_FPS_5, vWidth, vHeight, CAM_IMAGE_PIX_FMT_RGB565); // Settings we want for the ML Network
     if (err != CAM_ERR_SUCCESS){printError(err);}
     
     // Which camera we got?
@@ -259,7 +245,7 @@ void setup() {
     Serial.println("Set Daylight white balance parameter");
     err = theCamera.setAutoWhiteBalanceMode(CAM_WHITE_BALANCE_DAYLIGHT);
     if (err != CAM_ERR_SUCCESS){printError(err);}
-    /*
+    
     //ISO
     Serial.println("Set Auto ISO");
     err = theCamera.setAutoISOSensitivity(true);
@@ -267,15 +253,15 @@ void setup() {
     Serial.println("Set Auto Exposure");
     err = theCamera.setAutoExposure(true);
     if (err != CAM_ERR_SUCCESS){printError(err);}
-    */
-    // Still picture for save and to send to serial
-    Serial.println((String)"Set still picture format: w =" + iWidth + ", h = " + iHeight);
-    err = theCamera.setStillPictureImageFormat(iWidth, iHeight, CAM_IMAGE_PIX_FMT_JPG, 1); // JPEG Divisor requests less memory assuming good compresion, 1 = assume full image
-    if (err != CAM_ERR_SUCCESS){printError(err);}
+    
+    // // Still picture for save and to send to serial
+    // Serial.println((String)"Set still picture format: w =" + iWidth + ", h = " + iHeight);
+    // err = theCamera.setStillPictureImageFormat(iWidth, iHeight, CAM_IMAGE_PIX_FMT_JPG, 1); // JPEG Divisor requests less memory assuming good compresion, 1 = assume full image
+    // if (err != CAM_ERR_SUCCESS){printError(err);}
 
-    Serial.println((String)"Set JPEG Quality: " + JPGQUAL);
-    err = theCamera.setJPEGQuality(JPGQUAL); // 95 Too much, 90 ok, : At QuadVGA
-    if (err != CAM_ERR_SUCCESS){printError(err);}
+    // Serial.println((String)"Set JPEG Quality: " + JPGQUAL);
+    // err = theCamera.setJPEGQuality(JPGQUAL); // 95 Too much, 90 ok, : At QuadVGA
+    // if (err != CAM_ERR_SUCCESS){printError(err);}
  
     // Start the video and register the callback
     // Do this LAST!
@@ -378,9 +364,6 @@ int saveStill(CamImage img, int8_t imageTag)
 
 void CamCB(CamImage img)
 {
-
-
-
     // ********  Take Pix before anything so we have it ready to save ************//
 #ifdef SAVEJPG
     //Serial.println((String)"Take a still");
@@ -388,40 +371,18 @@ void CamCB(CamImage img)
 #endif
 
   /* Check the img instance is available or not. */
-  if (img.isAvailable()) // Turn the results off when thinking about it
+  if (img.isAvailable()) 
   {
     int imageNumber = -1;
     CamErr err;
     setResultsLED(-1);
     
-    // Resize (and shape?) The image. Lets see if we can trim it.
-    //Serial.println((String)"Resize the image");
-    CamImage reSizedImg; // New, smaller image
 
-    // 320x240, 96x96
-    // (320 - 96)/2 = 112
-    // (240 - 96)/2 = 72
-    int lefttop_x = (vWidth - mlWidth)/2;   // Center   /**< [en] Left top X coodinate in original image for clipping. <BR> [ja] 元画像に対して、クリップする左上のX座標 */
-    int lefttop_y = (vHeight - mlHeight)/2; // Center   /**< [en] Left top Y coodinate in original image for clipping. <BR> [ja] 元画像に対して、クリップする左上のY座標 */
-    int rightbottom_x = mlWidth + lefttop_x -1;         /**< [en] Right bottom X coodinate in original image for clipping. <BR> [ja] 元画像に対して、クリップする左上のX座標 */
-    int rightbottom_y = mlHeight + lefttop_y -1;        /**< [en] Right bottom Y coodinate in original image for clipping. <BR> [ja] 元画像に対して、クリップする左上のY座標 */
-    //Serial.println((String)"Crop Start (x, y): " + lefttop_x + ", " + lefttop_y);
-    //Serial.println((String)"Crop End (x, y): " + rightbottom_x + ", " + rightbottom_y);
-    err = img.clipAndResizeImageByHW(reSizedImg, lefttop_x, lefttop_y, rightbottom_x, rightbottom_y, mlWidth, mlHeight); // Resize must be in CAM_IMAGE_PIX_FMT_YUV422
-    if (err != CAM_ERR_SUCCESS){printError(err);} // Image size must end up one of our good ones.
-    //Serial.println((String)"Can we convert to to: CAM_IMAGE_PIX_FMT_JPG"); //No
-    
-#ifdef SHOWFULLRGB
-    err =  img.convertPixFormat(CAM_IMAGE_PIX_FMT_RGB565);
-    if (err != CAM_ERR_SUCCESS){printError(err);}
+    //err =  img.convertPixFormat(CAM_IMAGE_PIX_FMT_RGB565);
+    //if (err != CAM_ERR_SUCCESS){printError(err);}
     uint8_t* img_buffer = img.getImgBuff();
     int imageSize = img.getImgSize();
-#else
-    err =  reSizedImg.convertPixFormat(CAM_IMAGE_PIX_FMT_RGB565);
-    if (err != CAM_ERR_SUCCESS){printError(err);}
-    uint8_t* img_buffer = reSizedImg.getImgBuff();
-    int imageSize = reSizedImg.getImgSize();
-#endif
+
     
 
     digitalWrite(heartBeatLED_pin, true); // Heart Beat when we are thinking
@@ -431,13 +392,13 @@ void CamCB(CamImage img)
     // Send the camera buffer to the input stream
     // From spresense_tf_mnist
     //Serial.println((String)"Put image in memory: " + mlWidth + "x"+ mlHeight );
-    for (int i = 0; i < mlWidth * mlHeight * 2; ++i) 
+    for (int i = 0; i < vWidth * vHeight * 2; ++i) 
     {
         //Serial.print((String)img_buffer[i] + ", ");
         //if(i%96 ==0){Serial.println();}
       //input->data.f[i] = ((float)(img_buffer[i]));
-      input->data.f[i] = ((float)(img_buffer[i])/255);
-      //input->data.uint8[i] = img_buffer[i]; // model exported with uint8
+      //input->data.f[i] = ((float)(img_buffer[i])/255);
+      input->data.uint8[i] = img_buffer[i]; // model exported with uint8
     }
     //Serial.println();
 
@@ -455,7 +416,7 @@ void CamCB(CamImage img)
     uint8_t maxIndex = 0;               // Variable to store the index of the highest value
     float maxValue = output->data.f[0]; // The max is our guy
     for (int n = 0; n < nClasses; ++n) {
-      float value = output->data.f[n];
+      int value = output->data.f[n];
 
       if (value > maxValue) {
         maxValue = value;

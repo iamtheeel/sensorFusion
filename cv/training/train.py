@@ -35,9 +35,9 @@ yoloModel.info(detailed=True)
 modelSum = summary(model=yoloModel.model, 
                    #mode=eval
                    #verbose=2
-                   #input_size=(8, 3, 3, 3), # make sure this is "input_size", not "input_shape"
-             col_names=["num_params", "params_percent", "kernel_size", "trainable"], 
-            #col_names=["input_size", "output_size", "num_params", "trainable"],
+                   input_size=(1, image_depth, image_width, image_width), # make sure this is "input_size", not "input_shape"
+            #col_names=["input_size", "output_size", "num_params", "params_percent", "kernel_size", "trainable"], 
+            col_names=["input_size", "output_size", "num_params", "kernel_size", "trainable"],
             #col_width=20,
             row_settings=["var_names"]
             )
@@ -45,5 +45,5 @@ modelSum = summary(model=yoloModel.model,
 
 # image format
 
-#results = yoloModel.train(data="coco8.yaml", epochs=1, imgsz=image_width, device="mps")
+results = yoloModel.train(data="datasets/coco8.yaml", epochs=1, imgsz=image_width, device="mps")
 

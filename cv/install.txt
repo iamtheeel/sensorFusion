@@ -9,3 +9,5 @@ Fix:
 
 
 pip install torchinfo
+
+# for explorer
