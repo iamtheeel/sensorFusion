@@ -1,3 +1,19 @@
+#
+# Sensor Fusion
+#
+# MIC Lab
+# Joshua B. Mehlman
+# Summer 2024
+#
+###
+#
+# Display the image with lable(s) and box(s)
+# Either single image or all the images in a dir.
+#   for single image thisFile = None
+#
+###
+
+
 import os, fnmatch
 import numpy as np
 import cv2

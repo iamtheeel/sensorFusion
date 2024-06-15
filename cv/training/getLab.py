@@ -1,4 +1,20 @@
-
+#
+# Sensor Fusion
+#
+# MIC Lab
+# Joshua B. Mehlman
+# Summer 2024
+#
+###
+#
+# Returns the labels and box dimensions for a single image
+#   label as:
+#       text
+#   box dim as:
+#        upper right (x, y)
+#        lower left(x, y)
+#
+###
 
 import os
 import yaml
