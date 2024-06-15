@@ -9,7 +9,7 @@
 #
 # Display the image with lable(s) and box(s)
 # Either single image or all the images in a dir.
-#   for single image thisFile = None
+#   for image dir thisFile = None
 #
 ###
 
@@ -43,6 +43,13 @@ else:
 
 print(f"{image_dir}")
 
+def labelColor(label):
+    # color: (b, g, r)
+    match label:
+        case 'hand': return (255, 255, 255) # White
+        case 'apple': return (0, 0, 155)
+        case _: return (0,0,0) # Black
+
 def getThisImgLabs(image_loc, fileName):
     print(f"getThisLab file: {fileName}")
 
@@ -54,11 +61,16 @@ def getThisImgLabs(image_loc, fileName):
     # Add the labels and boxes to the image
     for thisLab in range(nLab):
         label, UL, LR = labeler.getLabBox(thisLab)
-        print(f"label: {thisLab}, {label}")
-        cv2.rectangle(img=image, pt1=UL, pt2=LR, color=(0,255,0), thickness=1)
-        cv2.putText(img=image, text=label, org=UL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=(255, 255, 255))
+        color = labelColor(label)
+        #color = (0,0,0)
+        #if label == 'hand':
+        #    color = (255, 0 ,0)
+        print(f"label: {thisLab+1}, {label}")
+        cv2.rectangle(img=image, pt1=UL, pt2=LR, color=color, thickness=1)
+        cv2.putText(img=image, text=label, org=UL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=color)
 
     # Display the image
+    # TODO: add exit key stroke
     numpy_arr = np.asarray(image)
     cv2.imshow(fileName, numpy_arr)
     cv2.waitKey()
