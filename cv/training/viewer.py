@@ -27,8 +27,8 @@ from getLab import getLab
 modelType = 'ssd' # is this yolo or ssd?
 #modelType = 'yolo' # is this yolo or ssd?
 
-#thisFile = None
-thisFile = 'dataset3_0.jpg'
+thisFile = None
+#thisFile = 'dataset3_0.jpg'
 
 if modelType == 'ssd':
     dataSet = 'dataset_ver1'
@@ -62,9 +62,6 @@ def getThisImgLabs(image_loc, fileName):
     for thisLab in range(nLab):
         label, UL, LR = labeler.getLabBox(thisLab)
         color = labelColor(label)
-        #color = (0,0,0)
-        #if label == 'hand':
-        #    color = (255, 0 ,0)
         print(f"label: {thisLab+1}, {label}")
         cv2.rectangle(img=image, pt1=UL, pt2=LR, color=color, thickness=1)
         cv2.putText(img=image, text=label, org=UL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=color)
@@ -72,7 +69,7 @@ def getThisImgLabs(image_loc, fileName):
     # Display the image
     # TODO: add exit key stroke
     numpy_arr = np.asarray(image)
-    cv2.imshow(fileName, numpy_arr)
+    cv2.imshow('', numpy_arr) # if you name with the image, will make a new window each time
     cv2.waitKey()
 
 # Entry point
