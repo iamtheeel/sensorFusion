@@ -16,19 +16,26 @@
 
 // TensorFlow Light
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
-//#include "tensorflow/lite/micro/micro_error_reporter.h" // Using err from MIL SPRESENS_TensorFlow Board
+//#include "tensorflow/lite/micro/all_ops_resolver.h"
+//#include "tensorflow/lite/micro/micro_error_reporter.h" // Sony SPRESENS_TensorFlow debug
+#include "tensorflow/lite/micro/spresense/debug_log_callback.h" // MIC SPRESENS_TensorFlow debug
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/system_setup.h"
 #include "tensorflow/lite/schema/schema_generated.h"
-#include "tensorflow/lite/micro/spresense/debug_log_callback.h"
+
 
 
 #include "yoloV8n_int8.h"
+#define MODEL_NAME yolov8n_full_integer_quant_tflite
+//#include "yolov3_f16.h" //Will not work with float16: input->type == kTfLiteInt8 || input->type == kTfLiteInt16 || input->type == kTfLiteUInt8
+//#define MODEL_NAME yolov3_tiny_float16_tflite
+//#include "yolov3_dr.h" //Hybrid models are not supported on TFLite Micro
+//#define MODEL_NAME yolov3_tiny_dynamic_range_quant_tflite
 
-#define STREAMRGB
+//#define STREAMRGB
 //#define SAVEJPG
 //#define WRITELOG
-//#define DOINFER
+#define DOINFER
 
 
 // Main Board Pins
@@ -64,10 +71,10 @@ const int iWidth = CAM_IMGSIZE_QVGA_H, iHeight = CAM_IMGSIZE_QVGA_V; //
 //const int iWidth = CAM_IMGSIZE_FULLHD_H, iHeight = CAM_IMGSIZE_FULLHD_V; // Memory Error, even with 1.5M
 
 // Video
-//const int vWidth = 96, vHeight = 96; // The smallest we can do
+const int vWidth = 96, vHeight = 96; // The smallest we can do
 //const int vWidth = CAM_IMGSIZE_QQVGA_H, vHeight = CAM_IMGSIZE_QQVGA_V; // 
 //const int vWidth = CAM_IMGSIZE_QVGA_H, vHeight = CAM_IMGSIZE_QVGA_V; // The biggest we can do 
-const int vWidth = CAM_IMGSIZE_QVGA_V, vHeight = CAM_IMGSIZE_QVGA_V; // YOLO8 needs square 
+//const int vWidth = CAM_IMGSIZE_QVGA_V, vHeight = CAM_IMGSIZE_QVGA_V; // YOLO8 needs square... or does it?
 //const int vWidth = CAM_IMGSIZE_VGA_H, vHeight = CAM_IMGSIZE_VGA_V; // No joy(even with minimal memory)
 
 /***      File System     ***/
@@ -139,7 +146,7 @@ void setup() {
 
     /***             Model setup  From Spresense_tf_mnist            ***/
     tflite::InitializeTarget();
-    Serial.println((String)"Alocate Areana: " + kTensorArenaSize*sizeof(uint8_t));
+    Serial.println((String)"Alocate Arena: " + kTensorArenaSize*sizeof(uint8_t));
     memset(tensor_arena, 0, kTensorArenaSize*sizeof(uint8_t));
   
 
@@ -148,7 +155,8 @@ void setup() {
     tflite::ErrorReporter* error_reporter = nullptr;
 
     // Map the model into a usable data structure..
-    model = tflite::GetModel(yolov8n_full_integer_quant_tflite);
+  
+    model = tflite::GetModel(MODEL_NAME);
     //model = tflite::GetModel(model_tflite);
     if (model->version() != TFLITE_SCHEMA_VERSION) {
       Serial.println("Model provided is schema version " 
@@ -157,7 +165,7 @@ void setup() {
                     + String(TFLITE_SCHEMA_VERSION));
       return;
     } else {
-      Serial.println("Model version: " + String(model->version()));
+      Serial.println("Model version ok: " + String(model->version()));
     }
 
     
@@ -184,12 +192,11 @@ void setup() {
     resolver.AddSoftmax();
     resolver.AddSub();
 
-    RegisterDebugLogCallback(debug_log_printf);
+    RegisterDebugLogCallback(debug_log_printf); // MIC Error
     
     // Build an interpreter to run the model with.
     Serial.println((String)"Alocate Interpriter: ");
-    static tflite::MicroInterpreter static_interpreter(
-        model, resolver, tensor_arena, kTensorArenaSize);//, error_reporter);
+    static tflite::MicroInterpreter static_interpreter(model, resolver, tensor_arena, kTensorArenaSize);//, error_reporter);
     interpreter = &static_interpreter;
     
     // Allocate memory from the tensor_arena for the model's tensors.

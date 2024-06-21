@@ -24,19 +24,23 @@ from getLab import getLab
 
 
 # Settings
-modelType = 'ssd' # is this yolo or ssd?
-#modelType = 'yolo' # is this yolo or ssd?
+#modelType = 'ssd' # is this yolo or ssd?
+modelType = 'yolo' # is this yolo or ssd?
 
-thisFile = None
-#thisFile = 'dataset3_0.jpg'
+#thisFile = None
+#thisFile = 'Dataset_apple_97.jpg'
+thisFile = 'dataset_ver1_dataset8_958.jpg'
+#thisFile = 'dataset8_958.jpg'
 
 if modelType == 'ssd':
     dataSet = 'dataset_ver1'
-    testTrain = 'test' # train or test
+    testTrain = 'train' # train or test
     baseDir = "../../data/version1" 
     image_dir = baseDir + '/' + dataSet + '/' + testTrain
 else:
-    dataSet = 'coco8'
+    #dataSet = 'coco8'
+    #dataSet = 'dataset_ver1'
+    dataSet = 'combinedData'
     testTrain = 'val' # train or val
     baseDir = "datasets" 
     image_dir = baseDir + '/' + dataSet + '/images/' + testTrain

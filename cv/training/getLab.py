@@ -32,7 +32,7 @@ class getLab:
         #self.xmlTree = None 
         self.xmlRoot = None
 
-        print(f"type: {type}")
+        #print(f"type: {type}")
         if type == 'ssd':
             # class name in label file
             self.ext = 'xml'
@@ -42,8 +42,6 @@ class getLab:
                 config = yaml.safe_load(configStr)
             self.classes = config["names"]
             print(f"N Classes: {len(self.classes)}")
-            thisClass = 20
-            print(f"Class: {thisClass}, {self.classes[thisClass]}")
             self.ext = 'txt'
 
     def getNLab(self, imgFile_str):
@@ -59,16 +57,13 @@ class getLab:
             nLab = 0 
 
             labDir = head_tail[0]
-            print(f"labDir: {labDir}")
+            #print(f"getNLab labDir: {labDir}")
             self.labFile = labDir + '/' + '/'+ fileExt
-            print(f"Label file: {self.labFile}")
+            #print(f"getNLab Label file: {self.labFile}")
 
             xmlTree = ET.parse(self.labFile)
             self.xmlRoot = xmlTree.getroot()
-            #for child in self.xmlRoot:
-            #     print(f"tag: {child.tag}, attrib: {child.attrib}")
-            #     if child.tag == 'object':
-            #        nLab += 1
+
             for object in self.xmlRoot.findall('object'):
                 nLab += 1
 
@@ -78,16 +73,16 @@ class getLab:
             labDir = lab_dir[0]+ '/labels'
             self.labFile = labDir + '/' + train_val[1] + '/'+ fileExt
 
-            print(f"Label file: {self.labFile}")
+            #print(f"getNLab Label file: {self.labFile}")
             with open(self.labFile, 'r') as fp: 
                 nLab = len(fp.readlines())
 
         return nLab
 
     
-    def getLabBox(self, labNum):
+    def getLabBox(self, labNum, asInt=True):
         if self.type == 'ssd':
-            label, UL, LR = self.getLabBoxSSD(labNum)
+            label, UL, LR = self.getLabBoxSSD(labNum=labNum, asInt=asInt)
         else:
             img = cv2.imread(self.imgFile)
             imgH, imgW, imgC = img.shape
@@ -95,7 +90,7 @@ class getLab:
 
         return label, UL, LR
 
-    def getLabBoxSSD(self, labNum):
+    def getLabBoxSSD(self, labNum, asInt):
         thisLab = 0
         #print(f"getLabBoxSSD labNum: {labNum}")
         for object in self.xmlRoot.findall('object'):
@@ -104,10 +99,15 @@ class getLab:
                 #print(f"getLabBoxSSD label: {name}")
 
                 bndBox = object.find('bndbox')
-                xmin = int(float(bndBox.find('xmin').text))
-                xmax = int(float(bndBox.find('xmax').text))
-                ymin = int(float(bndBox.find('ymin').text))
-                ymax = int(float(bndBox.find('ymax').text))
+                xmin = float(bndBox.find('xmin').text)
+                xmax = float(bndBox.find('xmax').text)
+                ymin = float(bndBox.find('ymin').text)
+                ymax = float(bndBox.find('ymax').text)
+                if asInt:
+                    xmin = int(xmin)
+                    xmax = int(xmax)
+                    ymin = int(ymin)
+                    ymax = int(ymax)
                 #print(f"xmin: {xmin}, xmax: {xmax}, ymin: {ymin}, ymax: {ymax}")
                 return name, (xmin,ymin), (xmax,ymax)
             thisLab += 1

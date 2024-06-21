@@ -15,8 +15,8 @@ import java.nio.ByteOrder;
 Serial myPort;
 
 // must match resolution used in the sketch
-final int cameraWidth = 96;
-final int cameraHeight = 96;
+final int cameraWidth = 240;
+final int cameraHeight = 240;
 final int cameraBytesPerPixel = 2; //RGB565 is 2bytes/pixle
 final int bytesPerFrame = cameraWidth * cameraHeight * cameraBytesPerPixel;
 
@@ -25,9 +25,10 @@ byte[] frameBuffer = new byte[bytesPerFrame];
 
 void setup()
 {
-  size(94, 94);
-  //myPort = new Serial(this, "/dev/cu.usbserial-11310", 921600);     // Mac
-  myPort = new Serial(this, "/dev/ttyUSB1", 1000000);     // Lunux
+  size(240, 240);
+  //myPort = new Serial(this, "/dev/cu.usbserial-11310", 1000000);     // Mac
+  myPort = new Serial(this, "/dev/cu.SLAB_USBtoUART", 1000000);     // Mac
+  //myPort = new Serial(this, "/dev/ttyUSB1", 1000000);     // Lunux
 
   // wait for full frame of bytes
   myPort.buffer(bytesPerFrame);  
@@ -50,36 +51,34 @@ void serialEvent(Serial myPort) {
     input = myPort.read();
     if(input == '3')
     {
-    input = myPort.read();
-    if(input == '3')
-    {
-    println("Start img stream");
-    myPort.readBytes(frameBuffer);
-  
-    // access raw bytes via byte buffer
-    ByteBuffer bb = ByteBuffer.wrap(frameBuffer);
-    //bb.order(ByteOrder.BIG_ENDIAN);
-    bb.order(ByteOrder.LITTLE_ENDIAN);
-
-  
-    int i = 0;
-  
-    while (bb.hasRemaining()) {
-      // read 16-bit pixel
-      short p = bb.getShort();
-  
-      // convert RGB565 to RGB 24-bit
-      // (R:HB7-HB3, G:HB2-LB5, B: LB4-LB0)
-      int r = ((p >> 11) & 0x1f) << 3;
-      int g = ((p >> 5) & 0x3f) << 2;
-      int b = ((p >> 0) & 0x1f) << 3;
-  
-      // set pixel color
-      myImage .pixels[i++] = color(r, g, b);
-    }
-   myImage .updatePixels();
-  } // A
-  } // 3
+      input = myPort.read();
+      if(input == '3')
+      {
+        println("Start img stream");
+        myPort.readBytes(frameBuffer);
+      
+        // access raw bytes via byte buffer
+        ByteBuffer bb = ByteBuffer.wrap(frameBuffer);
+        //bb.order(ByteOrder.BIG_ENDIAN);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+    
+        int i = 0;
+        while (bb.hasRemaining()) {
+          // read 16-bit pixel
+          short p = bb.getShort();
+      
+          // convert RGB565 to RGB 24-bit
+          // (R:HB7-HB3, G:HB2-LB5, B: LB4-LB0)
+          int r = ((p >> 11) & 0x1f) << 3;
+          int g = ((p >> 5) & 0x3f) << 2;
+          int b = ((p >> 0) & 0x1f) << 3;
+      
+          // set pixel color
+          myImage.pixels[i++] = color(r, g, b);
+        }
+        myImage.updatePixels();
+      } // A
+    } // 3
   } // 3
 
 }

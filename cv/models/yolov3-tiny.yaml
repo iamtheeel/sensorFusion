@@ -2,7 +2,7 @@
 # YOLOv3-tiny object detection model with P4-P5 outputs. For details see https://docs.ultralytics.com/models/yolov3
 
 # Parameters
-nc: 80 # number of classes
+nc: 2 # number of classes
 depth_multiple: 1.0 # model depth multiple
 width_multiple: 1.0 # layer channel multiple
 
