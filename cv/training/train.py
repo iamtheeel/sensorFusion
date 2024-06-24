@@ -29,9 +29,9 @@ dataSet = "datasets/combinedData.yaml"
 # Load a model
 # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/models/
 #yoloModel = YOLO("models/yolov3.yaml")  #  Does not work
-#yoloModel = YOLO("models/yolov3-tiny.yaml")  # 
+yoloModel = YOLO("models/yolov3-tiny.yaml")  # 
 #yoloModel = YOLO("models/yolov5-p6n.yaml")  # 
-yoloModel = YOLO("models/yolov8n.yaml")  # 
+#yoloModel = YOLO("models/yolov8n.yaml")  # 
 #yoloModel = YOLO("models/yolov8-p6n.yaml")  # 
 #yoloModel = YOLO("models/yolov8n.pt")  # load a pretrained model (recommended for training)
 #yoloModel = YOLO("models/yolov8n.yaml").load("models/yolov8n.pt")  # build from YAML and transfer weights
@@ -50,7 +50,7 @@ modelSum = summary(model=yoloModel.model,
 
 # TODO image format
 #WARNING ⚠️ updating to 'imgsz=96'. 'train' and 'val' imgsz must be an integer, while 'predict' and 'export' imgsz may be a [h, w] list or an integer, i.e. 'yolo export imgsz=640,480' or 'yolo export imgsz=640'
-results = yoloModel.train(data=dataSet, epochs=10, imgsz=image_sz, device="mps")
+results = yoloModel.train(data=dataSet, epochs=10, imgsz=image_sz, device="cpu")
 
 '''
 

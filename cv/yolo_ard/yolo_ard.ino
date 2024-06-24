@@ -25,12 +25,16 @@
 
 
 
-#include "yoloV8n_int8.h"
-#define MODEL_NAME yolov8n_full_integer_quant_tflite
+//#include "yoloV8n_int8.h"
+//#define MODEL_NAME yolov8n_full_integer_quant_tflite
 //#include "yolov3_f16.h" //Will not work with float16: input->type == kTfLiteInt8 || input->type == kTfLiteInt16 || input->type == kTfLiteUInt8
 //#define MODEL_NAME yolov3_tiny_float16_tflite
 //#include "yolov3_dr.h" //Hybrid models are not supported on TFLite Micro
 //#define MODEL_NAME yolov3_tiny_dynamic_range_quant_tflite
+//#include "yolov3-tiny_int8.h"
+//#define MODEL_NAME yolov3_tiny_int8_tflite //Hybrid models are not supported on TFLite Micro
+#include "yolov3-tiny_fullInt.h"
+#define MODEL_NAME yolov3_tiny_full_integer_quant_tflite
 
 //#define STREAMRGB
 //#define SAVEJPG

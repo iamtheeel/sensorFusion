@@ -1,7 +1,9 @@
 Note: 
 The Spresens Tensor Flow Build does not have logging information. Use the build from the Mobile and Intelligent Computing Laboratory http://sfsu-miclab.org/ <br>
 https://github.com/miclab-sfsu/CNN-KeywordSpotting-On-Device-ML/blob/main/keywordspotting_sonyspresense/keywordspotting_sonyspresense.ino <br>
-- Add the following to to Additional Boards manager https://github.com/zhenyulincs/Sony-Spresense-Arduino-TFMicro/releases/download/2.0/package_spresense_local_index.json
+- Add the following to to Additional Boards manager, you need to install the sony and the MIC board
+	* https://github.com/sonydevworld/spresense-arduino-compatible/releases/download/generic/package_spresense_index.json
+	* https://github.com/zhenyulincs/Sony-Spresense-Arduino-TFMicro/releases/download/2.0/package_spresense_local_index.json
 - Select the SFSU-MICLab SPRESENSE_Tensorflow board
 - Librarys used:
   - Camera.h

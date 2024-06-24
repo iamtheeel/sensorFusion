@@ -109,10 +109,18 @@ def saveModel(modelDir, model, dataSet, imgH, imgW ):
 
 model = YOLO("models/yolov3-tiny.yaml" )  # build a new model from YAML
 #model = YOLO("models/yolov8n.yaml" )  # build a new model from YAML
-weightsDir = "runs/detect/train44/weights/" 
+
+#weightsDir = "runs/detect/train9/weights/" #glass: YoloV3, imgsz=320
+#weightsDir = "runs/detect/train10/weights/" #glass: YoloV8, imgsz=320
+#weightsDir = "runs/detect/train11/weights/" #glass: YoloV8, imgsz=96
+weightsDir = "runs/detect/train23/weights/" #glass: YoloV3, imgsz=320, d,w: 
 #weightsDir = "runs/detect/train21/weights/" 
+
 #dataSet = "coco8.yaml"
 #dataSet = "datasets/coco8.yaml"
-dataSet = "datasets/dataset_ver1.yaml"
+#dataSet = "datasets/dataset_ver1.yaml"
+dataSet = "datasets/combinedData.yaml"
+imgH = 96
+imgW = 96
 
-saveModel(weightsDir, model, dataSet, 96, 96) #TODO image size is messed up, reqirez square
+saveModel(modelDir=weightsDir, model=model, dataSet=dataSet, imgH=imgH, imgW=imgW) 

@@ -9,5 +9,11 @@ Fix:
 
 
 pip install torchinfo
+pip install tensorflow
+pip install tflite-support
 
-# for explorer
+
+onnx2tf:
+https://github.com/PINTO0309/onnx2tf
+    problem: pip install -U onnxsim==0.4.33
+
