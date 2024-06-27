@@ -47,7 +47,7 @@ modelSum = summary(model=yoloModel.model,
             row_settings=["var_names"]
             )
 
-
+exit()
 # TODO image format
 #WARNING ⚠️ updating to 'imgsz=96'. 'train' and 'val' imgsz must be an integer, while 'predict' and 'export' imgsz may be a [h, w] list or an integer, i.e. 'yolo export imgsz=640,480' or 'yolo export imgsz=640'
 results = yoloModel.train(data=dataSet, epochs=10, imgsz=image_sz, device="cpu")
