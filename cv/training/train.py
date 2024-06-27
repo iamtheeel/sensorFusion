@@ -17,10 +17,10 @@ from torchinfo import summary
 
 # Training data
 image_depth = 3
-image_sz = 320 # Works
+#image_sz = 320 # Works
 #image_sz = 240: Failes
 #image_sz = 160 #works
-#image_sz = 96 #works
+image_sz = 96 #works
 
 dataSet = "datasets/combinedData.yaml"
 #dataSet = "datasets/dataset_ver1.yaml"

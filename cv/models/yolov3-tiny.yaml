@@ -3,8 +3,8 @@
 
 # Parameters
 nc: 2 # number of classes
-depth_multiple: 0.1 # model depth multiple
-width_multiple: 0.1 # layer channel multiple
+depth_multiple: 0.01 # model depth multiple
+width_multiple: 0.01 # layer channel multiple
 
 # YOLOv3-tiny backbone
 backbone:

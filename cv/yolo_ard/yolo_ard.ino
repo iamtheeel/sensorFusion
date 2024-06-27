@@ -33,8 +33,11 @@
 //#define MODEL_NAME yolov3_tiny_dynamic_range_quant_tflite
 //#include "yolov3-tiny_int8.h"
 //#define MODEL_NAME yolov3_tiny_int8_tflite //Hybrid models are not supported on TFLite Micro
-#include "yolov3-tiny_fullInt.h"
+//#include "yolov3-tiny_fullInt.h" // 0.1
+//#include "yolov3_0pt015_int.h"    // 0.05
+#include "yolov3_0pt01_96_int.h" // 0.01
 #define MODEL_NAME yolov3_tiny_full_integer_quant_tflite
+
 
 //#define STREAMRGB
 //#define SAVEJPG
@@ -184,7 +187,7 @@ void setup() {
     resolver.AddPad();
     resolver.AddReshape();
     resolver.AddFullyConnected();
-    resolver.AddDequantize();
+    //resolver.AddDequantize();
     resolver.AddQuantize();
     // For YOLOv8
     resolver.AddLogistic();
@@ -413,12 +416,12 @@ void CamCB(CamImage img)
     }
     //Serial.println();
 
-    Serial.println((String)"Do inference");
+    Serial.print((String)"Do inference... ");
     unsigned long infStart_ms = millis();
     TfLiteStatus invoke_status = interpreter->Invoke();
     if (invoke_status != kTfLiteOk) {Serial.println("Invoke failed");return;}
     unsigned long inferenceTime_ms = millis() - infStart_ms;
-    Serial.println((String)"Inference time (ms): " + inferenceTime_ms);
+    Serial.println((String)"time: " + inferenceTime_ms + "ms");
 #endif
     digitalWrite(heartBeatLED_pin, false); // the on time is the save/strem time.. and the 5Hz
 
@@ -427,7 +430,7 @@ void CamCB(CamImage img)
     uint8_t maxIndex = 0;               // Variable to store the index of the highest value
     float maxValue = output->data.f[0]; // The max is our guy
     for (int n = 0; n < nClasses; ++n) {
-      int value = output->data.f[n];
+      int value = output->data.uint8[n];
 
       if (value > maxValue) {
         maxValue = value;
@@ -439,14 +442,21 @@ void CamCB(CamImage img)
     static int biCount = 0;
     static int nbCount = 0;
     static int sqCount = 0;
-    Serial.print((String)"Bird, None, Squirrel: [" + 
-                          output->data.f[0] + ", " + 
-                          output->data.f[1] + ", " +
-                          output->data.f[2] + "]" ); 
+    Serial.println((String)"Resultssl: [" + 
+                          output->data.uint8[0] + ", " + 
+                          output->data.uint8[1] + ", " +
+                          output->data.uint8[2] + ", " +
+                          output->data.uint8[3] + ", " +
+                          output->data.uint8[3] + ", " +
+                          output->data.uint8[4] + ", " +
+                          output->data.uint8[5] + ", " +
+                          output->data.uint8[6] + "]" ); 
+     /*
          if(maxIndex == 2){Serial.print((String)", Detected: Squirrel: " + maxValue); sqCount++;}
     else if(maxIndex == 0){Serial.print((String)", Detected: Bird: "     + maxValue); biCount++;}
     else                  {Serial.print((String)", Detected: Empty: "   + maxValue); nbCount++;}
     Serial.println((String)" | Counts: " + biCount + ", " + nbCount + ", " + sqCount);
+    */
 
     // ********  Set LED Status  ************//
     setResultsLED(maxIndex);

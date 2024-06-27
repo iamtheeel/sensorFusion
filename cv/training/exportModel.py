@@ -113,7 +113,7 @@ model = YOLO("models/yolov3-tiny.yaml" )  # build a new model from YAML
 #weightsDir = "runs/detect/train9/weights/" #glass: YoloV3, imgsz=320
 #weightsDir = "runs/detect/train10/weights/" #glass: YoloV8, imgsz=320
 #weightsDir = "runs/detect/train11/weights/" #glass: YoloV8, imgsz=96
-weightsDir = "runs/detect/train23/weights/" #glass: YoloV3, imgsz=320, d,w: 
+weightsDir = "runs/detect/train29/weights/" #glass: YoloV3, imgsz=320, d,w: 
 #weightsDir = "runs/detect/train21/weights/" 
 
 #dataSet = "coco8.yaml"
