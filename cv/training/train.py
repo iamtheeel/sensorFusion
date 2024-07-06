@@ -12,15 +12,18 @@
 ###
 
 from ultralytics import YOLO
-
 from torchinfo import summary
+
+from torch import cuda
+device = "cuda" if cuda.is_available() else "cpu"
+
 
 # Training data
 image_depth = 3
-#image_sz = 320 # Works
+image_sz = 320 # Works
 #image_sz = 240: Failes
 #image_sz = 160 #works
-image_sz = 96 #works
+#image_sz = 96 #works
 
 dataSet = "datasets/combinedData.yaml"
 #dataSet = "datasets/dataset_ver1.yaml"
@@ -47,10 +50,10 @@ modelSum = summary(model=yoloModel.model,
             row_settings=["var_names"]
             )
 
-exit()
+#exit()
 # TODO image format
 #WARNING ⚠️ updating to 'imgsz=96'. 'train' and 'val' imgsz must be an integer, while 'predict' and 'export' imgsz may be a [h, w] list or an integer, i.e. 'yolo export imgsz=640,480' or 'yolo export imgsz=640'
-results = yoloModel.train(data=dataSet, epochs=10, imgsz=image_sz, device="cpu")
+results = yoloModel.train(data=dataSet, epochs=10, imgsz=image_sz, device=device) # cpu, cuda, mps
 
 '''
 
@@ -65,4 +68,5 @@ Plotting labels to runs/detect/train36/labels.jpg...
 optimizer: 'optimizer=auto' found, ignoring 'lr0=0.01' and 'momentum=0.937' and determining best 'optimizer', 'lr0' and 'momentum' automatically... 
 optimizer: AdamW(lr=0.001667, momentum=0.9) with parameter groups 53 weight(decay=0.0), 60 weight(decay=0.0005), 59 bias(decay=0.0)
 TensorBoard: model graph visualization added ✅
+
 '''
