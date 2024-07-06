@@ -16,10 +16,9 @@ from torchinfo import summary
 
 from torch import cuda, backends
 
-device = "cuda" if cuda.is_available() else "cpu"
-if backends.mps.is_available():
-    if backends.mps.is_built():
-        device = "mps"
+device = "cpu" 
+if cuda.is_available(): device = "cuda" 
+if backends.mps.is_available() and backends.mps.is_built(): device = "mps"
 
 print(f"setup: Device = {device}")
 exit()
