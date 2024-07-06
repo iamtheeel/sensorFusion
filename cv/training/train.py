@@ -14,10 +14,15 @@
 from ultralytics import YOLO
 from torchinfo import summary
 
-from torch import cuda
+from torch import cuda, backends
+
 device = "cuda" if cuda.is_available() else "cpu"
+if backends.mps.is_available():
+    if backends.mps.is_built():
+        device = "mps"
 
-
+print(f"setup: Device = {device}")
+exit()
 # Training data
 image_depth = 3
 image_sz = 320 # Works
