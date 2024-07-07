@@ -41,7 +41,8 @@ def saveModel(modelDir, model, dataSet, imgH, imgW ):
     modelFile = modelPath/fileName
 
     # Load the state dict
-    model.load_state_dict(torch.load(modelFile), strict=False) 
+    #model.load_state_dict(torch.load(modelFile), strict=False) 
+    model = YOLO(modelFile)  # build a new model from YAML
 
     # Save as ONNX
     #https://docs.ultralytics.com/modes/export/#arguments
@@ -107,14 +108,15 @@ def saveModel(modelDir, model, dataSet, imgH, imgW ):
     #  TF Lite     --> C header
     # xxd -i yolov8n_full_integer_quant.tflite.tflite > yoloV8n_int8.h
 
-model = YOLO("models/yolov3-tiny.yaml" )  # build a new model from YAML
-#model = YOLO("models/yolov8n.yaml" )  # build a new model from YAML
 
 #weightsDir = "runs/detect/train9/weights/" #glass: YoloV3, imgsz=320
 #weightsDir = "runs/detect/train10/weights/" #glass: YoloV8, imgsz=320
 #weightsDir = "runs/detect/train11/weights/" #glass: YoloV8, imgsz=96
-weightsDir = "runs/detect/train29/weights/" #glass: YoloV3, imgsz=320, d,w: 
-#weightsDir = "runs/detect/train21/weights/" 
+#weightsDir = "runs/detect/train29/weights/" #glass: YoloV3, imgsz=320, d,w: 
+weightsDir = "runs/detect/train51/weights/" 
+
+model = YOLO("models/yolov3-tiny.yaml" )  # build a new model from YAML
+#model = YOLO("models/yolov8n.yaml" )  # build a new model from YAML
 
 #dataSet = "coco8.yaml"
 #dataSet = "datasets/coco8.yaml"
