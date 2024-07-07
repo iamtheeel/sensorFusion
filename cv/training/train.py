@@ -22,6 +22,7 @@ if backends.mps.is_available() and backends.mps.is_built(): device = "mps"
 
 print(f"setup: Device = {device}")
 
+epochs = 10
 # Training data
 image_depth = 3
 image_sz = 320 # Works
@@ -57,7 +58,7 @@ modelSum = summary(model=yoloModel.model,
 #exit()
 # TODO image format
 #WARNING ⚠️ updating to 'imgsz=96'. 'train' and 'val' imgsz must be an integer, while 'predict' and 'export' imgsz may be a [h, w] list or an integer, i.e. 'yolo export imgsz=640,480' or 'yolo export imgsz=640'
-results = yoloModel.train(data=dataSet, epochs=1, imgsz=image_sz, device=device) # cpu, cuda, mps
+results = yoloModel.train(data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
 
 '''
 
