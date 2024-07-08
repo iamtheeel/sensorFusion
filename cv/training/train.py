@@ -22,7 +22,7 @@ if backends.mps.is_available() and backends.mps.is_built(): device = "mps"
 
 print(f"setup: Device = {device}")
 
-epochs = 10
+epochs = 1
 # Training data
 image_depth = 3
 image_sz = 320 # Works
