@@ -1,0 +1,20 @@
+https://coral.ai/docs/dev-board/get-started/#flash-the-board
+
+Hardware list
+DevBoard:
+    Board
+    USB-C power cable
+    MicroSD (for install
+    USB-C to USB-A for consol
+
+    Camera:
+
+
+df to find the disk
+unmount the disk, not eject
+MAC: diskutil unmount /Volumes/NO\ NAME
+Linux: umount ...
+
+
+sudo dd if=flashcard_arm64.img of=/dev/disk7 
+eject
