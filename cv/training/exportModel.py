@@ -8,6 +8,7 @@
 ###
 #
 # Save the model to TensorFlow MicroControler
+# must run python 3.11
 #
 ###
 from pathlib import Path
@@ -34,7 +35,7 @@ def representative_dataset():
         #temp_data = temp_data.reshape(1,2,imgW,imgH)# 2 is from RGB565, 2 bytes for 3 colors
         yield [temp_data.astype(np.float32)]
 
-def saveModel(modelDir, model, dataSet, imgH, imgW ):
+def saveModel(modelDir, dataSet, imgH, imgW ):
     name = "best"
     modelPath = Path(modelDir)
     fileName = name+".pt"
@@ -88,21 +89,16 @@ def saveModel(modelDir, model, dataSet, imgH, imgW ):
     # Run with python < 3.12: https://docs.python.org/3.11/library/imp.html
     # But it barks AFTER it saves the tfLite
     # Has started hanging. No clue what changed. But it is generating to the representative_dataset
+    #  Works on the linux box and the server. I think upgrade utralitics version
+
+    '''
+    must use python 3.11 for the exporter to work as of 7/7/24
+    '''
     #model.export(format="tflite", data=dataSet, int8=True) #Img is H, w
     model.export(format="tflite", data=dataSet, imgsz=(imgH, imgW), int8=True) #Img is H, w
     #model.export(format="tflite", imgsz=(imgMax, imgMax), int8=True, data=dataSet, optimize=True) # 
     #model.export(format="saved_model", imgsz=(imgMax, imgMax) ) # save as a tensorflow model
 
-'''
-    converter = tensorflow.lite.TFLiteConverter.from_saved_model(tfFile)
-    # Some settings for the tfLite from MIC
-    converter.optimizations = [tensorflow.lite.Optimize.DEFAULT]
-    converter.representative_dataset = representative_dataset
-    converter.target_spec.supported_ops = [tensorflow.lite.OpsSet.TFLITE_BUILTINS_INT8]
-    converter.inference_input_type = tensorflow.float32  
-    #converter.inference_input_type = tensorflow.uint8  # this is giving headach
-    converter.inference_output_type = tensorflow.float32
-'''
 
     ## The final step os 
     #  TF Lite     --> C header
@@ -113,10 +109,7 @@ def saveModel(modelDir, model, dataSet, imgH, imgW ):
 #weightsDir = "runs/detect/train10/weights/" #glass: YoloV8, imgsz=320
 #weightsDir = "runs/detect/train11/weights/" #glass: YoloV8, imgsz=96
 #weightsDir = "runs/detect/train29/weights/" #glass: YoloV3, imgsz=320, d,w: 
-weightsDir = "runs/detect/train51/weights/" 
-
-model = YOLO("models/yolov3-tiny.yaml" )  # build a new model from YAML
-#model = YOLO("models/yolov8n.yaml" )  # build a new model from YAML
+weightsDir = "runs/detect/train8/weights/" 
 
 #dataSet = "coco8.yaml"
 #dataSet = "datasets/coco8.yaml"
@@ -125,4 +118,4 @@ dataSet = "datasets/combinedData.yaml"
 imgH = 96
 imgW = 96
 
-saveModel(modelDir=weightsDir, model=model, dataSet=dataSet, imgH=imgH, imgW=imgW) 
+saveModel(modelDir=weightsDir, dataSet=dataSet, imgH=imgH, imgW=imgW) 

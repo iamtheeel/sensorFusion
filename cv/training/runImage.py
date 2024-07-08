@@ -22,11 +22,9 @@ if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device =
 # Configs
 image_depth = 3
 image_sz = 320 # Works
-#thisImg = "datasets/combinedData/images/train/Dataset_apple_4.jpg"
-# -- or --
-image_dir = "datasets/combinedData/images/foo/"
-weightsDir = "runs/detect/train51/weights/" #glass: YoloV3, imgsz=320, d,w: 
-#model = YOLO("models/yolov3-tiny.yaml" )  # build a new model from YAML
+#image_dir = "datasets/combinedData/images/foo/"
+image_dir = "datasets/testImages/"
+weightsDir = "runs/detect/train8/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
 name = "best"
 modelPath = Path(weightsDir)
