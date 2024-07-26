@@ -29,7 +29,9 @@ modelType = 'yolo' # is this yolo or ssd?
 
 #thisFile = None
 #thisFile = 'Dataset_apple_97.jpg'
-thisFile = 'dataset_ver1_dataset8_958.jpg'
+thisFile = 'Dataset_hand_4.jpg' #image in our test, in train
+#thisFile = 'dataset_ver1_dataset8_94.jpg' #in val
+#thisFile = 'dataset_ver1_dataset8_958.jpg'
 #thisFile = 'dataset8_958.jpg'
 
 if modelType == 'ssd':
@@ -41,7 +43,7 @@ else:
     #dataSet = 'coco8'
     #dataSet = 'dataset_ver1'
     dataSet = 'combinedData'
-    testTrain = 'val' # train or val
+    testTrain = 'train' # train or val
     baseDir = "datasets" 
     image_dir = baseDir + '/' + dataSet + '/images/' + testTrain
 
@@ -50,8 +52,8 @@ print(f"{image_dir}")
 def labelColor(label):
     # color: (b, g, r)
     match label:
-        case 'hand': return (255, 255, 255) # White
-        case 'apple': return (0, 0, 155)
+        case 'hand': return (0, 0, 255) 
+        case 'apple': return (0, 255, 0)
         case _: return (0,0,0) # Black
 
 def getThisImgLabs(image_loc, fileName):
@@ -72,8 +74,9 @@ def getThisImgLabs(image_loc, fileName):
 
     # Display the image
     # TODO: add exit key stroke
-    numpy_arr = np.asarray(image)
-    cv2.imshow('', numpy_arr) # if you name with the image, will make a new window each time
+    #numpy_arr = np.asarray(image)
+    #cv2.imshow('', numpy_arr) # if you name with the image, will make a new window each time
+    cv2.imshow('', image) # if you name with the image, will make a new window each time
     cv2.waitKey()
 
 # Entry point

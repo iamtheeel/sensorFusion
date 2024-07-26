@@ -135,5 +135,7 @@ class getLab:
         UL = [upperLeft_X, upperLeft_Y]
         LR = [lowerRight_X, lowerRight_Y]
 
+        print(f"Label UL: {UL} LR: {LR}")
+
         #print(f"label number: {line_split[0]}, {self.classes[labelNum]}")
         return self.classes[labelNum], UL, LR

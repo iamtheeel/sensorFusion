@@ -81,6 +81,7 @@ for dataSet in dataSetList:
         print(f"dir: {image_dir}")
 
         labeler = getLab('ssd', baseDir, dataSet)  
+
         listing = os.scandir(image_dir)
         for file in listing:
             if fnmatch.fnmatch(file, '*.jpg'):
