@@ -12,6 +12,9 @@
 ###
 import cv2
 
+#TODO: Add object name to display
+#TODO: Add infernece probability to display
+
 class displayHandObject:
     def __init__(self, handColor, objectColor, lineColor) -> None:
         self.handColor = handColor
@@ -20,7 +23,7 @@ class displayHandObject:
 
     def draw(self, imgFile, dist):
         thisImg =  cv2.imread(imgFile)
-        print(f"Image File shape: {thisImg.shape}")
+        print(f"Image File shape: {imgFile} {thisImg.shape}")
 
         # The Object
         objUL, objLR = dist.getBox(dist.grabObject)

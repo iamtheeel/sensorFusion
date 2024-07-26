@@ -11,6 +11,8 @@
 #
 ###
 
+#TODO: View all objects discovered, not just hand/object
+
 from ultralytics import YOLO
 import torch
 from pathlib import Path
@@ -20,13 +22,15 @@ import numpy as np
 import distance
 import display
 
+debug = True
+
 device = "cpu" 
 if torch.cuda.is_available(): device = "cuda" 
 if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
 
 # Configs
-#image_dir = "datasets/combinedData/images/foo/"
-image_dir = "datasets/testImages/"
+image_dir = "datasets/combinedData/images/val"
+#image_dir = "datasets/testImages"
 weightsDir = "weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
@@ -54,7 +58,8 @@ handObjDisp = display.displayHandObject(hColor, oColor, lColor)
 import os, fnmatch
 listing = os.scandir(image_dir)
 for thisFile in listing:
-    if fnmatch.fnmatch(thisFile, '*.jpg'):
+    if fnmatch.fnmatch(thisFile, '*936.jpg'):
+    #if fnmatch.fnmatch(thisFile, '*.jpg'):
         thisImgFile = image_dir + "/" + thisFile.name
 
         results = model.predict(thisImgFile)
@@ -63,14 +68,13 @@ for thisFile in listing:
             #result.show()
 
             print("---------------------------------------------")
-            print(f"Data: {result.boxes.data}")
+            if debug:
+                print(f"Data: {result.boxes.data}")
 
             validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
-            print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
-            print(f"Valid: {validRes}")
+            if debug:
+                print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
+                print(f"Valid: {validRes}")
+
             if validRes:
                 handObjDisp.draw(thisImgFile, distCalc)
-
-                '''
-    
-                '''

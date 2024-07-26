@@ -63,7 +63,7 @@ class distanceCalculator:
                 self.handObject = object
             else: self.nNonHand += 1
 
-        if self.nHands != 1 and self.nNonHand == 0:
+        if self.nHands != 1 or self.nNonHand == 0:
             return False
         
         # Once we have the hand object, get the closest distance

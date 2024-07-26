@@ -29,7 +29,8 @@ modelType = 'yolo' # is this yolo or ssd?
 
 #thisFile = None
 #thisFile = 'Dataset_apple_97.jpg'
-thisFile = 'Dataset_hand_4.jpg' #image in our test, in train
+#thisFile = 'Dataset_hand_4.jpg' #image in our test, in train
+thisFile = 'dataset_ver2_apple936.jpg' # problem chile in val. Sees 2 hands
 #thisFile = 'dataset_ver1_dataset8_94.jpg' #in val
 #thisFile = 'dataset_ver1_dataset8_958.jpg'
 #thisFile = 'dataset8_958.jpg'
