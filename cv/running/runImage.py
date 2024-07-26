@@ -22,7 +22,7 @@ import numpy as np
 import distance
 import display
 
-debug = True
+debug = False
 
 device = "cpu" 
 if torch.cuda.is_available(): device = "cuda" 
@@ -58,8 +58,8 @@ handObjDisp = display.displayHandObject(hColor, oColor, lColor)
 import os, fnmatch
 listing = os.scandir(image_dir)
 for thisFile in listing:
-    if fnmatch.fnmatch(thisFile, '*936.jpg'):
-    #if fnmatch.fnmatch(thisFile, '*.jpg'):
+    #if fnmatch.fnmatch(thisFile, '*936.jpg'):
+    if fnmatch.fnmatch(thisFile, '*.jpg'):
         thisImgFile = image_dir + "/" + thisFile.name
 
         results = model.predict(thisImgFile)

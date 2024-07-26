@@ -21,12 +21,12 @@ class distanceCalculator:
         ##Configs
         self.modelImgSize = trainImgSize #What is the pxl count of the image directly to inferance
         self.pxPerIn  = pxPerInCal #How many pixels per mm
-        self.nHands = 0
-        self.nNonHand = 0
 
         self.zeroData()
 
     def zeroData(self):
+        self.nHands = 0
+        self.nNonHand = 0
         self.grabObject = torch.tensor([0.0, 0.0, 0.0, 0.0, 0.0, -1.0]) # Init to UL
         self.handObject = None
 
