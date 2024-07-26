@@ -10,6 +10,9 @@
 # Calculate the distance between two items
 #
 ###
+
+#TODO: add probability threshold
+
 import math
 import torch
 
@@ -21,19 +24,17 @@ class distanceCalculator:
         self.nHands = 0
         self.nNonHand = 0
 
+        self.zeroData()
+
+    def zeroData(self):
         self.grabObject = torch.tensor([0.0, 0.0, 0.0, 0.0, 0.0, -1.0]) # Init to UL
         self.handObject = None
 
         self.bestCenter = (0,0)
-        self.handCenter = (trainImgSize[0], trainImgSize[1])            # Init to LR
+        self.handCenter = (self.modelImgSize[0], self.modelImgSize[1])            # Init to LR
 
         self.bestDist = self.calcDist(self.grabObject)
         #print(f"Max dist: {self.bestDist}")
-
-##data
-#this image size
-#hand box
-#2nd object box
 
     def loadData(self, data, cls):
         '''
@@ -47,6 +48,8 @@ class distanceCalculator:
             (Bool): Is or is not valid
         Raises:
         '''
+        self.zeroData()
+
         self.data = data
         if len(data) < 2: 
             print(f"loadData: must be more than 1 object. len of data: {len(data)}")
