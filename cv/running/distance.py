@@ -11,7 +11,7 @@
 #
 ###
 
-#TODO: if multiple hands, pick the one with the highest probability
+#TODO: improve data structure
 
 import math
 import torch
@@ -34,6 +34,7 @@ class distanceCalculator:
 
         self.bestCenter = (0,0)
         self.handCenter = (self.modelImgSize[0], self.modelImgSize[1])            # Init to LR
+        self.handConf = 0.0
 
         self.bestDist = self.calcDist(self.grabObject)
         #print(f"Max dist: {self.bestDist}")
@@ -58,7 +59,7 @@ class distanceCalculator:
             return False
         
         for object in data:
-            if object[5] == 0 and object[4] >= self.hThresh: 
+            if object[5] == 0 and object[4] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object
                 self.handCenter = self.findCenter(object)
@@ -66,8 +67,18 @@ class distanceCalculator:
             elif object[4] >= self.oThresh: 
                 self.nNonHand += 1
 
-        if self.nHands != 1 or self.nNonHand == 0:
+        if self.nNonHand == 0 or self.nHands == 0:
+            print(f"loadData: we need at least one hand:{self.nHands} and one target:{self.nNonHand}")
             return False
+
+        # If we have multiple hands use the one with the highest confidence
+        if self.nHands >= 1:
+            for object in data:
+                if object[5] == 0 and object[4] >= self.hThresh and object[4] > self.handConf:
+                    self.handConf = object[4]
+                    self.handCenter = self.findCenter(object)
+                    self.handObject = object
+
         
         # Once we have the hand object, get the closest distance
         for object in data:
