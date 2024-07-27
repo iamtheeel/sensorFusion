@@ -11,7 +11,6 @@
 #
 ###
 
-#TODO: View all objects discovered, not just hand/object
 
 from ultralytics import YOLO
 import torch
@@ -22,7 +21,8 @@ import numpy as np
 import distance
 import display
 
-debug = False
+debug = True
+showInfResults = False
 
 device = "cpu" 
 if torch.cuda.is_available(): device = "cuda" 
@@ -45,8 +45,10 @@ model = YOLO(modelFile)  #
 #model.load_state_dict(torch.load(modelFile), strict=False) 
 
 imagePxlPer_mm = 1.0
+handThreshold = 0.6
+objectThreshold = 0.6
 inferImgSize = [256, 320] # what is the image shape handed to inference
-distCalc = distance.distanceCalculator(inferImgSize, imagePxlPer_mm)
+distCalc = distance.distanceCalculator(inferImgSize, imagePxlPer_mm, handThresh=handThreshold, objThresh=objectThreshold)
 
 #Color in BGR
 lColor = [125, 125, 125]
@@ -64,8 +66,9 @@ for thisFile in listing:
 
         results = model.predict(thisImgFile)
         for result in results:
-            #print(result.boxes)
-            #result.show()
+            if showInfResults:
+                print(result.boxes)
+                result.show()
 
             print("---------------------------------------------")
             if debug:

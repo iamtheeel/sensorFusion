@@ -12,8 +12,7 @@
 ###
 import cv2
 
-#TODO: Add object name to display
-#TODO: Add infernece probability to display
+#TODO: Change lable position if the location obstructs it
 
 class displayHandObject:
     def __init__(self, handColor, objectColor, lineColor) -> None:
@@ -26,19 +25,24 @@ class displayHandObject:
         print(f"Image File shape: {imgFile} {thisImg.shape}")
 
         # The Object
+        objText = f"Target: {dist.grabObject[4]:.2f}"
         objUL, objLR = dist.getBox(dist.grabObject)
         cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=1)
         cv2.circle(img=thisImg, center=dist.bestCenter, radius=5, color=self.objectColor, thickness=2) #BGR
+        cv2.putText(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=self.objectColor)
 
         # The Hand
+        handText = f"Hand: {dist.handObject[4]:.2f}"
         handUL, handLR = dist.getBox(dist.handObject)
         cv2.rectangle(img=thisImg, pt1=handUL, pt2=handLR, color=self.handColor, thickness=1)
         cv2.circle(img=thisImg, center=dist.handCenter, radius=5, color=self.handColor, thickness=2) #BGR
+        cv2.putText(img=thisImg, text=handText, org=handUL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=self.handColor)
 
         # The distance
-        label =f"Distance: {dist.bestDist:.0f}mm"
-        print(label)
-        cv2.putText(img=thisImg, text=label, org=objUL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=self.lineColor)
+        distText =f"Distance: {dist.bestDist:.0f}mm"
+        distUL =  (5,15)
+        print(distText)
+        cv2.putText(img=thisImg, text=distText, org=distUL, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5, color=self.lineColor)
         cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.lineColor, thickness=1)
 
         cv2.imshow("", thisImg)

@@ -11,16 +11,18 @@
 #
 ###
 
-#TODO: add probability threshold
+#TODO: if multiple hands, pick the one with the highest probability
 
 import math
 import torch
 
 class distanceCalculator:
-    def __init__(self, trainImgSize, pxPerInCal) -> None:
+    def __init__(self, trainImgSize, pxPerInCal, handThresh =0.0, objThresh=0.0) -> None:
         ##Configs
         self.modelImgSize = trainImgSize #What is the pxl count of the image directly to inferance
         self.pxPerIn  = pxPerInCal #How many pixels per mm
+        self.hThresh = handThresh
+        self.oThresh = objThresh
 
         self.zeroData()
 
@@ -56,19 +58,20 @@ class distanceCalculator:
             return False
         
         for object in data:
-            if object[5] == 0: 
+            if object[5] == 0 and object[4] >= self.hThresh: 
                 self.nHands += 1
                 #self.hand = object
                 self.handCenter = self.findCenter(object)
                 self.handObject = object
-            else: self.nNonHand += 1
+            elif object[4] >= self.oThresh: 
+                self.nNonHand += 1
 
         if self.nHands != 1 or self.nNonHand == 0:
             return False
         
         # Once we have the hand object, get the closest distance
         for object in data:
-            if object[5] != 0: 
+            if object[5] != 0 and object[4] >= self.oThresh: 
                 thisDist = self.calcDist(object)
                 if thisDist < self.bestDist: 
                     self.grabObject = object
