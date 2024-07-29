@@ -78,7 +78,6 @@ class distanceCalculator:
                     self.handConf = object[4]
                     self.handCenter = self.findCenter(object)
                     self.handObject = object
-
         
         # Once we have the hand object, get the closest distance
         for object in data:
@@ -151,7 +150,3 @@ class distanceCalculator:
         y2 = object[3].item()
 
         return x1, y1, x2, y2
-
-#count objects
-#get hand
-#get 2nd object

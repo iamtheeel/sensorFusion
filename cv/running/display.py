@@ -12,7 +12,8 @@
 ###
 import cv2
 
-#TODO: Change lable position if the location obstructs it
+#TODO: Change label position if the location obstructs it
+#TODO: thumb throuh image if not ok
 
 class displayHandObject:
     def __init__(self, handColor, objectColor, lineColor) -> None:
