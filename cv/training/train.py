@@ -30,8 +30,9 @@ image_sz = 320 # Works
 #image_sz = 160 #works
 #image_sz = 96 #works
 
-dataSet = "datasets/combinedData.yaml"
-#dataSet = "datasets/dataset_ver1.yaml"
+#dataSet = "datasets/combinedData.yaml"
+#dataSet = "datasets/foo.yaml"  # Single image set, not working
+dataSet = "datasets/dataset_ver1.yaml" # small(er) training set
 #dataSet = "datasets/coco8.yaml"
 
 # Load a model
@@ -46,6 +47,7 @@ yoloModel = YOLO("models/yolov3-tiny.yaml")  #
 
 yoloModel.info(detailed=True)
 
+'''
 modelSum = summary(model=yoloModel.model, 
                    #verbose=2,
                    input_size=(1, image_depth, image_sz, image_sz), # make sure this is "input_size", not "input_shape": must be square
@@ -54,10 +56,10 @@ modelSum = summary(model=yoloModel.model,
             #col_width=20,
             row_settings=["var_names"]
             )
+'''
 
 #exit()
 # TODO image format
-#WARNING ⚠️ updating to 'imgsz=96'. 'train' and 'val' imgsz must be an integer, while 'predict' and 'export' imgsz may be a [h, w] list or an integer, i.e. 'yolo export imgsz=640,480' or 'yolo export imgsz=640'
 results = yoloModel.train(data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
 
 '''
