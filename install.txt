@@ -1,32 +1,25 @@
+pip install -r requirements.txt
 
-must run python 3.11 for ultralytics support as of July 7, 2024
-pip install ultralytics
-conda install pytorch torchvision -c pytorch
+    must run python 3.11 for ultralytics support as of July 7, 2024
+    pip install ultralytics
+    conda install pytorch torchvision -c pytorch
 
-from ultralytics import YOLO
-got:
-    AttributeError: partially initialized module 'charset_normalizer' has no attribute 'md__mypyc' (most likely due to a circular import)
-Fix:
-    pip install -U --force-reinstall charset-normalizer
-
-
-pip install torchinfo
-#pip install tensorflow
-pip install tflite-support
+    from ultralytics import YOLO
+    got:
+        AttributeError: partially initialized module 'charset_normalizer' has no attribute 'md__mypyc' (most likely due to a circular import)
+    Fix:
+        pip install -U --force-reinstall charset-normalizer
 
 
-onnx2tf:
-https://github.com/PINTO0309/onnx2tf
-    problem: pip install -U onnxsim==0.4.33
+    pip install torchinfo
+    #pip install tensorflow
+    pip install tflite-support
 
 
-on MIC server:
-sudo apt update && sudo apt upgrade && sudo apt install build-essential
-sudo apt-get install -y libgl1-mesa-dev
-sudo apt-get install -y libglib2.0-0
+    onnx2tf:
+    https://github.com/PINTO0309/onnx2tf
+        problem: pip install -U onnxsim==0.4.33
 
-# this suddenly triggered with python 3.11 on MIC
-sudo apt-get install -y libusb-1.0-0 
 
 
 
@@ -47,3 +40,14 @@ Add key to github
     run: git clone git@github.com:iamtheeel/sensorFusion.git
 Add the key to:
     https://github.com/settings/ssh/new
+
+
+Python Setup
+
+on MIC server (libGL issue):
+sudo apt update && sudo apt upgrade && sudo apt install build-essential
+sudo apt-get install -y libgl1-mesa-dev
+sudo apt-get install -y libglib2.0-0
+
+# this suddenly triggered with python 3.11 on MIC
+sudo apt-get install -y libusb-1.0-0 

@@ -22,7 +22,7 @@ import distance
 import display
 
 debug = True
-showInfResults = False
+showInfResults = True
 
 device = "cpu" 
 if torch.cuda.is_available(): device = "cuda" 
@@ -34,13 +34,15 @@ image_dir = "datasets/testImages"
 weightsDir = "weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
-fileName = "scratch_320.pt" #Trained from scratch imgsz=320
+#fileName = "scratch_320.pt" #Trained from scratch imgsz=320
+fileName = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size
 
 modelPath = Path(weightsDir)
 modelFile = modelPath/fileName
 print(f"model: {modelFile}")
 
 # Load the state dict
+#model = YOLO("yolov5n.pt")  # 
 model = YOLO(modelFile)  # 
 #model.load_state_dict(torch.load(modelFile), strict=False) 
 
