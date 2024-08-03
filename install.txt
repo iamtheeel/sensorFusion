@@ -1,7 +1,7 @@
 pip install -r requirements.txt
 
-    must run python 3.11 for ultralytics support as of July 7, 2024
-    pip install ultralytics
+    must run python 3.11 for ultralytics export support as of July 7, 2024
+    *pip install ultralytics
     conda install pytorch torchvision -c pytorch
 
     from ultralytics import YOLO
@@ -34,6 +34,9 @@ pip install --user mendel-development-tool
 -------------------------------------------
 Setup environment
 -------------------------------------------
+Editor:
+    sudo update-alternatives --config editor
+
 
 Git: 
 Add key to github
@@ -42,7 +45,7 @@ Add the key to:
     https://github.com/settings/ssh/new
 
 
-Python Setup
+Python Setup:
 
 on MIC server (libGL issue):
 sudo apt update && sudo apt upgrade && sudo apt install build-essential
