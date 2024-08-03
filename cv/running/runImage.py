@@ -35,7 +35,7 @@ weightsDir = "weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
 #fileName = "scratch_320.pt" #Trained from scratch imgsz=320
-fileName = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size
+fileName = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
 
 modelPath = Path(weightsDir)
 modelFile = modelPath/fileName

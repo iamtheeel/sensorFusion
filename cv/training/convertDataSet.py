@@ -27,12 +27,14 @@ from getLab import getLab
 ## Settings
 # Inputs:
 baseDir = "../../data/version1" 
+
 #dataSetList = ['appleHand'] # For testing
 dataSetList = ['Dataset', 'dataset_ver1', 'dataset_ver2', 'dataset_ver3_white_background']
 
 # Outputs
 #outName = 'foo' # small set for testing
-outName = 'combinedData'
+#outName = 'combinedData' # 2 class
+outName = 'coco_withHand' # coco pluss hand
 outBaseDir = "./datasets"
 
 
