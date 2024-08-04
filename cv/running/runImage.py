@@ -21,24 +21,33 @@ import numpy as np
 import distance
 import display
 
-debug = True
-showInfResults = True
+debug = False
+showInfResults = False
 
 device = "cpu" 
 if torch.cuda.is_available(): device = "cuda" 
 if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
 
 # Configs
-#image_dir = "datasets/combinedData/images/val"
-image_dir = "datasets/testImages"
+image_dir = "datasets/combinedData/images/val"
+#image_dir = "datasets/testImages"
+
 weightsDir = "weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
-#fileName = "scratch_320.pt" #Trained from scratch imgsz=320
-fileName = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
+#weightsFile = "scratch_320.pt" #Trained from scratch imgsz=320
+#weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
+weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO
+
+# Display settings
+imagePxlPer_mm = 1.0
+handThreshold = 0.6
+objectThreshold = 0.6
+inferImgSize = [256, 320] # what is the image shape handed to inference
+handClass = 80
 
 modelPath = Path(weightsDir)
-modelFile = modelPath/fileName
+modelFile = modelPath/weightsFile
 print(f"model: {modelFile}")
 
 # Load the state dict
@@ -46,11 +55,8 @@ print(f"model: {modelFile}")
 model = YOLO(modelFile)  # 
 #model.load_state_dict(torch.load(modelFile), strict=False) 
 
-imagePxlPer_mm = 1.0
-handThreshold = 0.6
-objectThreshold = 0.6
-inferImgSize = [256, 320] # what is the image shape handed to inference
-distCalc = distance.distanceCalculator(inferImgSize, imagePxlPer_mm, handThresh=handThreshold, objThresh=objectThreshold)
+#Init the calculator
+distCalc = distance.distanceCalculator(inferImgSize, imagePxlPer_mm, handThresh=handThreshold, objThresh=objectThreshold, handClass=handClass)
 
 #Color in BGR
 lColor = [125, 125, 125]

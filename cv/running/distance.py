@@ -17,12 +17,13 @@ import math
 import torch
 
 class distanceCalculator:
-    def __init__(self, trainImgSize, pxPerInCal, handThresh =0.0, objThresh=0.0) -> None:
+    def __init__(self, trainImgSize, pxPerInCal, handThresh =0.0, objThresh=0.0, handClass=0) -> None:
         ##Configs
         self.modelImgSize = trainImgSize #What is the pxl count of the image directly to inferance
         self.pxPerIn  = pxPerInCal #How many pixels per mm
         self.hThresh = handThresh
         self.oThresh = objThresh
+        self.handClassNum = handClass
 
         self.zeroData()
 
@@ -59,7 +60,8 @@ class distanceCalculator:
             return False
         
         for object in data:
-            if object[5] == 0 and object[4] >= self.hThresh:
+            print(f"this object class: {object[5]}, hand class: {self.handClassNum}")
+            if object[5] == self.handClassNum and object[4] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object
                 self.handCenter = self.findCenter(object)
@@ -74,14 +76,14 @@ class distanceCalculator:
         # If we have multiple hands use the one with the highest confidence
         if self.nHands >= 1:
             for object in data:
-                if object[5] == 0 and object[4] >= self.hThresh and object[4] > self.handConf:
+                if object[5] == self.handClassNum and object[4] >= self.hThresh and object[4] > self.handConf:
                     self.handConf = object[4]
                     self.handCenter = self.findCenter(object)
                     self.handObject = object
         
         # Once we have the hand object, get the closest distance
         for object in data:
-            if object[5] != 0 and object[4] >= self.oThresh: 
+            if object[5] != self.handClassNum and object[4] >= self.oThresh: 
                 thisDist = self.calcDist(object)
                 if thisDist < self.bestDist: 
                     self.grabObject = object

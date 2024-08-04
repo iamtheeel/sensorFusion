@@ -1,0 +1,5 @@
+*.zip
+*.log
+*.npy
+.DS_Store
+.vscode
