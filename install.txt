@@ -2,6 +2,7 @@ pip install -r requirements.txt
 
     must run python 3.11 for ultralytics export support as of July 7, 2024
     *pip install ultralytics
+
     conda install pytorch torchvision -c pytorch
 
     from ultralytics import YOLO
@@ -46,6 +47,9 @@ Add the key to:
 
 
 Python Setup:
+    image location 
+        there is a config file somewere... but I cant find it.
+        just put images in ~/datasets
 
 on MIC server (libGL issue):
 sudo apt update && sudo apt upgrade && sudo apt install build-essential
