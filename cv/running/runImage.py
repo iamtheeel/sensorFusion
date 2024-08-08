@@ -36,8 +36,8 @@ weightsDir = "weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
 #weightsFile = "scratch_320.pt" #Trained from scratch imgsz=320
-#weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
-weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO
+weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
+#weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO
 
 # Display settings
 imagePxlPer_mm = 1.0
