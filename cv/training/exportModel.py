@@ -35,11 +35,7 @@ def representative_dataset():
         #temp_data = temp_data.reshape(1,2,imgW,imgH)# 2 is from RGB565, 2 bytes for 3 colors
         yield [temp_data.astype(np.float32)]
 
-def saveModel(modelDir, dataSet, imgH, imgW ):
-    name = "best"
-    modelPath = Path(modelDir)
-    fileName = name+".pt"
-    modelFile = modelPath/fileName
+def saveModel(modelFile, dataSet, imgH, imgW ):
 
     # Load the state dict
     #model.load_state_dict(torch.load(modelFile), strict=False) 
@@ -112,7 +108,12 @@ def saveModel(modelDir, dataSet, imgH, imgW ):
 #weightsDir = "runs/detect/train10/weights/" #glass: YoloV8, imgsz=320
 #weightsDir = "runs/detect/train11/weights/" #glass: YoloV8, imgsz=96
 #weightsDir = "runs/detect/train29/weights/" #glass: YoloV3, imgsz=320, d,w: 
-weightsDir = "runs/detect/train30/weights/" 
+#modelDir = "runs/detect/train30/weights/" 
+modelDir = "weights/" 
+modelPath = Path(modelDir)
+fileName = "yolov5nu_orig.pt"
+#fileName = "best.pt"
+modelFile = modelPath/fileName
 
 #dataSet = "coco8.yaml"
 #dataSet = "datasets/coco8.yaml"
@@ -121,4 +122,4 @@ dataSet = "datasets/combinedData.yaml"
 imgH = 96
 imgW = 96
 
-saveModel(modelDir=weightsDir, dataSet=dataSet, imgH=imgH, imgW=imgW) 
+saveModel(modelFile=modelFile, dataSet=dataSet, imgH=imgH, imgW=imgW) 
