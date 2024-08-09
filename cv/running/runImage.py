@@ -22,15 +22,15 @@ import distance
 import display
 
 debug = False
-showInfResults = False
+showInfResults = True
 
 device = "cpu" 
 if torch.cuda.is_available(): device = "cuda" 
 if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
 
 # Configs
-image_dir = "datasets/combinedData/images/val"
-#image_dir = "datasets/testImages"
+#image_dir = "datasets/combinedData/images/val"
+image_dir = "datasets/testImages"
 
 weightsDir = "weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 

@@ -10,6 +10,8 @@
 # Save the model to TensorFlow MicroControler
 # must run python 3.11
 #
+# Must run under Linux
+#
 ###
 from pathlib import Path
 from ultralytics import YOLO
