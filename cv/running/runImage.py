@@ -122,14 +122,15 @@ for thisFile in listing:
                     print(result.boxes)
                     result.show()
 
-                print("---------------------------------------------")
-                if debug:
-                    print(f"Data: {result.boxes.data}")
+            print("---------------------------------------------")
+            if debug:
+                print(f"Data: {result.boxes.data}")
 
-                validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
-                if debug:
-                    print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
-                    print(f"Valid: {validRes}")
+            validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
 
-                if validRes:
-                    handObjDisp.draw(thisImgFile, distCalc)
+            if debug:
+                print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
+                print(f"Valid: {validRes}")
+
+            if validRes:
+                handObjDisp.draw(thisImgFile, distCalc)
