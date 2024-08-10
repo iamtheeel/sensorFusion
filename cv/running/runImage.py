@@ -54,15 +54,15 @@ if device != "tpu":
     weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO\
 else:
     #weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    #weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608_2Class.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
+    weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608_2Class.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
+    #weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
 
 # Display settings
 imagePxlPer_mm = 1.0
 handThreshold = 0.6
 objectThreshold = 0.6
 inferImgSize = [256, 320] # what is the image shape handed to inference
-handClass = 80
+handClass = 0#80
 
 modelPath = Path(weightsDir)
 modelFile = modelPath/weightsFile
