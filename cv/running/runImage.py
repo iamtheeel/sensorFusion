@@ -152,7 +152,9 @@ for thisFile in listing:
 
         if dispRez:
             exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
+            print(f"exitSatus: {exitStatus}: ")
 
-            if exitStatus == False:
+            if exitStatus == ord('q'):  # q = 113
+                print(f"********   quit now ***********")
                 exit()
 
