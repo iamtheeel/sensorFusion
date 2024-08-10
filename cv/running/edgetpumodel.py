@@ -132,7 +132,7 @@ class EdgeTPUModel:
         #output_path = base + "_detect" + ext
         imgName = os.path.split(base)
         #print(f"base: {base}, {imgName[1]}")
-        output_path = imgName[1] + "_detect" + ext 
+        output_path = "out/" + imgName[1] + "_detect" + ext 
         det = self.process_predictions(pred[0], full_image, pad, output_path, save_img=save_img, save_txt=save_txt)
         
         return det
