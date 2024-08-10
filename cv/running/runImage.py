@@ -18,13 +18,13 @@ print(f"machine: {machine}")
 if machine == "aarch64":
     device = "tpu"
 else:
+    import torch
     device = "cpu" 
     if torch.cuda.is_available(): device = "cuda" 
     if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
 
 if device != "tpu":
     from ultralytics import YOLO
-    import torch
 else:
     import logging
     from edgetpumodel import EdgeTPUModel
@@ -37,8 +37,8 @@ import numpy as np
 import distance
 import display
 
-debug = False
-showInfResults = False
+debug = True
+showInfResults = True
 
 
 # Configs
@@ -50,9 +50,10 @@ weightsDir = "../weights/" #Trained on server
 
 #weightsFile = "scratch_320.pt" #Trained from scratch imgsz=320
 #weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
-#weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO
-weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-#weightsFile = "yolov5n_2class_ourDataTrained_320_full_integer_quant_edgetpu.tflite" #yolo v5 nano trained from scratch (hand = 0, apple = 1)
+if device != "tpu":
+    weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO\
+else:
+    weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
 
 # Display settings
 imagePxlPer_mm = 1.0
@@ -113,32 +114,39 @@ for thisFile in listing:
         else:
             # Returns a dict
             results = model.predict(thisImgFile)
-            print(f"File: {thisImgFile}")
+            if debug:
+                #print(f"Results: {type(results)}, {results}")
+                #print(f"Results[0]: {type(results[0])}, {results[0]}")
+                #print(f"Results shape: {type(results)}, {results.shape}")
+                print(f"Results.boxes: {type(results[0].boxes.data)}, {results[0].boxes.data}")
+                print(f"File: {thisImgFile}")
 
-        for result in results:
-            if device == "tpu":
-                if results.shape[0] != 1: # If we have detected more than one object
+        print("---------------------------------------------")
+        if device == "tpu":
+            boxes = results
+                #if results.shape[0] != 1: # If we have detected more than one object
                 #if result[5] != 80:  # not a hand (47 is apple)
                     #print(f"result:{result}")
                     #logger.info("result:{}".format(result))
-                    validRes = distCalc.loadData(result)
+                    #validRes = distCalc.loadData(result)
 
-            else:
-                if showInfResults:
-                    print(result.boxes)
-                    result.show()
+        else:
+            if showInfResults:
+                print(results[0].boxes)
+                results[0].show()
 
-                validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
-
-            print("---------------------------------------------")
-            if debug:
-                print(f"Data: {result.boxes.data}")
-
-            validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
+            boxes = results[0].boxes.data
 
             if debug:
-                print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
-                print(f"Valid: {validRes}")
+                if device != "tpu":
+                    #print(f"Results: {type(results[0].boxes.data)}, {results[0].boxes.data}")
+                    print(f"Results: {type(results[0].boxes)}, {results[0].boxes}")
 
-            if validRes:
-                handObjDisp.draw(thisImgFile, distCalc)
+        validRes = distCalc.loadData(boxes, device)
+
+        if debug:
+            print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
+            print(f"Valid: {validRes}")
+
+#            if validRes:
+#                handObjDisp.draw(thisImgFile, distCalc)

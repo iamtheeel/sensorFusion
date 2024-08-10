@@ -40,7 +40,7 @@ class distanceCalculator:
         self.bestDist = self.calcDist(self.grabObject)
         #print(f"Max dist: {self.bestDist}")
 
-    def loadData(self, data, cls=None):
+    def loadData(self, data, device):
         '''
         Return True iff there is one and only one hand
         Loads the data used
@@ -52,6 +52,11 @@ class distanceCalculator:
             (Bool): Is or is not valid
         Raises:
         '''
+        #self.device = device
+        #if device == 'tpu': 
+        classField = 5
+        confField = 4
+
         self.zeroData()
 
         self.data = data
@@ -59,11 +64,11 @@ class distanceCalculator:
             print(f"loadData: must be more than 1 object. len of data: {len(data)}")
             return False
         
-        print(f"Data: {data}")
+        print(f"Distance, Data: {data}")
         for object in data:
-            print(f"object: {object}")
-            print(f"this object class: {object[5]}, hand class: {self.handClassNum}")
-            if object[5] == self.handClassNum and object[4] >= self.hThresh:
+            #print(f"object: {object}")
+            #print(f"this object class: {object[classField]}, hand class: {self.handClassNum}")
+            if object[classField] == self.handClassNum and object[4] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object
                 self.handCenter = self.findCenter(object)
@@ -78,14 +83,14 @@ class distanceCalculator:
         # If we have multiple hands use the one with the highest confidence
         if self.nHands >= 1:
             for object in data:
-                if object[5] == self.handClassNum and object[4] >= self.hThresh and object[4] > self.handConf:
+                if object[classField] == self.handClassNum and object[4] >= self.hThresh and object[4] > self.handConf:
                     self.handConf = object[4]
                     self.handCenter = self.findCenter(object)
                     self.handObject = object
         
         # Once we have the hand object, get the closest distance
         for object in data:
-            if object[5] != self.handClassNum and object[4] >= self.oThresh: 
+            if object[classField] != self.handClassNum and object[4] >= self.oThresh: 
                 thisDist = self.calcDist(object)
                 if thisDist < self.bestDist: 
                     self.grabObject = object
