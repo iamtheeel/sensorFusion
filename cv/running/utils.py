@@ -67,7 +67,8 @@ def get_image_tensor(img, max_size, debug=False):
     Reshapes an input image into a square with sides max_size
     """
     if type(img) is str:
-        img = cv2.imread(img)
+        #print(f"cv2 version: {cv2.__version__}")
+        img = cv2.imread(img, cv2.IMREAD_UNCHANGED) 
     
     resized, pad = resize_and_pad(img, max_size)
     resized = resized.astype(np.float32)

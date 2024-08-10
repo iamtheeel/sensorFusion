@@ -11,9 +11,24 @@
 #
 ###
 
+import platform
+machine = platform.machine()
+print(f"machine: {machine}")
 
-from ultralytics import YOLO
-import torch
+if machine == "aarch64":
+    device = "tpu"
+else:
+    device = "cpu" 
+    if torch.cuda.is_available(): device = "cuda" 
+    if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
+
+if device != "tpu":
+    from ultralytics import YOLO
+    import torch
+else:
+    import logging
+    from edgetpumodel import EdgeTPUModel
+
 from pathlib import Path
 
 import numpy as np
@@ -22,22 +37,20 @@ import distance
 import display
 
 debug = False
-showInfResults = True
-
-device = "cpu" 
-if torch.cuda.is_available(): device = "cuda" 
-if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
+showInfResults = False
 
 # Configs
-#image_dir = "datasets/combinedData/images/val"
-image_dir = "datasets/testImages"
+#image_dir = "../datasets/combinedData/images/val"
+image_dir = "../datasets/testImages"
 
-weightsDir = "weights/" #Trained on server
+weightsDir = "../weights/" #Trained on server
 #weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
 
 #weightsFile = "scratch_320.pt" #Trained from scratch imgsz=320
-weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
+#weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
 #weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO
+weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
+#weightsFile = "yolov5n_2class_ourDataTrained_320_full_integer_quant_edgetpu.tflite" #yolo v5 nano trained from scratch (hand = 0, apple = 1)
 
 # Display settings
 imagePxlPer_mm = 1.0
@@ -50,10 +63,23 @@ modelPath = Path(weightsDir)
 modelFile = modelPath/weightsFile
 print(f"model: {modelFile}")
 
+dataSet = "../datasets/coco_withHand.yaml"
+
 # Load the state dict
-#model = YOLO("yolov5n.pt")  # 
-model = YOLO(modelFile)  # 
-#model.load_state_dict(torch.load(modelFile), strict=False) 
+if device != "tpu":
+    model = YOLO(modelFile)  # 
+else:
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    if debug == False:
+        logging.disable(level=logging.CRITICAL)
+        logger.disabled = True
+
+    model = EdgeTPUModel(modelFile, dataSet, conf_thresh=0.1, iou_thresh=0.1, v8=True)
+    input_size = model.get_image_size()
+    x = (255*np.random.random((3,*input_size))).astype(np.int8)
+    model.forward(x) # Prime with the image size
+
 
 #Init the calculator
 distCalc = distance.distanceCalculator(inferImgSize, imagePxlPer_mm, handThresh=handThreshold, objThresh=objectThreshold, handClass=handClass)
@@ -72,20 +98,38 @@ for thisFile in listing:
     if fnmatch.fnmatch(thisFile, '*.jpg'):
         thisImgFile = image_dir + "/" + thisFile.name
 
-        results = model.predict(thisImgFile)
+        if device == "tpu":
+            # Returns a numpy array: x1, x2, y1, y2, conf, class
+            results = model.predict(thisImgFile, save_img=showInfResults, save_txt=showInfResults)
+            #if results.shape[0] != 1:
+            #    print(results)
+
+
+        else:
+            # Returns a dict
+            results = model.predict(thisImgFile)
+            print(f"File: {thisImgFile}")
+
         for result in results:
-            if showInfResults:
-                print(result.boxes)
-                result.show()
+            if device == "tpu":
+                if results.shape[0] != 1: # If we have detected more than one object
+                #if result[5] != 80:  # not a hand (47 is apple)
+                    print(f"result:{result}")
+                    #logger.info("result:{}".format(result))
 
-            print("---------------------------------------------")
-            if debug:
-                print(f"Data: {result.boxes.data}")
+            else:
+                if showInfResults:
+                    print(result.boxes)
+                    result.show()
 
-            validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
-            if debug:
-                print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
-                print(f"Valid: {validRes}")
+                print("---------------------------------------------")
+                if debug:
+                    print(f"Data: {result.boxes.data}")
 
-            if validRes:
-                handObjDisp.draw(thisImgFile, distCalc)
+                validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
+                if debug:
+                    print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
+                    print(f"Valid: {validRes}")
+
+                if validRes:
+                    handObjDisp.draw(thisImgFile, distCalc)

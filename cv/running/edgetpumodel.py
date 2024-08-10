@@ -157,7 +157,8 @@ class EdgeTPUModel:
             x = x[np.newaxis].astype(np.int8)
         else:
             x = x[np.newaxis].astype(np.uint8)
-        
+        #print(f"v8: {self.v8}, image: {x}") 
+
         self.interpreter.set_tensor(self.input_details[0]['index'], x)
         self.interpreter.invoke()
         
@@ -271,9 +272,11 @@ class EdgeTPUModel:
                     
             if save_txt:
                 output_txt = base+".txt"
+                print(f"Output file: {output_txt}")
                 with open(output_txt, 'w') as f:
                    json.dump(output, f, indent=1)
             if save_img:
+              print(f"Output image: {output_path}")
               cv2.imwrite(output_path, output_image)
             
         return det
