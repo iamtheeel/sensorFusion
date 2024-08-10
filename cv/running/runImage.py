@@ -29,6 +29,7 @@ else:
     import logging
     from edgetpumodel import EdgeTPUModel
 
+
 from pathlib import Path
 
 import numpy as np
@@ -38,6 +39,7 @@ import display
 
 debug = False
 showInfResults = False
+
 
 # Configs
 #image_dir = "../datasets/combinedData/images/val"
