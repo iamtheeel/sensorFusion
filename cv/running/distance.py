@@ -60,37 +60,45 @@ class distanceCalculator:
         self.zeroData()
 
         self.data = data
-        if len(data) < 2: 
-            print(f"loadData: must be more than 1 object. len of data: {len(data)}")
-            return False
         
         print(f"Distance, Data: {data}")
         for object in data:
             #print(f"object: {object}")
             #print(f"this object class: {object[classField]}, hand class: {self.handClassNum}")
-            if object[classField] == self.handClassNum and object[4] >= self.hThresh:
+            if object[classField] == self.handClassNum and object[confField] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object
                 self.handCenter = self.findCenter(object)
                 self.handObject = object
-            elif object[4] >= self.oThresh: 
+            elif object[confField] >= self.oThresh: 
+                print(f"object: {object}")
                 self.nNonHand += 1
+                ## we still want to be able to display if we don't have a hand
+                # use the best confidence untill we can be bothered to show multiple objectes
+                if object[confField] > self.grabObject[confField]:
+                    self.grabObject[confField] = object[confField]
+                    self.grabObject = object # hmm, how to sort multiple objects if we have no hand?
 
-        if self.nNonHand == 0 or self.nHands == 0:
-            print(f"loadData: we need at least one hand:{self.nHands} and one target:{self.nNonHand}")
-            return False
 
         # If we have multiple hands use the one with the highest confidence
         if self.nHands >= 1:
             for object in data:
-                if object[classField] == self.handClassNum and object[4] >= self.hThresh and object[4] > self.handConf:
-                    self.handConf = object[4]
+                if object[classField] == self.handClassNum and object[confField] >= self.hThresh and object[confField] > self.handConf:
+                    self.handConf = object[confField]
                     self.handCenter = self.findCenter(object)
                     self.handObject = object
+
+        #if len(data) < 2: 
+        #    print(f"loadData: must be more than 1 object. len of data: {len(data)}")
+        #    return False
+
+        if self.nNonHand == 0 or self.nHands == 0:
+            print(f"loadData: we need at least one hand:{self.nHands} and one target:{self.nNonHand}")
+            return False
         
         # Once we have the hand object, get the closest distance
         for object in data:
-            if object[classField] != self.handClassNum and object[4] >= self.oThresh: 
+            if object[classField] != self.handClassNum and object[confField] >= self.oThresh: 
                 thisDist = self.calcDist(object)
                 if thisDist < self.bestDist: 
                     self.grabObject = object

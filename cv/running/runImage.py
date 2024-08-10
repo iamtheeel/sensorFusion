@@ -10,6 +10,9 @@
 # Run YOLO on a called image
 #
 ###
+debug = True
+showInfResults = False #On TPU will write _detect files
+dispRez = True
 
 import platform
 machine = platform.machine()
@@ -37,9 +40,6 @@ import numpy as np
 import distance
 import display
 
-debug = True
-showInfResults = True #On TPU will write _detect files
-dispRez = False
 
 # Configs
 #image_dir = "../datasets/combinedData/images/val"
@@ -148,5 +148,9 @@ for thisFile in listing:
             print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
             print(f"Valid: {validRes}, distance: {distCalc.bestDist}")
 
-            if validRes and dispRez:
-                handObjDisp.draw(thisImgFile, distCalc)
+        if dispRez:
+            exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
+
+            if exitStatus == False:
+                exit()
+
