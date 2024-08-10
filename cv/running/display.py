@@ -40,14 +40,9 @@ class displayHandObject:
             cv2.namedWindow("sensorFusion", cv2.WND_PROP_FULLSCREEN)
             cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
         cv2.imshow("sensorFusion", thisImg)
-        cv2.waitKey()
-        # This is not working... why?
-        #if cv2.waitKey(1) == ('q'):
-        #    print(f"*****  Exit now *****  ")
-        #    cv2.destroyAllWindows()
-        #    return False
-        
-        return True
+
+        waitkey = cv2.waitKey()
+        return waitkey
 
     def drawObject(self, thisImg, dist):
         # The Object

@@ -53,9 +53,7 @@ weightsDir = "../weights/" #Trained on server
 if device != "tpu":
     weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO\
 else:
-    #weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    #weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608_2Class.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
+    weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
 
 # Display settings
 imagePxlPer_mm = 1.0
@@ -152,7 +150,9 @@ for thisFile in listing:
 
         if dispRez:
             exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
+            print(f"exitSatus: {exitStatus}: ")
 
-            if exitStatus == False:
+            if exitStatus == ord('q'):  # q = 113
+                print(f"********   quit now ***********")
                 exit()
 
