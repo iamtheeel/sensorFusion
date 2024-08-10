@@ -78,6 +78,7 @@ class distanceCalculator:
                 if object[confField] > self.grabObject[confField]:
                     self.grabObject[confField] = object[confField]
                     self.grabObject = object # hmm, how to sort multiple objects if we have no hand?
+                    self.bestCenter = self.findCenter(object)
 
 
         # If we have multiple hands use the one with the highest confidence

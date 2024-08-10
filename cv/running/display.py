@@ -21,6 +21,7 @@ class displayHandObject:
         self.handColor = handColor
         self.objectColor = objectColor
         self.lineColor = lineColor
+        self.fullScreen = False
 
     def draw(self, imgFile, dist, valid):
         thisImg =  cv2.imread(imgFile)
@@ -35,8 +36,9 @@ class displayHandObject:
         if valid:
             self.drawDistance(thisImg, dist)
 
-        cv2.namedWindow("sensorFusion", cv2.WND_PROP_FULLSCREEN)
-        cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+        if self.fullScreen:
+            cv2.namedWindow("sensorFusion", cv2.WND_PROP_FULLSCREEN)
+            cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
         cv2.imshow("sensorFusion", thisImg)
         cv2.waitKey()
         # This is not working... why?
