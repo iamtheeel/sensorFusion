@@ -11,6 +11,9 @@
 # must run python 3.11
 #
 # Must run under Linux
+# Note: takes a bloody long time!
+#
+# Files created:
 #
 ###
 from pathlib import Path
@@ -113,7 +116,9 @@ def saveModel(modelFile, dataSet, imgH, imgW ):
 #modelDir = "runs/detect/train30/weights/" 
 modelDir = "weights/" 
 modelPath = Path(modelDir)
-fileName = "yolov5nu_orig.pt"
+#fileName = "yolov5nu_orig.pt"
+#fileName = "yolov5nu_transferFromCOCO.pt"
+fileName = "yolov5n_2class_ourDataTrained_320.pt"
 #fileName = "best.pt"
 modelFile = modelPath/fileName
 
@@ -121,7 +126,16 @@ modelFile = modelPath/fileName
 #dataSet = "datasets/coco8.yaml"
 #dataSet = "datasets/dataset_ver1.yaml"
 dataSet = "datasets/combinedData.yaml"
-imgH = 96
-imgW = 96
+# img size should be multiple of 16
+#imgH = 240
+imgH = 320
+#imgH = 416 # 415 saved as 416
+#imgH = 512
+#imgH = 576
+#imgH = 608
+#imgH = 624 # Failed
+#imgH = 640 # seems to be borked
+imgW = imgH
+#imgW = 640
 
 saveModel(modelFile=modelFile, dataSet=dataSet, imgH=imgH, imgW=imgW) 
