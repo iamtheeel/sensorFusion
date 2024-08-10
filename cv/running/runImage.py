@@ -101,8 +101,11 @@ for thisFile in listing:
         if device == "tpu":
             # Returns a numpy array: x1, x2, y1, y2, conf, class
             results = model.predict(thisImgFile, save_img=showInfResults, save_txt=showInfResults)
+            inferTime = model.get_last_inference_time() #inference time, nms time
+            print(f"Inference Time: {inferTime}")
             #if results.shape[0] != 1:
             #    print(results)
+            print(f"Results: {type(results)}, {results}")
 
 
         else:
@@ -114,13 +117,16 @@ for thisFile in listing:
             if device == "tpu":
                 if results.shape[0] != 1: # If we have detected more than one object
                 #if result[5] != 80:  # not a hand (47 is apple)
-                    print(f"result:{result}")
+                    #print(f"result:{result}")
                     #logger.info("result:{}".format(result))
+                    validRes = distCalc.loadData(result)
 
             else:
                 if showInfResults:
                     print(result.boxes)
                     result.show()
+
+                validRes = distCalc.loadData(result.boxes.data, result.boxes.cls)
 
             print("---------------------------------------------")
             if debug:

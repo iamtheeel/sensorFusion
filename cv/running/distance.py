@@ -40,7 +40,7 @@ class distanceCalculator:
         self.bestDist = self.calcDist(self.grabObject)
         #print(f"Max dist: {self.bestDist}")
 
-    def loadData(self, data, cls):
+    def loadData(self, data, cls=None):
         '''
         Return True iff there is one and only one hand
         Loads the data used
@@ -59,7 +59,9 @@ class distanceCalculator:
             print(f"loadData: must be more than 1 object. len of data: {len(data)}")
             return False
         
+        print(f"Data: {data}")
         for object in data:
+            print(f"object: {object}")
             print(f"this object class: {object[5]}, hand class: {self.handClassNum}")
             if object[5] == self.handClassNum and object[4] >= self.hThresh:
                 self.nHands += 1
