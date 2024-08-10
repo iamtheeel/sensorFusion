@@ -38,8 +38,8 @@ import distance
 import display
 
 debug = True
-showInfResults = True
-
+showInfResults = True #On TPU will write _detect files
+dispRez = False
 
 # Configs
 #image_dir = "../datasets/combinedData/images/val"
@@ -146,7 +146,7 @@ for thisFile in listing:
 
         if debug:
             print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
-            print(f"Valid: {validRes}")
+            print(f"Valid: {validRes}, distance: {distCalc.bestDist}")
 
-#            if validRes:
-#                handObjDisp.draw(thisImgFile, distCalc)
+            if validRes and dispRez:
+                handObjDisp.draw(thisImgFile, distCalc)

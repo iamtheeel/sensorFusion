@@ -1,2 +1,3 @@
 torch
 torchinfo
+opencv-python

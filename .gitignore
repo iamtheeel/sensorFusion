@@ -3,3 +3,7 @@
 *.npy
 .DS_Store
 .vscode
+*.swp
+__*
+*__
+*_detect_*
