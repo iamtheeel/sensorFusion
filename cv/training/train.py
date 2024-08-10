@@ -26,18 +26,19 @@ epochs = 300
 # Training data
 image_depth = 3
 #image_sz = 320 # Works
-#image_sz = 240: Failes
+#image_sz = 240: Faile 
 #image_sz = 160 #works
 #image_sz = 96 #works
 
 
 #dataSet = "datasets/combinedData.yaml" # 2 class
-#dataSet = "/home/coder/datasets/cocoClasses_withHand.yaml" # coco 81 class, hand and apple data only
-dataSet = "/home/coder/datasets/cocoData_handAppleAdded.yaml" # coco 81 class, coco, hand, and apple data
+dataSet = "../datasets/coco_withHand.yaml" # coco 81 class, hand and apple data only
+#dataSet = "/home/coder/datasets/cocoData_handAppleAdded.yaml" # coco 81 class, coco, hand, and apple data
 #Dataset 'datasets/coco_withHand.yaml' images not found ⚠️, missing path '/Users/theeel/Documents/school/MIC/sensorFusion/src/cv/datasets/coco_withHand/images/val'
 #dataSet = "datasets/foo.yaml"  # Single image set, not working
 #dataSet = "datasets/dataset_ver1.yaml" # small(er) training set
 #dataSet = "datasets/coco8.yaml"
+
 
 # Load a model
 # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/models/
@@ -45,12 +46,12 @@ dataSet = "/home/coder/datasets/cocoData_handAppleAdded.yaml" # coco 81 class, c
 #yoloModel = YOLO("models/yolov3-tiny.yaml")  # 
 #yoloModel = YOLO("models/yolov8n.yaml")  # 
 #yoloModel = YOLO("models/yolov8-p6n.yaml")  # 
-#yoloModel = YOLO("weights/yolov5nu.pt")  # trained with 300 epochs
-#yoloModel = YOLO("models/yolov5n.yaml").load("weights/yolov8n.pt")  # build from YAML and transfer weights
-yoloModel = YOLO("models/yolov5n.yaml")
+#yoloModel = YOLO("weights/yolov5nu.pt")  # pre-trained with 300 epochs
+yoloModel = YOLO("../models/yolov5n.yaml").load("../weights/yolov5nu.pt")  # build from YAML and transfer weights
+#yoloModel = YOLO("models/yolov5n.yaml")
 
 # Model settings
-transLearn = False
+transLearn = True
 image_sz = 640 # Was trained with
 freezeLayer = 10 # First 10 layers are the backbone (10: freezes 0-9)
 
@@ -78,6 +79,6 @@ modelSum = summary(model=yoloModel.model,
             )
 '''
 
-results = yoloModel.train(data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
+results = yoloModel.train(hsv_h=1.0, plots=True, pretrained=True, data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
 
 exit()
