@@ -10,24 +10,34 @@
 # Run YOLO on a called image
 #
 ###
-debug = True
-showInfResults = False #On TPU will write _detect files
-dispRez = True
 
 import platform
 import logging
 from pathlib import Path
 import numpy as np
+import cv2
 
+# From MICLab
+import sys
+import os
+sys.path.insert(0, '..')
+from ConfigParser import ConfigParser
 
-# Logging
+## Configuration
+config = ConfigParser(os.path.join(os.getcwd(), '../config.yaml'))
+configs = config.get_config()
+#print(configs)
+#print(configs['logLevel'])
+
+## Logging
+debug = configs['debugs']['debug']
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 if debug == False:
     logging.disable(level=logging.CRITICAL)
     logger.disabled = True
 
-# What platform are we running on
+## What platform are we running on
 machine = platform.machine()
 logger.info(f"machine: {machine}")
 
@@ -44,58 +54,66 @@ if device != "tpu":
 else:
     from edgetpumodel import EdgeTPUModel
 
-
+## Import our items after we set the log leve
 import distance
 import display
 
+# From edgetpu
+from utils import get_image_tensor
+
 
 # Configs
-#image_dir = "../datasets/combinedData/images/val"
-image_dir = "../datasets/testImages"
+## set the model information
+image_dir = configs['runTime']['imageDir']
 
-weightsDir = "../weights/" #Trained on server
-#weightsDir = "runs/detect/train48/weights/" #glass: YoloV3, imgsz=320, d,w: 
-
-#weightsFile = "scratch_320.pt" #Trained from scratch imgsz=320
-#weightsFile = "yolov5nu.pt" #PreTrained yolo v5 nano 640px image size, 
-if device != "tpu":
-    weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO\
+if device == "tpu":
+    weightsFile = configs['training']['weightsFile_tpu']
 else:
-    #weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    #weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608_2Class.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    weightsFile = "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-
-# Display settings
-imagePxlPer_mm = 1.0
-handThreshold = 0.6
-objectThreshold = 0.6
-inferImgSize = [256, 320] # what is the image shape handed to inference
-handClass = 80
-
-modelPath = Path(weightsDir)
+    weightsFile = configs['training']['weightsFile']
+modelPath = Path(configs['training']['weightsDir'])
 modelFile = modelPath/weightsFile
 logger.info(f"model: {modelFile}")
-
-dataSet = "../datasets/coco_withHand.yaml"
 
 # Load the state dict
 if device != "tpu":
     model = YOLO(modelFile)  # 
 else:
-    model = EdgeTPUModel(modelFile, dataSet, conf_thresh=0.1, iou_thresh=0.1, v8=True)
+    model = EdgeTPUModel(modelFile, configs['training']['dataSet'], conf_thresh=0.1, iou_thresh=0.1, v8=True)
     input_size = model.get_image_size()
     x = (255*np.random.random((3,*input_size))).astype(np.int8)
     model.forward(x) # Prime with the image size
 
 
-#Init the calculator
-distCalc = distance.distanceCalculator(inferImgSize, imagePxlPer_mm, handThresh=handThreshold, objThresh=objectThreshold, handClass=handClass)
+distCalc = distance.distanceCalculator(configs['training']['imageSize'], configs['runTime']['distSettings'])
+handObjDisp = display.displayHandObject(configs['runTime']['displaySettings']) #hColor, oColor, lColor)
 
-#Color in BGR
-lColor = [125, 125, 125]
-hColor = [0, 255, 0]
-oColor = [0, 0, 255]
-handObjDisp = display.displayHandObject(hColor, oColor, lColor)
+## Get image
+# https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
+camera = cv2.VideoCapture(configs['runTime']['camId'])
+camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
+camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
+
+# Get the image
+camStat, image = camera.read()
+
+# Precess the image
+if device == "tpu":
+    full_image, net_image, pad = get_image_tensor(image, input_size[0])
+    pred = model.forward(net_image)
+    model.process_predictions(pred[0], full_image, pad)
+                
+    tinference, tnms = model.get_last_inference_time()
+    logger.info("Frame done in {}".format(tinference+tnms))
+else: 
+    results = model.predict(image) # Returns a dict
+
+
+# Display the image
+if configs['debugs']['dispResults']:
+    logger.info(f"Cam Status: {camStat}")
+    cv2.imshow("cameraTest", image)
+    waitkey = cv2.waitKey()
+exit()
 
 # Run the model
 import os, fnmatch
@@ -108,7 +126,7 @@ for thisFile in listing:
 
         if device == "tpu":
             # Returns a numpy array: x1, x2, y1, y2, conf, class
-            results = model.predict(thisImgFile, save_img=showInfResults, save_txt=showInfResults)
+            results = model.predict(thisImgFile, save_img=configs['debugs']['showInfResults'] , save_txt=configs['debugs']['showInfResults'])
             inferTime = model.get_last_inference_time() #inference time, nms time
             logger.info(f"Inference Time: {inferTime}")
             #if results.shape[0] != 1:
@@ -117,8 +135,7 @@ for thisFile in listing:
 
 
         else:
-            # Returns a dict
-            results = model.predict(thisImgFile)
+            results = model.predict(thisImgFile) # Returns a dict
             if debug:
                 #logger.info(f"Results: {type(results)}, {results}")
                 #logger.info(f"Results[0]: {type(results[0])}, {results[0]}")
@@ -136,7 +153,7 @@ for thisFile in listing:
                     #validRes = distCalc.loadData(result)
 
         else:
-            if showInfResults:
+            if configs['debugs']['showInfResults']:
                 logger.info(results[0].boxes)
                 results[0].show()
 
@@ -153,7 +170,7 @@ for thisFile in listing:
             logger.info(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
             logger.info(f"Valid: {validRes}, distance: {distCalc.bestDist}")
 
-        if dispRez:
+        if configs['debugs']['dispResults']:
             exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
             logger.info(f"exitSatus: {exitStatus}: ")
 

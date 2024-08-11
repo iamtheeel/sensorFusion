@@ -1,0 +1,36 @@
+debugs:
+    debug: True 
+    showInfResults: False
+    dispResults: True
+
+training:
+    dataSet: "../datasets/coco_withHand.yaml"
+    weightsDir: "../weights"
+    weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
+    
+    #imageSize: [608, 608] #h, w
+    imageSize: [420, 640] #h, w
+
+runTime:
+    ## Inference Source
+    imgSrc: "directory"
+    #imageDir: "../datasets/combinedData/images/val"
+    imageDir: "../datasets/testImages"
+
+    camId: 0
+
+    distSettings:
+        imagePxlPer_mm: 1.0
+        handThreshold: 0.6
+        objectThreshold: 0.6
+        handClass: 80
+
+    displaySettings:
+        fullScreen: False
+        handColor: [0, 255, 0]
+        lineColor: [125, 125, 125] # Color in BGR
+        objectColor: [0, 0, 255]
+        handLineTh: 2 #Thickness in px
+        objLineTh: 2
+        distLineTh: 1

@@ -15,19 +15,21 @@
 
 import math
 import torch
-import logging
 
+import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Distance")
 
 class distanceCalculator:
-    def __init__(self, trainImgSize, pxPerInCal, handThresh =0.0, objThresh=0.0, handClass=0) -> None:
+    def __init__(self, trainImgSize, config) -> None:
         ##Configs
         self.modelImgSize = trainImgSize #What is the pxl count of the image directly to inferance
-        self.pxPerIn  = pxPerInCal #How many pixels per mm
-        self.hThresh = handThresh
-        self.oThresh = objThresh
-        self.handClassNum = handClass
+        self.pxPerIn  = config['imagePxlPer_mm'] #How many pixels per mm
+        self.hThresh = config['handThreshold']
+        self.oThresh = config['objectThreshold']
+        self.handClassNum = config['handClass']
+
+        print(f"pxPerIn: {self.pxPerIn}")
 
         self.zeroData()
 

@@ -20,11 +20,15 @@ logger = logging.getLogger("display")
 #TODO: thumb throuh image if not ok
 
 class displayHandObject:
-    def __init__(self, handColor, objectColor, lineColor) -> None:
-        self.handColor = handColor
-        self.objectColor = objectColor
-        self.lineColor = lineColor
-        self.fullScreen = False
+    def __init__(self,  conf) -> None:
+    #def __init__(self, handColor, objectColor, lineColor) -> None:
+        self.handColor = conf['handColor']
+        self.objectColor = conf['objectColor']
+        self.lineColor = conf['lineColor']
+        self.fullScreen = conf['fullScreen']
+        self.handLineTh = conf['handLineTh']
+        self.objLineTh = conf['objLineTh']
+        self.distLineTh = conf['distLineTh']
 
     def draw(self, imgFile, dist, valid):
         thisImg =  cv2.imread(imgFile)
@@ -52,7 +56,7 @@ class displayHandObject:
         objText = f"Target: {dist.grabObject[4]:.2f}"
         logger.info(f"drawObject: {dist.grabObject}")
         objUL, objLR = dist.getBox(dist.grabObject)
-        cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=1)
+        cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=self.objLineTh)
         cv2.circle(img=thisImg, center=dist.bestCenter, radius=5, color=self.objectColor, thickness=2) #BGR
         cv2.putText(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.objectColor)
 
@@ -60,7 +64,7 @@ class displayHandObject:
         # The Hand
         handText = f"Hand: {dist.handObject[4]:.2f}"
         handUL, handLR = dist.getBox(dist.handObject)
-        cv2.rectangle(img=thisImg, pt1=handUL, pt2=handLR, color=self.handColor, thickness=1)
+        cv2.rectangle(img=thisImg, pt1=handUL, pt2=handLR, color=self.handColor, thickness=self.handLineTh)
         cv2.circle(img=thisImg, center=dist.handCenter, radius=5, color=self.handColor, thickness=2) #BGR
         cv2.putText(img=thisImg, text=handText, org=handUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1.0, color=self.handColor)
 
@@ -69,5 +73,5 @@ class displayHandObject:
         distText =f"Distance: {dist.bestDist:.0f}mm"
         distUL =  (5,15)
         logger.info(distText)
-        cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.lineColor, thickness=1)
+        cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.lineColor, thickness=self.distLineTh)
         cv2.putText(img=thisImg, text=distText, org=distUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.lineColor)

@@ -1,3 +1,0 @@
-torch
-torchinfo
-opencv-python
