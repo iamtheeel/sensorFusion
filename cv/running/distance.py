@@ -15,6 +15,10 @@
 
 import math
 import torch
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("Distance")
 
 class distanceCalculator:
     def __init__(self, trainImgSize, pxPerInCal, handThresh =0.0, objThresh=0.0, handClass=0) -> None:
@@ -38,7 +42,7 @@ class distanceCalculator:
         self.handConf = 0.0
 
         self.bestDist = self.calcDist(self.grabObject)
-        #print(f"Max dist: {self.bestDist}")
+        #logger.info(f"zeroData, Max dist: {self.bestDist}")
 
     def loadData(self, data, device):
         '''
@@ -61,17 +65,17 @@ class distanceCalculator:
 
         self.data = data
         
-        print(f"Distance, Data: {data}")
+        logger.info(f"LoadData, Data: {data}")
         for object in data:
-            #print(f"object: {object}")
-            #print(f"this object class: {object[classField]}, hand class: {self.handClassNum}")
+            #logger.info(f"LoadDataobject: {object}")
+            #logger.info(f"LoadDatathis object class: {object[classField]}, hand class: {self.handClassNum}")
             if object[classField] == self.handClassNum and object[confField] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object
                 self.handCenter = self.findCenter(object)
                 self.handObject = object
             elif object[confField] >= self.oThresh: 
-                print(f"object: {object}")
+                logger.info(f"loadData, object: {object}")
                 self.nNonHand += 1
                 ## we still want to be able to display if we don't have a hand
                 # use the best confidence untill we can be bothered to show multiple objectes
@@ -90,11 +94,11 @@ class distanceCalculator:
                     self.handObject = object
 
         #if len(data) < 2: 
-        #    print(f"loadData: must be more than 1 object. len of data: {len(data)}")
+        #    logger.info(f"loadData: must be more than 1 object. len of data: {len(data)}")
         #    return False
 
         if self.nNonHand == 0 or self.nHands == 0:
-            print(f"loadData: we need at least one hand:{self.nHands} and one target:{self.nNonHand}")
+            logger.info(f"loadData: we need at least one hand:{self.nHands} and one target:{self.nNonHand}")
             return False
         
         # Once we have the hand object, get the closest distance
