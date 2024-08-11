@@ -42,6 +42,13 @@ import display
 
 
 # Configs
+# Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+if debug == False:
+    logging.disable(level=logging.CRITICAL)
+    logger.disabled = True
+
 #image_dir = "../datasets/combinedData/images/val"
 image_dir = "../datasets/testImages"
 
@@ -72,12 +79,6 @@ dataSet = "../datasets/coco_withHand.yaml"
 if device != "tpu":
     model = YOLO(modelFile)  # 
 else:
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
-    if debug == False:
-        logging.disable(level=logging.CRITICAL)
-        logger.disabled = True
-
     model = EdgeTPUModel(modelFile, dataSet, conf_thresh=0.1, iou_thresh=0.1, v8=True)
     input_size = model.get_image_size()
     x = (255*np.random.random((3,*input_size))).astype(np.int8)
