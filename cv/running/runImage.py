@@ -70,7 +70,7 @@ imagePxlPer_mm = 1.0
 handThreshold = 0.6
 objectThreshold = 0.6
 inferImgSize = [256, 320] # what is the image shape handed to inference
-handClass = 0#80
+handClass = 80
 
 modelPath = Path(weightsDir)
 modelFile = modelPath/weightsFile
