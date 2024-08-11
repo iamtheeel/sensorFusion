@@ -29,7 +29,7 @@ class distanceCalculator:
         self.oThresh = config['objectThreshold']
         self.handClassNum = config['handClass']
 
-        print(f"pxPerIn: {self.pxPerIn}")
+        #logger.info(f"pxPerIn: {self.pxPerIn}")
 
         self.zeroData()
 
@@ -70,7 +70,7 @@ class distanceCalculator:
         logger.info(f"LoadData, Data: {data}")
         for object in data:
             #logger.info(f"LoadDataobject: {object}")
-            #logger.info(f"LoadDatathis object class: {object[classField]}, hand class: {self.handClassNum}")
+            logger.info(f"LoadData, this object class: {object[classField]}, conf: {object[confField]}, hand class: {self.handClassNum}")
             if object[classField] == self.handClassNum and object[confField] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object
@@ -112,6 +112,7 @@ class distanceCalculator:
                     self.bestDist = thisDist
                     self.bestCenter = self.findCenter(object)
 
+        logger.info(f"N objects detected: hands = {self.nHands}, non hands = {self.nNonHand},  Distance = {self.bestDist:.0f}mm")
         return True
 
     def calcDist(self, object):

@@ -9,12 +9,13 @@ training:
     weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
     
-    #imageSize: [608, 608] #h, w
-    imageSize: [420, 640] #h, w
+    imageSize: [608, 608] #h, w
 
 runTime:
     ## Inference Source
-    imgSrc: "directory"
+    #imgSrc: "directory"
+    #imgSrc: "appleHand_hand_4.jpg"
+    imgSrc: "webCam"
     #imageDir: "../datasets/combinedData/images/val"
     imageDir: "../datasets/testImages"
 
@@ -23,7 +24,8 @@ runTime:
     distSettings:
         imagePxlPer_mm: 1.0
         handThreshold: 0.6
-        objectThreshold: 0.6
+        objectThreshold: 0.2
+        #0.6
         handClass: 80
 
     displaySettings:

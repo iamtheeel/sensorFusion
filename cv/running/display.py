@@ -20,8 +20,7 @@ logger = logging.getLogger("display")
 #TODO: thumb throuh image if not ok
 
 class displayHandObject:
-    def __init__(self,  conf) -> None:
-    #def __init__(self, handColor, objectColor, lineColor) -> None:
+    def __init__(self,  conf ) -> None:
         self.handColor = conf['handColor']
         self.objectColor = conf['objectColor']
         self.lineColor = conf['lineColor']
@@ -29,10 +28,19 @@ class displayHandObject:
         self.handLineTh = conf['handLineTh']
         self.objLineTh = conf['objLineTh']
         self.distLineTh = conf['distLineTh']
+        self.source = 'file'
 
-    def draw(self, imgFile, dist, valid):
-        thisImg =  cv2.imread(imgFile)
-        logger.info(f"Image File shape: {imgFile} {thisImg.shape}")
+    def draw(self, imgFile, dist, valid ):
+        if isinstance(imgFile, str):
+            thisImg =  cv2.imread(imgFile)
+            #logger.info(f"Image File: {imgFile}")
+            waitKeyTime = 0 #ms, will wait untill the key is pressed
+        else:
+            thisImg =  imgFile
+            self.source = 'webCam'
+            waitKeyTime = 1 #ms, will run through with a delay
+
+        #logger.info(f"Image File shape: {thisImg.shape}")
 
         if dist.nHands != 0:
             self.drawHand(thisImg, dist)
@@ -48,7 +56,8 @@ class displayHandObject:
             cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
         cv2.imshow("sensorFusion", thisImg)
 
-        waitkey = cv2.waitKey()
+
+        waitkey = cv2.waitKey(waitKeyTime)
         return waitkey
 
     def drawObject(self, thisImg, dist):
