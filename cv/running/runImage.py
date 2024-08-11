@@ -61,8 +61,8 @@ if device != "tpu":
     weightsFile = "yolov5nu_transferFromCOCO.pt" #yolo v5 nano 640px image size, transfern learning from COCO\
 else:
     #weightsFile = "yolov5nu_transferFromCOCO_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608_2Class.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
-    #weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
+    #weightsFile = "yolov5nu_tran_hsv_h-1.0_full_integer_quant_edgetpu_608_2Class.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
+    weightsFile = "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite" #yolo v5 nano 640px image size, transfern learning from COCO
 
 # Display settings
 imagePxlPer_mm = 1.0
