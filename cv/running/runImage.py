@@ -15,8 +15,21 @@ showInfResults = False #On TPU will write _detect files
 dispRez = True
 
 import platform
+import logging
+from pathlib import Path
+import numpy as np
+
+
+# Logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+if debug == False:
+    logging.disable(level=logging.CRITICAL)
+    logger.disabled = True
+
+# What platform are we running on
 machine = platform.machine()
-print(f"machine: {machine}")
+logger.info(f"machine: {machine}")
 
 if machine == "aarch64":
     device = "tpu"
@@ -29,26 +42,14 @@ else:
 if device != "tpu":
     from ultralytics import YOLO
 else:
-    import logging
     from edgetpumodel import EdgeTPUModel
 
-
-from pathlib import Path
-
-import numpy as np
 
 import distance
 import display
 
 
 # Configs
-# Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-if debug == False:
-    logging.disable(level=logging.CRITICAL)
-    logger.disabled = True
-
 #image_dir = "../datasets/combinedData/images/val"
 image_dir = "../datasets/testImages"
 
@@ -73,7 +74,7 @@ handClass = 0#80
 
 modelPath = Path(weightsDir)
 modelFile = modelPath/weightsFile
-print(f"model: {modelFile}")
+logger.info(f"model: {modelFile}")
 
 dataSet = "../datasets/coco_withHand.yaml"
 
@@ -102,60 +103,61 @@ listing = os.scandir(image_dir)
 for thisFile in listing:
     #if fnmatch.fnmatch(thisFile, '*936.jpg'):
     if fnmatch.fnmatch(thisFile, '*.jpg'):
+        #generate a list of files
         thisImgFile = image_dir + "/" + thisFile.name
 
         if device == "tpu":
             # Returns a numpy array: x1, x2, y1, y2, conf, class
             results = model.predict(thisImgFile, save_img=showInfResults, save_txt=showInfResults)
             inferTime = model.get_last_inference_time() #inference time, nms time
-            print(f"Inference Time: {inferTime}")
+            logger.info(f"Inference Time: {inferTime}")
             #if results.shape[0] != 1:
-            #    print(results)
-            print(f"Results: {type(results)}, {results}")
+            #    logger.info(results)
+            logger.info(f"Results: {type(results)}, {results}")
 
 
         else:
             # Returns a dict
             results = model.predict(thisImgFile)
             if debug:
-                #print(f"Results: {type(results)}, {results}")
-                #print(f"Results[0]: {type(results[0])}, {results[0]}")
-                #print(f"Results shape: {type(results)}, {results.shape}")
-                print(f"Results.boxes: {type(results[0].boxes.data)}, {results[0].boxes.data}")
-                print(f"File: {thisImgFile}")
+                #logger.info(f"Results: {type(results)}, {results}")
+                #logger.info(f"Results[0]: {type(results[0])}, {results[0]}")
+                #logger.info(f"Results shape: {type(results)}, {results.shape}")
+                logger.info(f"Results.boxes: {type(results[0].boxes.data)}, {results[0].boxes.data}")
+                logger.info(f"File: {thisImgFile}")
 
-        print("---------------------------------------------")
+        logger.info("---------------------------------------------")
         if device == "tpu":
             boxes = results
                 #if results.shape[0] != 1: # If we have detected more than one object
                 #if result[5] != 80:  # not a hand (47 is apple)
-                    #print(f"result:{result}")
+                    #logger.info(f"result:{result}")
                     #logger.info("result:{}".format(result))
                     #validRes = distCalc.loadData(result)
 
         else:
             if showInfResults:
-                print(results[0].boxes)
+                logger.info(results[0].boxes)
                 results[0].show()
 
             boxes = results[0].boxes.data
 
             if debug:
                 if device != "tpu":
-                    #print(f"Results: {type(results[0].boxes.data)}, {results[0].boxes.data}")
-                    print(f"Results: {type(results[0].boxes)}, {results[0].boxes}")
+                    #logger.info(f"Results: {type(results[0].boxes.data)}, {results[0].boxes.data}")
+                    logger.info(f"Results: {type(results[0].boxes)}, {results[0].boxes}")
 
         validRes = distCalc.loadData(boxes, device)
 
         if debug:
-            print(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
-            print(f"Valid: {validRes}, distance: {distCalc.bestDist}")
+            logger.info(f"N objects detected: hands = {distCalc.nHands}, non hands = {distCalc.nNonHand}")
+            logger.info(f"Valid: {validRes}, distance: {distCalc.bestDist}")
 
         if dispRez:
             exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
-            print(f"exitSatus: {exitStatus}: ")
+            logger.info(f"exitSatus: {exitStatus}: ")
 
             if exitStatus == ord('q'):  # q = 113
-                print(f"********   quit now ***********")
+                logger.info(f"********   quit now ***********")
                 exit()
 

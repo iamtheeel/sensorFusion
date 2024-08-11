@@ -12,6 +12,9 @@
 ###
 import cv2
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("display")
 
 #TODO: Change label position if the location obstructs it
 #TODO: thumb throuh image if not ok
@@ -25,7 +28,7 @@ class displayHandObject:
 
     def draw(self, imgFile, dist, valid):
         thisImg =  cv2.imread(imgFile)
-        print(f"Image File shape: {imgFile} {thisImg.shape}")
+        logger.info(f"Image File shape: {imgFile} {thisImg.shape}")
 
         if dist.nHands != 0:
             self.drawHand(thisImg, dist)
@@ -47,7 +50,7 @@ class displayHandObject:
     def drawObject(self, thisImg, dist):
         # The Object
         objText = f"Target: {dist.grabObject[4]:.2f}"
-        print(f"drawObject: {dist.grabObject}")
+        logger.info(f"drawObject: {dist.grabObject}")
         objUL, objLR = dist.getBox(dist.grabObject)
         cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=1)
         cv2.circle(img=thisImg, center=dist.bestCenter, radius=5, color=self.objectColor, thickness=2) #BGR
@@ -65,6 +68,6 @@ class displayHandObject:
         # The distance
         distText =f"Distance: {dist.bestDist:.0f}mm"
         distUL =  (5,15)
-        print(distText)
+        logger.info(distText)
         cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.lineColor, thickness=1)
         cv2.putText(img=thisImg, text=distText, org=distUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.lineColor)
