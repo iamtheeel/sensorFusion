@@ -39,3 +39,4 @@ runTime:
         handLineTh: 2 #Thickness in px
         objLineTh: 2
         distLineTh: 1
+        runCamOnce: True

@@ -76,11 +76,13 @@ if __name__ == "__main__":
     
         # Get the image
         # put in a loop/ add timing
-        while True:
+        runCam = True
+        while runCam:
             logger.info("---------------------------------------------")
             camStat, image = camera.read()
             #logger.info(f"camera status: {camStat}")
             if camStat:
+                if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
                 ## TODO: Check if we are keeping up ##
                 results = infer.runInference(image)
 
@@ -89,7 +91,7 @@ if __name__ == "__main__":
                     exitStatus = handObjDisp.draw(image, distCalc, validRes)
                     if exitStatus == ord('q'):  # q = 113
                         logger.info(f"********   quit now ***********")
-                        break
+                        runCam = False
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch

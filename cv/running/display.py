@@ -29,6 +29,7 @@ class displayHandObject:
         self.objLineTh = conf['objLineTh']
         self.distLineTh = conf['distLineTh']
         self.source = 'file'
+        self.conf = conf
 
     def draw(self, imgFile, dist, valid ):
         if isinstance(imgFile, str):
@@ -38,8 +39,12 @@ class displayHandObject:
         else:
             thisImg =  imgFile
             self.source = 'webCam'
-            waitKeyTime = 1 #ms, will run through with a delay
+            if(self.conf['runCamOnce']):
+                waitKeyTime = 0 #ms, wait until the key is pressed
+            else:
+                waitKeyTime = 1 #ms, will run through with a delay
 
+        logger.info(f"waitKeyTime: {waitKeyTime}")
         #logger.info(f"Image File shape: {thisImg.shape}")
 
         if dist.nHands != 0:
