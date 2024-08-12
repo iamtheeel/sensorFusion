@@ -9,6 +9,8 @@ training:
     weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
     
+    #imageSize: [240, 240] #h, w
+    #imageSize: [640, 640] #h, w
     imageSize: [608, 608] #h, w
 
 runTime:
@@ -20,6 +22,7 @@ runTime:
     imageDir: "../datasets/testImages"
 
     camId: 0
+    camRateHz: 5
 
     distSettings:
         imagePxlPer_mm: 1.0

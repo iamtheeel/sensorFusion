@@ -72,20 +72,24 @@ if __name__ == "__main__":
         camera = cv2.VideoCapture(configs['runTime']['camId'])
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
         camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
+        camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
     
         # Get the image
         # put in a loop/ add timing
         while True:
             logger.info("---------------------------------------------")
             camStat, image = camera.read()
-            results = infer.runInference(image)
+            #logger.info(f"camera status: {camStat}")
+            if camStat:
+                ## TODO: Check if we are keeping up ##
+                results = infer.runInference(image)
 
-            validRes = distCalc.loadData(results, device)
-            if configs['debugs']['dispResults']:
-                exitStatus = handObjDisp.draw(image, distCalc, validRes)
-                if exitStatus == ord('q'):  # q = 113
-                    logger.info(f"********   quit now ***********")
-                    exit()
+                validRes = distCalc.loadData(results, device)
+                if configs['debugs']['dispResults']:
+                    exitStatus = handObjDisp.draw(image, distCalc, validRes)
+                    if exitStatus == ord('q'):  # q = 113
+                        logger.info(f"********   quit now ***********")
+                        break
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch
