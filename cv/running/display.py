@@ -28,7 +28,6 @@ class displayHandObject:
         self.handLineTh = conf['handLineTh']
         self.objLineTh = conf['objLineTh']
         self.distLineTh = conf['distLineTh']
-        self.source = 'file'
         self.conf = conf
 
         self.waitKeyTime = 0 #ms, wait until the key is pressed
@@ -43,7 +42,6 @@ class displayHandObject:
             self.waitKeyTime = 0 #ms, will wait untill the key is pressed
         else:
             thisImg =  imgFile
-            self.source = 'webCam'
 
         #logger.info(f"Image File shape: {thisImg.shape}")
 
