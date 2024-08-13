@@ -17,8 +17,8 @@ training:
 runTime:
     ## Inference Source
     #imgSrc: "directory"
-    imgSrc: "appleHand_hand_4.jpg"
-    #imgSrc: "webCam"
+    #imgSrc: "appleHand_hand_4.jpg"
+    imgSrc: "webCam"
     #imageDir: "../datasets/combinedData/images/val"
     imageDir: "../datasets/testImages"
 

@@ -17,7 +17,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("display")
 
 #TODO: Change label position if the location obstructs it
-#TODO: thumb throuh image if not ok
 
 class displayHandObject:
     def __init__(self,  conf ) -> None:
@@ -54,9 +53,12 @@ class displayHandObject:
         if valid:
             self.drawDistance(thisImg, dist)
 
+        cv2.namedWindow("sensorFusion", cv2.WINDOW_NORMAL )
         if self.fullScreen:
-            cv2.namedWindow("sensorFusion", cv2.WND_PROP_FULLSCREEN)
-            cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+            cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) # prevents cv2 from showing on the corel board
+
+        #cv2.setWindowProperty("sensorFusion",cv2.WINDOW_GUI_EXPANDED, 1) # prevents cv2 from showing on the corel board
+        cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_TOPMOST, 1)
         cv2.imshow("sensorFusion", thisImg)
 
 
