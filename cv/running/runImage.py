@@ -91,6 +91,8 @@ if __name__ == "__main__":
                     if exitStatus == ord('q'):  # q = 113
                         logger.info(f"********   quit now ***********")
                         runCam = False
+            else:
+                logger.info(f"Image not ready: {configs['runTime']['camId']}")
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch

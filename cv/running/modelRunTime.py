@@ -39,10 +39,12 @@ class modelRunTime:
 
         # Load the state dict
         if device == "tpu":
-            self.model = EdgeTPUModel(modelFile, configs['training']['dataSet'], conf_thresh=0.1, iou_thresh=0.1, v8=True)
+            self.model = EdgeTPUModel(modelFile, configs['dataSet'], 
+                                      conf_thresh=0.1, iou_thresh=0.1, v8=True)
+            # Prime with the image size
             self.input_size = self.model.get_image_size()
             x = (255*np.random.random((3,*self.input_size))).astype(np.int8)
-            self.model.forward(x) # Prime with the image size
+            self.model.forward(x) 
         else:
             self.model = YOLO(modelFile)  # 
 
@@ -51,21 +53,21 @@ class modelRunTime:
 
         if self.device == 'tpu':
             if isinstance(image, str):
-                results =self.runInferenceTPUFile
+                yoloResults =self.runInferenceTPUFile(image)
             else:
-                results =self.runInferenceTPUWebCam
+                yoloResults =self.runInferenceTPUWebCam(image)
 
-            logger.info(f"Inference, nms time: {self.model.get_last_inference_time()}") #inference time, nms time
-            logger.info(f"Results: {type(results)}, {results}")
+            #inference time, nms time
+            logger.info(f"TPU Inference, nms time: {self.model.get_last_inference_time()}") 
+            logger.info(f"TPU Results: {type(yoloResults)}, {yoloResults}")
+            return yoloResults
 
         else:
             yoloResults = self.model.predict(image) # Returns a dict
             logger.info(yoloResults[0].speed)
 
             #logger.info(f"Results.boxes: {type(yoloResults[0].boxes.data)}, {yoloResults[0].boxes.data}")
-
-            results = yoloResults[0].boxes.data
-        return results
+            return yoloResults[0].boxes.data
 
     def runInferenceTPUFile(self, image):
             logger.info(f"Running TPU file infernece")
@@ -79,7 +81,14 @@ class modelRunTime:
             logger.info(f"Running TPU webcam infernece")
             full_image, net_image, pad = get_image_tensor(image, self.input_size[0])
             pred = self.model.forward(net_image)
-            self.model.process_predictions(pred[0], full_image, pad)
+            results = self.model.process_predictions(det=pred[0], 
+                                                     output_image=full_image, 
+                                                     pad=pad,
+                                                     save_img=False,
+                                                     save_txt=False,
+                                                     hide_labels=True,
+                                                     hide_conf=True)
                         
-            tinference, tnms = self.model.get_last_inference_time()
-            logger.info("Frame done in {}".format(tinference+tnms))
+            #tinference, tnms = self.model.get_last_inference_time()
+            #logger.info("Frame done in {}".format(tinference+tnms))
+            return results

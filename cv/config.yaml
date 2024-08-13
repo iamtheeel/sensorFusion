@@ -17,12 +17,13 @@ training:
 runTime:
     ## Inference Source
     #imgSrc: "directory"
-    #imgSrc: "appleHand_hand_4.jpg"
-    imgSrc: "webCam"
+    imgSrc: "appleHand_hand_4.jpg"
+    #imgSrc: "webCam"
     #imageDir: "../datasets/combinedData/images/val"
     imageDir: "../datasets/testImages"
 
-    camId: 0
+    camId: 1
+    #camId: 0
     camRateHz: 5
 
     distSettings:

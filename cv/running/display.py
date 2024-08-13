@@ -31,20 +31,20 @@ class displayHandObject:
         self.source = 'file'
         self.conf = conf
 
-    def draw(self, imgFile, dist, valid ):
+        self.waitKeyTime = 0 #ms, wait until the key is pressed
+        if(self.conf['runCamOnce'] == False):
+            self.waitKeyTime = 1 #ms, will run through with a delay
+        #logger.info(f"waitKeyTime: {self.waitKeyTime}")
+
+    def draw(self, imgFile, dist, valid):
         if isinstance(imgFile, str):
             thisImg =  cv2.imread(imgFile)
             #logger.info(f"Image File: {imgFile}")
-            waitKeyTime = 0 #ms, will wait untill the key is pressed
+            self.waitKeyTime = 0 #ms, will wait untill the key is pressed
         else:
             thisImg =  imgFile
             self.source = 'webCam'
-            if(self.conf['runCamOnce']):
-                waitKeyTime = 0 #ms, wait until the key is pressed
-            else:
-                waitKeyTime = 1 #ms, will run through with a delay
 
-        logger.info(f"waitKeyTime: {waitKeyTime}")
         #logger.info(f"Image File shape: {thisImg.shape}")
 
         if dist.nHands != 0:
@@ -62,7 +62,7 @@ class displayHandObject:
         cv2.imshow("sensorFusion", thisImg)
 
 
-        waitkey = cv2.waitKey(waitKeyTime)
+        waitkey = cv2.waitKey(self.waitKeyTime)
         return waitkey
 
     def drawObject(self, thisImg, dist):
