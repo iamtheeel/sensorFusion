@@ -67,7 +67,7 @@ class displayHandObject:
 
     def drawObject(self, thisImg, dist):
         # The Object
-        objText = f"Target: {dist.grabObject[4]:.2f}"
+        objText = f"Target[{dist.grabObject[5]:.0f}]: {dist.grabObject[4]:.2f}"
         logger.info(f"drawObject: {dist.grabObject}")
         objUL, objLR = dist.getBox(dist.grabObject)
         cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=self.objLineTh)

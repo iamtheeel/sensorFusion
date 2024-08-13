@@ -75,7 +75,6 @@ if __name__ == "__main__":
         camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
     
         # Get the image
-        # put in a loop/ add timing
         runCam = True
         while runCam:
             logger.info("---------------------------------------------")
