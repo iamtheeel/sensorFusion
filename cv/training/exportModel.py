@@ -114,25 +114,27 @@ def saveModel(modelFile, dataSet, imgH, imgW ):
 #weightsDir = "runs/detect/train11/weights/" #glass: YoloV8, imgsz=96
 #weightsDir = "runs/detect/train29/weights/" #glass: YoloV3, imgsz=320, d,w: 
 #modelDir = "runs/detect/train30/weights/" 
-modelDir = "weights/" 
+modelDir = "../weights/" 
 modelPath = Path(modelDir)
 #fileName = "yolov5nu_orig.pt"
 #fileName = "yolov5nu_transferFromCOCO.pt"
-fileName = "yolov5n_2class_ourDataTrained_320.pt"
-#fileName = "best.pt"
+#fileName = "yolov5n_2class_ourDataTrained_320.pt"
+#fileName = "yolov5nu_tran_hsv_h-1.0_2class.pt"
+fileName = "yolov5nu_tran_hsv_h-1.0_81class.pt"
 modelFile = modelPath/fileName
 
 #dataSet = "coco8.yaml"
 #dataSet = "datasets/coco8.yaml"
 #dataSet = "datasets/dataset_ver1.yaml"
-dataSet = "datasets/combinedData.yaml"
+dataSet = "../datasets/coco_withHand.yaml" # 81 classes (coco + hand)
+#dataSet = "datasets/combinedData.yaml" # 2 classes only
 # img size should be multiple of 16
 #imgH = 240
-imgH = 320
+#imgH = 320
 #imgH = 416 # 415 saved as 416
 #imgH = 512
 #imgH = 576
-#imgH = 608
+imgH = 608
 #imgH = 624 # Failed
 #imgH = 640 # seems to be borked
 imgW = imgH
