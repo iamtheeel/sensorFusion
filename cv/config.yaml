@@ -21,10 +21,10 @@ training:
 runTime:
     ## Inference Source
     #imgSrc: "directory"
-    #imgSrc: "appleHand_hand_4.jpg"
-    imgSrc: "webCam"
-    imageDir: "../datasets/combinedData/images/val"
-    #imageDir: "../datasets/testImages"
+    imgSrc: "appleHand_hand_4.jpg"
+    #imgSrc: "webCam"
+    #imageDir: "../datasets/combinedData/images/val"
+    imageDir: "../datasets/testImages"
 
     camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
