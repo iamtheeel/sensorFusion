@@ -24,8 +24,8 @@ runTime:
     #imgSrc: "appleHand_hand_4.jpg"
     #imgSrc: "dataset3_310.jpg"
     imgSrc: "webCam"
-    imageDir: "../datasets/combinedData/images/val"
-    #imageDir: "../datasets/testImages"
+    #imageDir: "../datasets/combinedData/images/val"
+    imageDir: "../datasets/testImages"
 
     #camId: 0 # MAC webcam, laptop built in web cam
     camId: 1 # Corel TPU, 
@@ -49,4 +49,4 @@ runTime:
         handLineTh: 2 #Thickness in px
         objLineTh: 2
         distLineTh: 1
-        runCamOnce: False
+        runCamOnce: True

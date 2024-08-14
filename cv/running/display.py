@@ -20,6 +20,8 @@ logger = logging.getLogger("display")
 
 class displayHandObject:
     def __init__(self,  conf ) -> None:
+        logger.info("Init: displayHandObject")
+
         self.handColor = conf['handColor']
         self.objectColor = conf['objectColor']
         self.lineColor = conf['lineColor']
@@ -31,8 +33,12 @@ class displayHandObject:
 
         self.waitKeyTime = 0 #ms, wait until the key is pressed
         if(self.conf['runCamOnce'] == False):
-            self.waitKeyTime = 50 #ms, will run through with a delay
-        #logger.info(f"waitKeyTime: {self.waitKeyTime}")
+            self.waitKeyTime = 1 #ms, will run through with a delay
+
+        #cv2.namedWindow("sensorFusion", cv2.WINDOW_NORMAL )
+        cv2.namedWindow("sensorFusion", cv2.WINDOW_AUTOSIZE )
+        cv2.moveWindow("sensorFusion", 10,10) #Does not work with Wayland
+        #cv2.putText(img='', text="Loading", org=[10,10], fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=5, color=self.objectColor)
 
     def draw(self, imgFile, dist, valid):
         if isinstance(imgFile, str):
@@ -53,12 +59,14 @@ class displayHandObject:
         if valid:
             self.drawDistance(thisImg, dist)
 
-        cv2.namedWindow("sensorFusion", cv2.WINDOW_NORMAL )
         if self.fullScreen:
             cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) 
-            # prevents cv2 from showing on the corel board, works on MAC, on linux has full screen - but image is not
+            # linux has full screen - but image is not
+        #else:
+            #cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_AUTOSIZE) 
 
         #cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_TOPMOST, 1)
+
         cv2.imshow("sensorFusion", thisImg)
 
         waitkey = cv2.waitKey(self.waitKeyTime)
@@ -67,11 +75,12 @@ class displayHandObject:
     def drawObject(self, thisImg, dist):
         # The Object
         objText = f"Target[{dist.grabObject[5]:.0f}]: {dist.grabObject[4]:.2f}"
-        logger.info(f"drawObject: {dist.grabObject}")
+        #logger.info(f"drawObject: {dist.grabObject}")
         objUL, objLR = dist.getBox(dist.grabObject)
         cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=self.objLineTh)
         cv2.circle(img=thisImg, center=dist.bestCenter, radius=5, color=self.objectColor, thickness=2) #BGR
         cv2.putText(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.objectColor)
+        #cv2.putText(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.objectColor)
 
     def drawHand(self, thisImg, dist):
         # The Hand
