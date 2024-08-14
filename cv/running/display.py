@@ -31,7 +31,7 @@ class displayHandObject:
 
         self.waitKeyTime = 0 #ms, wait until the key is pressed
         if(self.conf['runCamOnce'] == False):
-            self.waitKeyTime = 1 #ms, will run through with a delay
+            self.waitKeyTime = 50 #ms, will run through with a delay
         #logger.info(f"waitKeyTime: {self.waitKeyTime}")
 
     def draw(self, imgFile, dist, valid):
@@ -55,12 +55,11 @@ class displayHandObject:
 
         cv2.namedWindow("sensorFusion", cv2.WINDOW_NORMAL )
         if self.fullScreen:
-            cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) # prevents cv2 from showing on the corel board
+            cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) 
+            # prevents cv2 from showing on the corel board, works on MAC, on linux has full screen - but image is not
 
-        #cv2.setWindowProperty("sensorFusion",cv2.WINDOW_GUI_EXPANDED, 1) # prevents cv2 from showing on the corel board
-        cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_TOPMOST, 1)
+        #cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_TOPMOST, 1)
         cv2.imshow("sensorFusion", thisImg)
-
 
         waitkey = cv2.waitKey(self.waitKeyTime)
         return waitkey
