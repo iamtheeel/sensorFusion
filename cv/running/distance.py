@@ -67,7 +67,8 @@ class distanceCalculator:
 
         self.data = data
         
-        logger.info(f"LoadData, Data: {data}")
+        #logger.info(f"LoadData, Data: {data}")
+
         for object in data:
             #logger.info(f"LoadDataobject: {object}")
             logger.info(f"LoadData, this object class: {object[classField]}, conf: {object[confField]}, hand class: {self.handClassNum}")

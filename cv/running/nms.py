@@ -42,8 +42,10 @@ def nms(dets, scores, thresh):
         inter = w * h
           
         ovr = inter / (areas[i] + areas[other_box_ids] - inter)
+        #print(f"@@@ over: {ovr}")
         
         inds = np.where(ovr <= thresh)[0]
+        #print(f"@@@@ inds: {inds}")
         order = order[inds + 1]
 
     return np.array(keep)
@@ -129,6 +131,7 @@ def non_max_suppresion_v8(prediction, conf_thres=0.25, iou_thres=0.45, classes=N
             i = i[:max_det]
         if merge and (1 < n < 3E3):  # Merge NMS (boxes merged using weighted mean)
             # update boxes as boxes(i,4) = weights(i,n) * boxes(n,4)
+            #print(f"### box_iou: {box_iou(boxes[i], boxes)}")
             iou = box_iou(boxes[i], boxes) > iou_thres  # iou matrix
             weights = iou * scores[None]  # box weights
             x[i, :4] = np.dot(weights, x[:, :4]).astype(float) / weights.sum(1, keepdim=True)  # merged boxes

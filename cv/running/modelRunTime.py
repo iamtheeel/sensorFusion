@@ -19,28 +19,34 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("runModel")
 
 class modelRunTime:
-    def __init__(self, configs, imgSrc, debug, device) -> None:
+    def __init__(self, configs, device) -> None:
         self.device = device 
-        self.imgSrc = imgSrc
         self.configs = configs
-        self.debug = debug
+        self.debug = configs['debugs']['showInfResults']
 
         if device == "tpu":
             from edgetpumodel import EdgeTPUModel
             import numpy as np
-            weightsFile = configs['weightsFile_tpu']
+            weightsFile = configs['training']['weightsFile_tpu']
         else:
             from ultralytics import YOLO
-            weightsFile = configs['weightsFile']
+            weightsFile = configs['training']['weightsFile']
 
-        modelPath = Path(configs['weightsDir'])
+        modelPath = Path(configs['training']['weightsDir'])
         modelFile = modelPath/weightsFile
         logger.info(f"model: {modelFile}")
 
         # Load the state dict
         if device == "tpu":
-            self.model = EdgeTPUModel(modelFile, configs['dataSet'], 
-                                      conf_thresh=0.1, iou_thresh=0.1, v8=True)
+            thresh = max(configs['runTime']['distSettings']['handThreshold'],
+                         configs['runTime']['distSettings']['objectThreshold'])
+            self.model = EdgeTPUModel(modelFile, configs['training']['dataSet'], 
+                                      conf_thresh=thresh, #only over this
+                                      iou_thresh=configs['runTime']['distSettings']['nmsIouThreshold'],
+                                      filter_classes=None,  # Not implemented
+                                      agnostic_nms=False,
+                                      max_det=100,
+                                      v8=True)
             # Prime with the image size
             self.input_size = self.model.get_image_size()
             x = (255*np.random.random((3,*self.input_size))).astype(np.int8)
@@ -72,7 +78,7 @@ class modelRunTime:
     def runInferenceTPUFile(self, image):
             logger.info(f"Running TPU file infernece")
             # Returns a numpy array: x1, x2, y1, y2, conf, class
-            results = self.model.predict(image, save_img=self.debug['showInfResults'] , save_txt=self.debug['showInfResults'])
+            results = self.model.predict(image, save_img=self.debug, save_txt=self.debug)
 
             return results
 

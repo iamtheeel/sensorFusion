@@ -61,7 +61,7 @@ import display
 if __name__ == "__main__":
     ## set the model information
 
-    infer = modelRunTime(configs['training'], configs['runTime']['imgSrc'], configs['debugs'], device)
+    infer = modelRunTime(configs, device)
     
     distCalc = distance.distanceCalculator(configs['training']['imageSize'], configs['runTime']['distSettings'])
     handObjDisp = display.displayHandObject(configs['runTime']['displaySettings']) #hColor, oColor, lColor)

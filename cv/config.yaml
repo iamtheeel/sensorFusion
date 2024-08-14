@@ -14,20 +14,21 @@ training:
     # img size should be multiple of 16,
     # Export requires it to be square
     #imageSize: [240, 320] #h, w
-    #imageSize: [480, 640] #h, w
-    imageSize: [480, 480] #h, w
+    imageSize: [480, 640] #h, w
+    #imageSize: [480, 480] #h, w
     #imageSize: [608, 608] #h, w: Largest export (ram limited?)
 
 runTime:
     ## Inference Source
     #imgSrc: "directory"
     #imgSrc: "appleHand_hand_4.jpg"
+    #imgSrc: "dataset3_310.jpg"
     imgSrc: "webCam"
     imageDir: "../datasets/combinedData/images/val"
     #imageDir: "../datasets/testImages"
 
-    camId: 0 # MAC webcam, laptop built in web cam
-    #camId: 1 # Corel TPU, 
+    #camId: 0 # MAC webcam, laptop built in web cam
+    camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
     #camId: 3 #
     camRateHz: 5
@@ -36,6 +37,7 @@ runTime:
         imagePxlPer_mm: 1.0
         handThreshold: 0.6
         objectThreshold: 0.2
+        nmsIouThreshold: 0.45 #only use if iou < this
         #0.6
         handClass: 80
 
