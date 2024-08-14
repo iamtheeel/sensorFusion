@@ -6,13 +6,17 @@ debugs:
 training:
     dataSet: "../datasets/coco_withHand.yaml"
     weightsDir: "../weights"
-    #weightsFile: "yolov5nu.pt" # Pre trained (640px)
-    weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    #weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
+    #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
-    
+
+    # img size should be multiple of 16,
+    # Export requires it to be square
     #imageSize: [240, 320] #h, w
     #imageSize: [480, 640] #h, w
-    imageSize: [608, 608] #h, w
+    imageSize: [480, 480] #h, w
+    #imageSize: [608, 608] #h, w: Largest export (ram limited?)
 
 runTime:
     ## Inference Source
@@ -22,9 +26,9 @@ runTime:
     imageDir: "../datasets/combinedData/images/val"
     #imageDir: "../datasets/testImages"
 
-    #camId: 0 # MAC webcam, laptop built in web cam
+    camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
-    camId: 2 #laptop USB webcam
+    #camId: 2 #laptop USB webcam
     #camId: 3 #
     camRateHz: 5
 
