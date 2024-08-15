@@ -42,13 +42,9 @@ dataSet = "../datasets/coco_withHand.yaml" # coco 81 class, hand and apple data 
 
 # Load a model
 # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/models/
-#yoloModel = YOLO("models/yolov3.yaml")  #  Does not work
-#yoloModel = YOLO("models/yolov3-tiny.yaml")  # 
-#yoloModel = YOLO("models/yolov8n.yaml")  # 
-#yoloModel = YOLO("models/yolov8-p6n.yaml")  # 
+#yoloModel = YOLO("models/yolov5n.yaml")
 #yoloModel = YOLO("weights/yolov5nu.pt")  # pre-trained with 300 epochs
 yoloModel = YOLO("../models/yolov5n.yaml").load("../weights/yolov5nu.pt")  # build from YAML and transfer weights
-#yoloModel = YOLO("models/yolov5n.yaml")
 
 # Model settings
 transLearn = True
@@ -79,6 +75,6 @@ modelSum = summary(model=yoloModel.model,
             )
 '''
 
-results = yoloModel.train(hsv_h=1.0, plots=True, pretrained=True, data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
+results = yoloModel.train(hsv_h=1.0, plots=True, pretrained=transLearn, data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
 
 exit()
