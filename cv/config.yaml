@@ -6,17 +6,25 @@ debugs:
 training:
     dataSet: "../datasets/coco_withHand.yaml"
     weightsDir: "../weights"
-    #weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
+    modelsDir: "../models"
+    modelFile: "yolov5nu.yaml"
+    weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
-    weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
+    #weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
 
+    transLearn: True
+    freezeLayer: 10 # First 10 layers are the backbone (10: freezes 0-9)
+    scratchTrain: False #Train from scratch
     # img size should be multiple of 16,
     # Export requires it to be square
     #imageSize: [240, 320] #h, w
     imageSize: [480, 640] #h, w
     #imageSize: [480, 480] #h, w
     #imageSize: [608, 608] #h, w: Largest export (ram limited?)
+
+    #HyperPerams
+    epochs: 1
 
 runTime:
     ## Inference Source
