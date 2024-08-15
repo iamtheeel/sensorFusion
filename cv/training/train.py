@@ -53,7 +53,8 @@ epochs = configs['training']['epochs']
 logger.info(f"Image Size: {image_sz}")
 
 # From: https://docs.ultralytics.com/yolov5/tutorials/transfer_learning_with_frozen_layers/#freeze-backbone
-if configs['training']['transLearn']:
+transLearn = configs['training']['transLearn']
+if transLearn:
        yoloModel = YOLO(modelFile).load(weightsFile)  # build from YAML and transfer weights
        freezeLayer = configs['training']['freezeLayer'] # First 10 layers are the backbone (10: freezes 0-9)
 
@@ -85,6 +86,3 @@ modelSum = summary(model=yoloModel.model,
 '''
 
 results = yoloModel.train(hsv_h=1.0, plots=True, pretrained=transLearn, data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
-
-exit()
-print
