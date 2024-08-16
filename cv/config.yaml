@@ -9,7 +9,8 @@ training:
     #weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
-    weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
+    #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_608_full_integer_quant_edgetpu.tflite"
+    weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
 
     # img size should be multiple of 16,
     # Export requires it to be square
@@ -49,4 +50,4 @@ runTime:
         handLineTh: 2 #Thickness in px
         objLineTh: 2
         distLineTh: 1
-        runCamOnce: True
+        runCamOnce: False
