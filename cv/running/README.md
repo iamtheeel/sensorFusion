@@ -28,7 +28,7 @@ Serial Terminal:
 Install the TPU OS:
 > - The operating system is out of date. As of this writting (Aug 2024), the newest version of [mendel linux](https://coral.ai/software/#mendel-linux) is from Nov 2021
 > - Unlike a raspberry Pi, the OS must be installed on the internal memory, the computer can not boot from the microSD card (or at least not easily)
-> - There is a [way](https://coral.ai/docs/dev-board/reflash/#flash-a-new-board) of flashing via USB, however I was not able to get it to work. Its possible that I had some silly error. But I did not spend too much time as I have a functioning SD Card.
+> - [There is a way](https://coral.ai/docs/dev-board/reflash/#flash-a-new-board) of flashing via USB, however I was not able to get it to work. Its possible that I had some silly error. But I did not spend too much time as I have a functioning SD Card.
 >1. Download the boot image
 >2. Put the image on a microSD card
 >3. Set the TPU to boot from SD
@@ -38,6 +38,10 @@ Install the TPU OS:
 <br>
 
 Configuring and operating the Corel TPU devboard:
+> - Network
+> - SSH
+> - KVM
+> - 
 
 <br>
 
@@ -50,4 +54,13 @@ Software Installation:
 >       - pip install -r requirements_tpu.txt
 >   _ Else (we need ultralitics):
 >       - pip install -r requirements.txt
->              
+
+
+Running:
+>1.
+
+
+
+Setting up as a WIFI Host:
+>1.
+
