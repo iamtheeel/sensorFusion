@@ -3,7 +3,7 @@ A system to increase grip strength based on computer vision and myoelectric sens
 
 The computer vision system is in [CV](./cv "Python Based Computer Vision using YOLO")
 
-To install pre-requisits: **Note**<br>
-> pip install -r requirements.txt
-
+To install the code:
 > git clone https://github.com/iamtheeel/sensorFusion.git
+
+Then follow the directions in each subsystem
