@@ -34,9 +34,44 @@ Installation:
 
 Configurations:
 >- The CV configureation file is [config.yaml](../config.yaml)
->    - The file is shared from training and runtime to minimize configuration mismatch issues 
+>    - The file is shared from training and runtime to minimize configuration mismatch issues
+>- Training Configurations:
+>    - debugs:
+>        - debug: True
+>            - Prints out possibly usefull information
+>    - training:
+>        - imageSize [height, width]: [480, 640]
+>            - Note, most settings assume a square image, will select the larger of the two numbers
+>        - dataSet:
+>            - the location and name of the dataset configuration file
+>            - set to [../datasets/coco_withHand.yaml](../datasets/coco_withHand.yaml)
+>        - modelsDir:
+>            - The location of the model file: "../models"
+>        - modelFile:
+>            - the YOLO model configuration: "yolov5.yaml"
+>        - transLearn:
+>            - Train from an existing pretrained weights file, or train from scratch: True
+>        - weightsDir (only used if transLearn): 
+>            - The location of the weights file: "../weights"
+>        - weightsFile (only used if transLearn):
+>            - The pre-trained weights file:  "yolov5nu.pt"
+>        - epochs:
+>            - The number of epochs to run for: 300
+>        - freezeLayer (only used if transLearn):
+>            - How many layers to freeze before learning: 10
+>- Export Configurations:
 
 Running the Training:
+> 1. Edit the Configuration file as needed
+> 2. Change to the "training" directory
+> 3. Run the script:
+>     - python3 train.py
+> 4. Wait
+>     - A new run number will be created for each run. 
+> - The created weights file will be in:
+>     - sensorFusion/cv/runs/train<run number>/weights/best.py
+> - Lots of fun data, logs and so on is in:
+>     - sensorFusion/cv/runs/train<run number>
 
 Export the model:
 
