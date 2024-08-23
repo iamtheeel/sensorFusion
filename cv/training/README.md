@@ -7,7 +7,7 @@ The final product is a 8bit (unsigned for YOLOV8) quantized tensorflow light mod
 
 Installation:
 >1. Install base code (if you have not already:
->    1. git clone https://github.com/iamtheeel/sensorFusion.git\
+>    1. git clone https://github.com/iamtheeel/sensorFusion.git
 >1. Change directory to training
 >    1. cd sensorFusion/cv/training
 >1. install prerequisites:
@@ -76,7 +76,7 @@ Configurations:
 >            - Note, most settings assume a square image, will select the larger of the two numbers
 >        - dataSet:
 >            - the location and name of the dataset configuration file
->            - set to [../datasets/coco_withHand.yaml](../datasets/coco_withHand.yaml)1
+>            - set to [../datasets/coco_withHand.yaml](../datasets/coco_withHand.yaml)
 >            - weightsDir (only used if transLearn): 
 >            - The location of the weights file: "../weights"
 >        - weightsFile (only used if transLearn):
@@ -118,7 +118,7 @@ Export the model:
 >           - An edge tpu compiled version of that file: yolo5nu_hsv_h1.0_81classes_full_integer_quant_edgetpu.tflite
 >           - A log file of the TPU complile: yolo5nu_hsv_h1.0_81classes_full_integer_quant_edgetpu.log
 >           - Note: the _int8.tflite file is a mixed quantization and can not be used here. We must use the full integer quanization
-> 7. Copy the file to the tensorflow board (see doc in [running](../running)
+> 7. Copy the file to the tensorflow board (see doc in [running](../running))
 
 <br>
 
