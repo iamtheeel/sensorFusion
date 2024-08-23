@@ -4,7 +4,7 @@ The computer vision system is runing YOLOv5 on a [Corel Dev Board](https://coral
 
 The computer vision consists of two catagories:
 - [Training and Exporting](./training) the model
-  - The training is written around [Ultralitics](https://docs.ultralytics.com/modes/train/)
+  - The training is written around the [Ultralitics](https://docs.ultralytics.com/modes/train/) YOLO implementation
 - [Running](./running) the model
   - Run time is written around [jveitchmichaelis' edgetpu-yolo](https://github.com/jveitchmichaelis/edgetpu-yolo)
 
