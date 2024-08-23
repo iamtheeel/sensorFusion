@@ -14,10 +14,10 @@ I was installing from a laptop running Deebian Linux
 
 Powering the board:
 >- ** DO NOT POWER FROM YOUR COMPUTER** The board draws 2-3A, this may bork your computer's usb-c connection
->- Use an external powersupply that can source 3A at 5V
+>- Use an external powersupply that can source 3A at 5V (some laptop supplys are plenty good at 20V, but don't have much or any at 5V)
 >- Use a usb-c cable that is good for 3A
->- There are 2 USB-C connections, one for data, one for power: <img src="readmeFiles/devboard-power-co.jpg" height=400 alt="Power via usbc">
->- Note: the red LED that comes on with power (the fan will also spin)
+>- There are 2 USB-C connections, one is for data (next to the DVI), the other is power (next to the audio):<br> <img src="readmeFiles/devboard-power-co.jpg" height=300 alt="Power via usbc">
+>- Note: the red LED that comes on with power. The fan will also spin, and the serial port should start talking.
 
 <br>
 
