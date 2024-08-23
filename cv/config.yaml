@@ -5,9 +5,10 @@ debugs:
 
 training:
     dataSet: "../datasets/coco_withHand.yaml"
-    weightsDir: "../weights"
     modelsDir: "../models"
     modelFile: "yolov5nu.yaml"
+    #modelFile: "yolov5.yaml"
+    weightsDir: "../weights"
     weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
