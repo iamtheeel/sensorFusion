@@ -7,3 +7,6 @@ To install the code:
 > git clone https://github.com/iamtheeel/sensorFusion.git
 
 Then follow the directions in each subsystem
+
+Note: 
+Instructions on setting up the corel board are in the [running](./running "Real Time") Subsection
