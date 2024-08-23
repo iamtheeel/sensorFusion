@@ -33,6 +33,8 @@ Installation:
 >        - viewer.py  (also calls getLab.py
 
 Configurations:
+>- The CV configureation file is [config.yaml](../config.yaml)
+>    - The file is shared from training and runtime to minimize configuration mismatch issues 
 
 Running the Training:
 
