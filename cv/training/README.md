@@ -5,6 +5,8 @@ We are using the YOLOv8 ultralytics engine to train a YOLOv5 model. This needs t
 
 The final product is a 8bit (unsigned for YOLOV8) quantized tensorflow light model that is compiled on the TPU.
 
+The software will detect if you are running with a Cuda GPU, CPU, or MPS (Apple Silicon)
+
 Installation:
 >1. Install base code (if you have not already:
 >    1. git clone https://github.com/iamtheeel/sensorFusion.git
