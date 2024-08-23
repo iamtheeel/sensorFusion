@@ -1,12 +1,18 @@
 # sensorFusion, Computer Vision: Running
 
+Powering the board:
+
+Serial Terminal:
+
+
 Installation:
+>1. Install the OS
 >1. Install base code (if you have not already:
 >    1. git clone https://github.com/iamtheeel/sensorFusion.git
 >1. Change directory to running
 >1. install prerequisites:
->   - If on a Tensor Board:
+>   - If on the TPU:
 >       - pip install -r requirements_tpu.txt
->   - Otherwise:
+>   _ Else:
 >       - pip install -r requirements.txt
 >              
