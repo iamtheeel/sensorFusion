@@ -113,13 +113,23 @@ Configuring and operating the Corel TPU devboard:
 <br>
 
 Software Installation:
+This is a 3 year OS... It will work just fine for us, but give deprication warnings. We do have to be carfull about library useage tho.
 >1. Install base code (if you have not already:
 >    1. git clone https://github.com/iamtheeel/sensorFusion.git
->1. Change directory to running
+>       - The required parts of edgetpu-yolo are included. I have modifyed very littel. But have made a few changes that were nessisary.
+>1. Change directory to sensorFusion/cv/running
 >1. install prerequisites:
->   - If on the TPU:
->       - pip install -r requirements_tpu.txt
->   _ Else (we need ultralitics):
+>    - If on the TPU: Most of the following will give warnings (e.x.):
+>    - script pip3.10 is installed in '/home/mendel/.local/bin' which is not on PATH.
+>       - Fixable, but not a problem
+>       - Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+>         - Fixable, but not a problem
+>       - DEPRECATION: reportbug 7.5.3-deb10u1 has a non-standard version number. pip 24.1 will enforce this behaviour change. A possible replacement is to upgrade to a newer version of reportbug or contact the author to suggest that they release a version with a conforming version number. Discussion can be found at https://github.com/pypa/pip/issues/12063
+>         - Y
+>     1. sudo apt-get install -y python3 python3-pip
+>     1. pip3 install --upgrade pip setuptools wheel
+>     1. pip install -r --user requirements_tpu.txt
+>   - Else (we need ultralitics):
 >       - pip install -r requirements.txt
 
 
