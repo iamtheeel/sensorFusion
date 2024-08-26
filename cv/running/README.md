@@ -13,10 +13,10 @@ I was installing from a laptop running Deebian Linux
 <br>
 
 Serial Terminal:
+> The [serial console](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console") for the dev-board is unusual:<br>
 > <img src="readmeFiles/devboard-serial-console.jpg" height=300 alt="Serial connection Micro-USB"> <br>
-> The colsole port is the Micro-USB port on the same side as the 20 pin IO Pin Headder
-> The [serial console](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console") for the dev-board is unusual:
-> - The serial console power is send via the USB-Micro-B connection, not via the main power.
+> - The console port is the Micro-USB port on the same side as the 20 pin IO Pin Headder
+> - The serial console power is sent via the USB-Micro-B connection, not via the main power.
 >   - The TX/RX lights will iluminate on Console port power, then turn off when the board powers
 > - The serial will be availalbe to the host prior to powering the board. It will, of course, not trasmit any data untill the board is powered.
 > - It is recommended to connect to the serial console prior to powering the board
@@ -39,7 +39,7 @@ Serial Terminal:
 >    1. Open the Device Manager (assuming MS has not moved it)
 >    1. Look under "Ports (COM & LPT)" for Silicon Labs Dual CP2105 USB to UART Bridge"
 >    2. The one that says somthing like: "Enhanced COM Port" (such as "COM3")"
->3. Connect to the board
+>1. Connect to the board:
 >   - screen /dev/ttyUSB0 115200
 >   - To exit screen: <CTRL>+A, K, Y
 
