@@ -4,11 +4,13 @@ The software will detect if you are running with a Cuda GPU, CPU, or MPS (Apple 
 
 If you are running GPU or MPS, the inference, pre and postprocessing will be done with [Ultralitics](https://docs.ultralytics.com/modes/train/)
 
+However the assumption is we will want to run with the TPU, running on a desktop/laptop/server is mostly for debuging.
+
 If you are running on a TPU board the inference will be done with TensorFlow Lite, pre and postprocessing via [jveitchmichaelis' edgetpu-yolo](https://github.com/jveitchmichaelis/edgetpu-yolo)
  
 [Documentation on preparing and using the Corel Dev Board](https://coral.ai/docs/dev-board/get-started) is fairly compleate and easy to follow.
 I will present a distilled version with some notes.
-I was installing from a laptop running Deebian Linux
+I was installing from a laptop running Deebian Linux, and from OSX.
 
 <br>
 
@@ -24,7 +26,10 @@ Serial Terminal:
 >   - Speed: 115200
 >   - Data Bits: 8
 >   - Parity Bit: None
->   - Stop Bits: 1 
+>   - Stop Bits: 1
+> - Default Credentials
+>   - Username: mendel
+>   - Password: mendel
 >1. [Make sure your account on your host has permision to use the serial port. ](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console")
 >1. Install "Screen" (or other terminal software, Note: on windows PuTTY is nice)
 >1. Connect the Micro-USB to the host computer usb port.
@@ -59,17 +64,48 @@ Powering the board:
 Install the TPU OS:
 > - The operating system is out of date. As of this writting (Aug 2024), the newest version of [mendel linux](https://coral.ai/software/#mendel-linux) is from Nov 2021
 > - Unlike a raspberry Pi, the OS must be installed on the internal memory, the computer can not boot from the microSD card (or at least not easily)
-> - [There is a way](https://coral.ai/docs/dev-board/reflash/#flash-a-new-board) of flashing via USB, however I was not able to get it to work. Its possible that I had some silly error. But I did not spend too much time as I have a functioning SD Card.
->1. Download the boot image
->2. Put the image on a microSD card
->3. Set the TPU to boot from SD
->4. Install the OS to internal memory
->5. Set the TPU to boot from internal memory
+> - [There is a way](https://coral.ai/docs/dev-board/reflash/#flash-a-new-board) of flashing via USB, however I was not able to get it to work. Its possible that I had some silly error. But I did not spend too much time as I have a functioning SD Card. This also will not work for a fresh install, but should presev /home
+>1. Download [Mendel Linux](https://coral.ai/software/#mendel-linux)
+>  - Latest flashcard [enterprise-eagle-flashcard-20211117215217.zip](https://dl.google.com/coral/mendel/enterprise/enterprise-eagle-flashcard-20211117215217.zip)
+>1. Put the image on a microSD card
+>   1. Unzip the file
+>   1. Determine which file is your SD Card
+>      - df -l
+>        - "df = disk format (asking not telling), -l = only show local disks
+>      - This will give a list of mount points. If there is any doubt, unmount and eject the card and run the df again, looking for changes
+>      - If your disk is not already formated for your OS, a df will not show. You can either use your os to format it, or go down a rabbit hole... Up to you.
+>   1. Use dd to write the image e.x.:
+>     - sudo dd if=flashcard_arm64.img of=/dev/disk7
+>        - sudo = do as root
+>        - dd = convert and copy a file
+>        - if = infile
+>        - of = outfile
+>     - NOTE: this will overwrite whatever disk is pointed to with "of=<diskname>" by overwrite, I mean destroy. So, be durn spanky sure you have the correct disk.  
+>1. Insert the SD Card to the Dev-Board card slot
+> 1. Set the TPU to boot from SD
+>    - The Dev board boot target is selected via the dip switches (Internal Memory Boot mode show):
+> <br> <img src="readmeFiles/devboard-bootmode-emmc.jpg" height=300 alt="Boot Target Selection">
+>6. Install the OS to internal memory
+>  1. Connect to the serial consol (and/or plug a monitor in)
+>  2. Power the board (this takes a while)
+>  3. When the board says "Power Down" It is done
+>1. Unplug the serial port and power (the serial is probably over kill, but why kill when you can overkill)
+> 8. Set the TPU to boot from internal memory
+> 1. Connect to the serial consol (and/or plug a monitor, keyboard, and mouse in)
+> 10. Re-Power the bopard
+>   - When boot is compleate the serial terminal will present the Mendel Linux logon prompt (the monitor will show the gui)
+
+Dip Switch Configuration:
+| Boot Mode | 1 | 2 | 3 | 4 |
+|:-----------|---|---|---|---|
+| SD Card | ON | OFF | ON | ON |
+| Internal Memory | ON | OFF | OFF | OFF |
 
 <br>
 
 Configuring and operating the Corel TPU devboard:
 > - Network
+>   - nmtui
 > - SSH
 > - KVM
 > - X11
