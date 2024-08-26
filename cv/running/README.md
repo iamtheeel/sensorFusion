@@ -41,7 +41,7 @@ Configuring and operating the Corel TPU devboard:
 > - Network
 > - SSH
 > - KVM
-> - 
+> - X11
 
 <br>
 
