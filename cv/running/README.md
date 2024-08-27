@@ -107,6 +107,7 @@ Configuring and operating the Corel TPU devboard:
 > - Network
 >   - The "easy" way to get the network setup is with nmtui
 >   - This can be done with comandline arguments, or with the consol tool, we will use the tool
+><br> <img src="readmeFiles/nmtui_activate.png" height=300 alt="NMTUI Tool"> <br>
 >   1. from a shell run: nmtui
 >   2. Select "Activate a connection
 >      - You should see a list of available coections
