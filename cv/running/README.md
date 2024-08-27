@@ -119,7 +119,7 @@ Configuring and operating the Corel TPU devboard:
 >   1. Plug USB keyboard and mouse in, it should work, you will need a hub.
 > - X11
 >   1. Plug monitor into HDMI port. It should work.
->   - Mendel uses Weston under [Wayland](https://wayland.freedesktop.org/) under X11.
+>   - Mendel uses [Weston](https://gitlab.freedesktop.org/wayland/weston) under [Wayland](https://wayland.freedesktop.org/) instead of X11.
 >   - Cuz life need more layers. Besides who needs remote windows... I got opinions on the topic, go ahead and ask me.
 
 <br>
