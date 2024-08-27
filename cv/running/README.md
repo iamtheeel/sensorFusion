@@ -105,7 +105,14 @@ Dip Switch Configuration:
 
 Configuring and operating the Corel TPU devboard:
 > - Network
->   - nmtui
+>   - The "easy" way to get the network setup is with nmtui
+>   - This can be done with comandline arguments, or with the consol tool, we will use the tool
+>   1. from a shell run: nmtui
+>   2. Select "Activate a connection
+>      - You should see a list of available coections
+>      - If is does not show the list arrow down, it should refesh...
+>   1. Select your Network <activate>
+>     - Key in your password
 > - SSH
 > - KVM
 > - X11
