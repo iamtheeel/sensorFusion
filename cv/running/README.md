@@ -121,7 +121,7 @@ Configuring and operating the Corel TPU devboard:
 >   1. Plug monitor into HDMI port. It should work.
 >   - Mendel uses [Weston](https://gitlab.freedesktop.org/wayland/weston) under [Wayland](https://wayland.freedesktop.org/) instead of X11.
 >   - Cuz life need more layers. Besides who needs remote windows... I got opinions on the topic, go ahead and ask me.
->   - Also documentation, who needs it ayway. Stm of all groups has steped in and created a [Weston/Wayland doc}(https://wiki.st.com/stm32mpu/wiki/Wayland_Weston_overview)
+
 
 <br>
 
