@@ -115,6 +115,24 @@ Configuring and operating the Corel TPU devboard:
 >   1. Select your Network <activate>
 >     - Key in your password
 > - SSH
+>   - Logon keys and other chicken egg problems
+>   - Password SSH is disabled so we have a few options
+>     - Enable It
+>     - [Manualy create a public/private key pair](https://coral.ai/docs/dev-board/mdt/#mdt-on-macos) on the devboard (If you are on a MAC you must use this path)
+>     - Use the [Mendel Devolopment Tool (MDT)](https://coral.ai/docs/dev-board/mdt/)
+>       1. Install MDT on the host computer (your laptop/desktop)
+>          1. python3 -m pip install --user mendel-development-tool
+>       1. Connect MDT to the development board
+>          1. Plug the data USB-C port on the development bord to a USB port on your host computer.
+>       1. If you are using ssh and don't already have a ssh public/private key pair:
+>          1. From the host computer: ssh-keygen
+>          2. From the host computer: mdt pushkey ~/.ssh/id_rsa.pub
+>       1. Terminal into the board
+>          - SSH to the developemnt board
+>            1. Determine the development board IP
+>               2. From the serial consol (or kvm): sudo ifconfig -a
+>            3. ssh mendel@ip address
+>          - Use: mdt shell
 > - KVM
 >   1. Plug USB keyboard and mouse in, it should work, you will need a hub.
 > - X11
@@ -138,7 +156,6 @@ This is a 3 year OS... It will work just fine for us, but give deprecation warni
 >       - Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
 >         - Fixable, but not a problem
 >       - DEPRECATION: reportbug 7.5.3-deb10u1 has a non-standard version number. pip 24.1 will enforce this behaviour change. A possible replacement is to upgrade to a newer version of reportbug or contact the author to suggest that they release a version with a conforming version number. Discussion can be found at https://github.com/pypa/pip/issues/12063
->         - Y
 >     1. sudo apt-get install -y python3 python3-pip
 >     1. pip3 install --upgrade pip setuptools wheel
 >     1. pip install -r --user requirements_tpu.txt
