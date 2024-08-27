@@ -167,11 +167,13 @@ Running:
 > Welp, that was easy... notthing to it right?
 > Ok, now we can run the real time software
 >1. Connect a head
->   - Keyboard
->   - Mouse
->   - Monitor 
->3. Configure the settings
->4. Launch the software
+>    - Keyboard
+>    - Mouse
+>    - Monitor 
+>1. Connect the camera
+>    - Determine the camera port 
+>1. Configure the settings
+>1. Launch the software
 
 
 
