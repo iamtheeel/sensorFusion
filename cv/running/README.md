@@ -2,25 +2,25 @@
 
 The software will detect if you are running with a Cuda GPU, CPU, or MPS (Apple Silicon)
 
-If you are running GPU or MPS, the inference, pre and postprocessing will be done with [Ultralitics](https://docs.ultralytics.com/modes/train/)
+If you are running GPU or MPS, the inference, pre and post-processing will be done with [Ultralitics](https://docs.ultralytics.com/modes/train/)
 
-However the assumption is we will want to run with the TPU, running on a desktop/laptop/server is mostly for debuging.
+However the assumption is we will want to run with the TPU, running on a desktop/laptop/server is mostly for debugging.
 
-If you are running on a TPU board the inference will be done with TensorFlow Lite, pre and postprocessing via [jveitchmichaelis' edgetpu-yolo](https://github.com/jveitchmichaelis/edgetpu-yolo)
+If you are running on a TPU board the inference will be done with TensorFlow Lite, pre and post-processing via [jveitchmichaelis' edgetpu-yolo](https://github.com/jveitchmichaelis/edgetpu-yolo)
  
-[Documentation on preparing and using the Corel Dev Board](https://coral.ai/docs/dev-board/get-started) is fairly compleate and easy to follow.
+[Documentation on preparing and using the Corel Dev Board](https://coral.ai/docs/dev-board/get-started) is fairly complete and easy to follow.
 I will present a distilled version with some notes.
-I was installing from a laptop running Deebian Linux, and from OSX.
+I was installing from a laptop running Debian Linux, and from OSX.
 
 <br>
 
 Serial Terminal:
 > The [serial console](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console") for the dev-board is unusual:<br>
 > <img src="readmeFiles/devboard-serial-console.jpg" height=300 alt="Serial connection Micro-USB"> <br>
-> - The console port is the Micro-USB port on the same side as the 20 pin IO Pin Headder
+> - The console port is the Micro-USB port on the same side as the 20 pin IO Pin Header
 > - The serial console power is sent via the USB-Micro-B connection, not via the main power.
->   - The TX/RX lights will iluminate on Console port power, then turn off when the board powers
-> - The serial will be availalbe to the host prior to powering the board. It will, of course, not trasmit any data untill the board is powered.
+>   - The TX/RX lights will illuminate on Console port power, then turn off when the board powers
+> - The serial will be available to the host prior to powering the board. It will, of course, not transmit any data until the board is powered.
 > - It is recommended to connect to the serial console prior to powering the board
 > - The serial settings are (115200, 8-N-1):
 >   - Speed: 115200
@@ -30,7 +30,7 @@ Serial Terminal:
 > - Default Credentials
 >   - Username: mendel
 >   - Password: mendel
->1. [Make sure your account on your host has permision to use the serial port. ](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console")
+>1. [Make sure your account on your host has permission to use the serial port. ](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console")
 >1. Install "Screen" (or other terminal software, Note: on windows PuTTY is nice)
 >1. Connect the Micro-USB to the host computer usb port.
 >1. Determine the USB port (e.x. /dev/ttyUSB0)
@@ -43,7 +43,7 @@ Serial Terminal:
 >    1. Install the driver (It should auto install when plugging the cable in)
 >    1. Open the Device Manager (assuming MS has not moved it)
 >    1. Look under "Ports (COM & LPT)" for Silicon Labs Dual CP2105 USB to UART Bridge"
->    2. The one that says somthing like: "Enhanced COM Port" (such as "COM3")"
+>    2. The one that says something like: "Enhanced COM Port" (such as "COM3")"
 >1. Connect to the board:
 >   - screen /dev/ttyUSB0 115200
 >   - To exit screen: <CTRL>+A, K, Y
@@ -52,9 +52,9 @@ Serial Terminal:
 
 Powering the board:
 >- ** DO NOT POWER FROM YOUR COMPUTER** The board draws 2-3A, this may bork your computer's usb-c connection
->- Use an external powersupply that can source 3A at 5V (some laptop supplys are plenty good at 20V, but don't have much or any at 5V)
+>- Use an external power supply that can source 3A at 5V (some laptop supplies are plenty good at 20V, but don't have much or any at 5V)
 >- Use a usb-c cable that is good for 3A
->- There are 2 USB-C connections, one is for data (next to the DVI), the other is power (next to the audio):<br> <img src="readmeFiles/devboard-power-co.jpg" height=300 alt="Power via usbc">
+>- There are 2 USB-C connections, one is for data (next to the HDMI), the other is power (next to the audio):<br> <img src="readmeFiles/devboard-power-co.jpg" height=300 alt="Power via usbc">
 >- Note: the red LED that comes on with power. The fan will also spin, and the serial port should start talking.
 
 
@@ -72,8 +72,8 @@ Install the TPU OS:
 >   1. Determine which file is your SD Card
 >      - df -l
 >        - "df = disk format (asking not telling), -l = only show local disks
->      - This will give a list of mount points. If there is any doubt, unmount and eject the card and run the df again, looking for changes
->      - If your disk is not already formated for your OS, a df will not show. You can either use your os to format it, or go down a rabbit hole... Up to you.
+>      - This will give a list of mount points. If there is any doubt, un-mount and eject the card and run the df again, looking for changes
+>      - If your disk is not already formatted for your OS, a df will not show. You can either use your os to format it, or go down a rabbit hole... Up to you.
 >   1. Use dd to write the image e.x.:
 >     - sudo dd if=flashcard_arm64.img of=/dev/disk7
 >        - sudo = do as root
@@ -92,8 +92,8 @@ Install the TPU OS:
 >1. Unplug the serial port and power (the serial is probably over kill, but why kill when you can overkill)
 > 8. Set the TPU to boot from internal memory
 > 1. Connect to the serial consol (and/or plug a monitor, keyboard, and mouse in)
-> 10. Re-Power the bopard
->   - When boot is compleate the serial terminal will present the Mendel Linux logon prompt (the monitor will show the gui)
+> 10. Re-Power the board
+>   - When boot is complete the serial terminal will present the Mendel Linux logon prompt (the monitor will show the GUI)
 
 Dip Switch Configuration:
 | Boot Mode | 1 | 2 | 3 | 4 |
@@ -110,21 +110,25 @@ Configuring and operating the Corel TPU devboard:
 ><br> <img src="readmeFiles/nmtui_activate.png" height=300 alt="NMTUI Tool"> <br>
 >   1. from a shell run: nmtui
 >   2. Select "Activate a connection
->      - You should see a list of available coections
->      - If is does not show the list arrow down, it should refesh...
+>      - You should see a list of available connections
+>      - If is does not show the list arrow down, it should refresh...
 >   1. Select your Network <activate>
 >     - Key in your password
 > - SSH
 > - KVM
+>   1. Plug USB keyboard and mouse in, it should work, you will need a hub.
 > - X11
+>   1. Plug monitor into HDMI port. It should work.
+>   - Mendel uses Weston under [Wayland](https://wayland.freedesktop.org/) under X11.
+>   - Cuz life need more layers. Besides who needs remote windows... I got opinions on the topic, go ahead and ask me.
 
 <br>
 
 Software Installation:
-This is a 3 year OS... It will work just fine for us, but give deprication warnings. We do have to be carfull about library useage tho.
+This is a 3 year OS... It will work just fine for us, but give deprecation warnings. We do have to be careful about library usage tho.
 >1. Install base code (if you have not already:
 >    1. git clone https://github.com/iamtheeel/sensorFusion.git
->       - The required parts of edgetpu-yolo are included. I have modifyed very littel. But have made a few changes that were nessisary.
+>       - The required parts of edgetpu-yolo are included. I have modified very little. But have made a few changes that were necessary.
 >1. Change directory to sensorFusion/cv/running
 >1. install prerequisites:
 >    - If on the TPU: Most of the following will give warnings (e.x.):
