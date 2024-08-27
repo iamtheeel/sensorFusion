@@ -144,7 +144,7 @@ Configuring and operating the Corel TPU devboard:
 <br>
 
 Software Installation:
-This is a 3 year OS... It will work just fine for us, but give deprecation warnings. We do have to be careful about library usage tho.
+This is a 3 year old OS... It will work just fine for us, but give deprecation warnings. We do have to be careful about library usage tho.
 >1. Install base code (if you have not already:
 >    1. git clone https://github.com/iamtheeel/sensorFusion.git
 >       - The required parts of edgetpu-yolo are included. I have modified very little. But have made a few changes that were necessary.
@@ -164,7 +164,14 @@ This is a 3 year OS... It will work just fine for us, but give deprecation warni
 
 
 Running:
->1.
+> Welp, that was easy... notthing to it right?
+> Ok, now we can run the real time software
+>1. Connect a head
+>   - Keyboard
+>   - Mouse
+>   - Monitor 
+>3. Configure the settings
+>4. Launch the software
 
 
 
