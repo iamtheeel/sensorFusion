@@ -12,6 +12,7 @@ If you are running on a TPU board the inference will be done with TensorFlow Lit
 I will present a distilled version with some notes.
 I was installing from a laptop running Debian Linux, and from OSX.
 
+<hr>
 
 The instructions are broken down to:
 - [Serial Terminal](#serial-term)
@@ -21,6 +22,7 @@ The instructions are broken down to:
 - [Installing the Software](#software-install)
 - [Running The Software](#operation)
 
+<hr>
 <br>
 
 <h3 id="serial-term">Serial Terminal:</h3>
@@ -228,7 +230,11 @@ This is a 3 year old OS... It will work just fine for us, but give deprecation w
 >       - runTime/distSettings/nmsIouThreshold: For only use if the iou is below this point (tweek if there are overlaying objects, or skipping the overlay>
 >       - training/dataSet: the dataset file used during training
 >1. Launch the software
+>   1. cd sensorFusion/cv/running
+>   2. python3 runImage.py
 >1. Exiting
+>   - In the window press "q" to quit.
+>   - If you are running through a directory of images anyother key will go to the next image. 
 
 
 
