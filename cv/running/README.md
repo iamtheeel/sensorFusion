@@ -122,13 +122,15 @@ Dip Switch Configuration:
 >   - The "easy" way to get the network setup is with nmtui
 >   - This can be done with comandline arguments, or with the consol tool, we will use the tool
 ><br> <img src="readmeFiles/nmtui_activate.png" height=300 alt="NMTUI Tool"> <br>
->   1. from a shell run: nmtui
->   2. Select "Activate a connection
->      - You should see a list of available connections
->      - If is does not show the list arrow down, it should refresh...
->   1. Select your Network <activate>
->     - Key in your password
-> - SSH
+>      1. from a shell run: nmtui
+>      2. Select "Activate a connection
+>         - You should see a list of available connections
+>         - If is does not show the list arrow down, it should refresh...
+>      1. Select your Network <activate>
+>         - Key in your password
+>   - Setting up as a WIFI Host:
+>      1. foobar
+> - Logging into the board (e.x. ssh)
 >   - Logon keys and other chicken egg problems
 >   - Password SSH is disabled so we have a few options
 >     - Enable It
@@ -212,8 +214,5 @@ This is a 3 year old OS... It will work just fine for us, but give deprecation w
 >1. Launch the software
 >1. Exiting
 
-<br>
 
-Setting up as a WIFI Host:
->1.
 
