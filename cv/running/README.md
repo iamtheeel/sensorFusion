@@ -14,9 +14,9 @@ I was installing from a laptop running Debian Linux, and from OSX.
 
 
 The instructions are broken down to
-- <a href="#serial-term">Serial Terminal</a>
 - [Serial Terminal](#serial-term)
 - [Powering the board](#board-power)
+- [Install the TPU OS](#install-os)
 
 
 
@@ -71,7 +71,8 @@ The instructions are broken down to
 
 <br>
 
-Install the TPU OS:
+
+### Install the TPU OS: {#install-os}
 > - The operating system is out of date. As of this writting (Aug 2024), the newest version of [mendel linux](https://coral.ai/software/#mendel-linux) is from Nov 2021
 > - Unlike a raspberry Pi, the OS must be installed on the internal memory, the computer can not boot from the microSD card (or at least not easily)
 > - [There is a way](https://coral.ai/docs/dev-board/reflash/#flash-a-new-board) of flashing via USB, however I was not able to get it to work. Its possible that I had some silly error. But I did not spend too much time as I have a functioning SD Card. This also will not work for a fresh install, but should presev /home
