@@ -17,7 +17,7 @@ The instructions are broken down to:
 - [Serial Terminal](#serial-term)
 - [Powering the board](#board-power)
 - [Install the TPU OS](#install-os)
-- [Configureing the Corel TPU Devboard](#configure-tpu)
+- [Configureing the Corel TPU Devboard](#configure-tpu): Network, ssh, etc
 - [Installing the Software](#software-install)
 - [Running The Software](#operation)
 
@@ -195,22 +195,38 @@ This is a 3 year old OS... It will work just fine for us, but give deprecation w
 >    - runImage.py: The program entery point
 >      - debugs/debug
 >      - debugs/dispResults
->      - training/imageSize
+>      - training/imageSize: Size of the training image set, will set camera to this size
 >      - runTime/imgSrc
 >        - Single File name (ex: appleHand_hand_4.jpg": Will run the single image
 >        - "directory": Will run the images called in runTime/imageDir
 >        - "webCam": Will run live from a camera
->          -  runTime/camId: Camera id to connect to (e.x. camId: 1)
+>          - runTime/camId: Camera id to connect to (e.x. camId: 1)
 >          - runTime/camRateHz: The frame rate to use (note: the inference times are on the order of 0.15 sec, so about 5 Hz)
 >          - runTime/displaySettings/RunCamOnce: Run a single frame from the camera (usefull for debuging
->    - distance.py: Calculates the distance from the hand and object
->       - foobar
+>    - distance.py: Calculates the distance from the hand and object, and the overlays
+>       - training/imageSize: Size of the training image set, will set bounderys of the overlays
+>       - runTime/distSettings/imagePxPer_mm: Camera distance calibration
+>       - runTime/distSettings/handThreshold: Probability threshold for the hand
+>       - runTime/distSettings/objectThreshold: Probability threshold for the object
+>       - nmsIouThreshold/handClass: Which class number is the "hand"
 >    - display.py: Displays the image and overlays
->       - foobar
+>       - runTime/displaySettings/fullScreen: Show image full screen or in a window
+>       - runTime/displaySettings/handColor
+>       - runTime/displaySettings/objectColor
+>       - runTime/displaySettings/lineColor
+>       - runTime/displaySettings/handLineTh: Thickness of the hand overlay in px
+>       - runTime/displaySettings/objLineTh: Thickness of the target object overlay in px
+>       - runTime/displaySettings/distLineTh: Thickness of the distance call overlay in px
 >    - modelRunTime.py: Calling the appropriate model for the system (e.x. edgetpumodel.py for the corel edge TPU dev board, otherwise ultralitics YOLO)
 >       - debugs/showInfResults
+>       - training/weightsDir: Location of the model weights file
+>          - if tpu: training/weightsFile_tpu
+>          - else  : training/weightsFile
 >    - edgetpumodel.py, nms.py utils.py: From [edgetpu-yolo](https://github.com/jveitchmichaelis/edgetpu-yolo)
->       - foobar
+>       - runTime/distSettings/handThreshold: Probability threshold for the hand
+>       - runTime/distSettings/objectThreshold: Probability threshold for the object
+>       - runTime/distSettings/nmsIouThreshold: For only use if the iou is below this point (tweek if there are overlaying objects, or skipping the overlay>
+>       - training/dataSet: the dataset file used during training
 >1. Launch the software
 >1. Exiting
 
