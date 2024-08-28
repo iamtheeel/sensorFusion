@@ -22,7 +22,8 @@ The instructions are broken down to:
 
 <br>
 
-<h3 id="serial-term">Serial Terminal:</h3><br>
+<h3 id="serial-term">Serial Terminal:</h3>
+
 > The [serial console](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console") for the dev-board is unusual:<br>
 > <img src="readmeFiles/devboard-serial-console.jpg" height=300 alt="Serial connection Micro-USB"> <br>
 > - The console port is the Micro-USB port on the same side as the 20 pin IO Pin Header
@@ -58,7 +59,7 @@ The instructions are broken down to:
 
 <br>
 
-<h3 id="board-power">Powering the board:</h3><br>
+<h3 id="board-power">Powering the board:</h3>
 
 >- ** DO NOT POWER FROM YOUR COMPUTER** The board draws 2-3A, this may bork your computer's usb-c connection
 >- Use an external power supply that can source 3A at 5V (some laptop supplies are plenty good at 20V, but don't have much or any at 5V)
@@ -71,7 +72,8 @@ The instructions are broken down to:
 <br>
 
 
-<h3 id="install-os">Install the TPU OS:</h3><br>
+<h3 id="install-os">Install the TPU OS:</h3>
+
 > - The operating system is out of date. As of this writting (Aug 2024), the newest version of [mendel linux](https://coral.ai/software/#mendel-linux) is from Nov 2021
 > - Unlike a raspberry Pi, the OS must be installed on the internal memory, the computer can not boot from the microSD card (or at least not easily)
 > - [There is a way](https://coral.ai/docs/dev-board/reflash/#flash-a-new-board) of flashing via USB, however I was not able to get it to work. Its possible that I had some silly error. But I did not spend too much time as I have a functioning SD Card. This also will not work for a fresh install, but should presev /home
