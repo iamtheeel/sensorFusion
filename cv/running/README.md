@@ -17,8 +17,9 @@ The instructions are broken down to:
 - [Serial Terminal](#serial-term)
 - [Powering the board](#board-power)
 - [Install the TPU OS](#install-os)
-
-
+- [Configureing the Corel TPU Devboard](#configure-tpu)
+- [Installing the Software](#software-install)
+- [Running The Software](#operation)
 
 <br>
 
@@ -115,7 +116,8 @@ Dip Switch Configuration:
 
 <br>
 
-Configuring and operating the Corel TPU devboard:
+<h3 id="configure-tpu">Configuring and operating the Corel TPU devboard:</h3>
+
 > - Network
 >   - The "easy" way to get the network setup is with nmtui
 >   - This can be done with comandline arguments, or with the consol tool, we will use the tool
@@ -155,7 +157,9 @@ Configuring and operating the Corel TPU devboard:
 
 <br>
 
-Software Installation:
+
+<h3 id="software-install">Software Installation:</h3>
+
 This is a 3 year old OS... It will work just fine for us, but give deprecation warnings. We do have to be careful about library usage tho.
 >1. Install base code (if you have not already:
 >    1. git clone https://github.com/iamtheeel/sensorFusion.git
@@ -175,7 +179,8 @@ This is a 3 year old OS... It will work just fine for us, but give deprecation w
 >       - pip install -r requirements.txt
 
 
-Running:
+<h3 id="operation">Running The Software:</h3>
+
 > Welp, that was easy... notthing to it right?
 > Ok, now we can run the real time software
 >1. Connect a head
