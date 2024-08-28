@@ -12,9 +12,17 @@ If you are running on a TPU board the inference will be done with TensorFlow Lit
 I will present a distilled version with some notes.
 I was installing from a laptop running Debian Linux, and from OSX.
 
+
+The instructions are broken down to
+- <a href="#serial-term">Serial Terminal</a>
+- [Serial Terminal](#serial-term)
+- [Powering the board](#board-power)
+
+
+
 <br>
 
-Serial Terminal:
+<h3 id="serial-term">Serial Terminal:</h3><br>
 > The [serial console](https://coral.ai/docs/dev-board/serial-console/ "Corel Dev Board Serial Console") for the dev-board is unusual:<br>
 > <img src="readmeFiles/devboard-serial-console.jpg" height=300 alt="Serial connection Micro-USB"> <br>
 > - The console port is the Micro-USB port on the same side as the 20 pin IO Pin Header
@@ -50,7 +58,9 @@ Serial Terminal:
 
 <br>
 
-Powering the board:
+### Powering the board: {board-power}
+<h3 id="board-power">Powering the board:</h3><br>
+
 >- ** DO NOT POWER FROM YOUR COMPUTER** The board draws 2-3A, this may bork your computer's usb-c connection
 >- Use an external power supply that can source 3A at 5V (some laptop supplies are plenty good at 20V, but don't have much or any at 5V)
 >- Use a usb-c cable that is good for 3A
@@ -172,10 +182,30 @@ Running:
 >    - Monitor 
 >1. Connect the camera
 >    - Determine the camera port 
->1. Configure the settings
+>1. Configure the settings (cv/config.yaml) and module description
+>    - runImage.py: The program entery point
+>      - debugs/debug
+>      - debugs/dispResults
+>      - training/imageSize
+>      - runTime/imgSrc
+>        - Single File name (ex: appleHand_hand_4.jpg": Will run the single image
+>        - "directory": Will run the images called in runTime/imageDir
+>        - "webCam": Will run live from a camera
+>          -  runTime/camId: Camera id to connect to (e.x. camId: 1)
+>          - runTime/camRateHz: The frame rate to use (note: the inference times are on the order of 0.15 sec, so about 5 Hz)
+>          - runTime/displaySettings/RunCamOnce: Run a single frame from the camera (usefull for debuging
+>    - distance.py: Calculates the distance from the hand and object
+>       - foobar
+>    - display.py: Displays the image and overlays
+>       - foobar
+>    - modelRunTime.py: Calling the appropriate model for the system (e.x. edgetpumodel.py for the corel edge TPU dev board, otherwise ultralitics YOLO)
+>       - debugs/showInfResults
+>    - edgetpumodel.py, nms.py utils.py: From [edgetpu-yolo](https://github.com/jveitchmichaelis/edgetpu-yolo)
+>       - foobar
 >1. Launch the software
+>1. Exiting
 
-
+<br>
 
 Setting up as a WIFI Host:
 >1.
