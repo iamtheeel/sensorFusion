@@ -20,9 +20,9 @@ import os
 from torch import cuda, backends
 
 ## Configuration # From MICLab
-sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
 from ConfigParser import ConfigParser
-config = ConfigParser(os.path.join(os.getcwd(), '../config.yaml'))
+config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
 configs = config.get_config()
 
 device = "cpu" 

@@ -21,10 +21,10 @@ import time
 
 # From MICLab
 import sys, os
-sys.path.insert(0, '..')  # ConfigParser is one dir lower
+sys.path.insert(0, '../..')  # ConfigParser is in the project root
 from ConfigParser import ConfigParser
 ## Configuration
-config = ConfigParser(os.path.join(os.getcwd(), '../config.yaml'))
+config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
 configs = config.get_config()
 
 ## Logging

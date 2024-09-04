@@ -18,14 +18,14 @@ import sys
 import os
 
 # From MICLab
-sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
 from ConfigParser import ConfigParser
 
 # Internal
 from running.modelRunTime import modelRunTime
 
 ## Configuration
-config = ConfigParser(os.path.join(os.getcwd(), '../config.yaml'))
+config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
 configs = config.get_config()
 
 ## Logging
