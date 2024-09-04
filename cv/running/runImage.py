@@ -63,8 +63,9 @@ if __name__ == "__main__":
 
     infer = modelRunTime(configs, device)
     
-    distCalc = distance.distanceCalculator(configs['training']['imageSize'], configs['runTime']['distSettings'])
-    handObjDisp = display.displayHandObject(configs['runTime']['displaySettings']) #hColor, oColor, lColor)
+    distCalc = distance.distanceCalculator(configs['training']['imageSize'], 
+                                           configs['runTime']['distSettings'])
+    handObjDisp = display.displayHandObject(configs['runTime']['displaySettings'])
     
     ## Get image
     if configs['runTime']['imgSrc'] == 'webCam':

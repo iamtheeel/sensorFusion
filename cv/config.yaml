@@ -44,18 +44,18 @@ runTime:
 
     distSettings:
         imagePxlPer_mm: 1.0
-        handThreshold: 0.6
-        objectThreshold: 0.2
-        nmsIouThreshold: 0.45 #only use if iou < this
+        handThreshold: 0.10
+        objectThreshold: 0.10
+        nmsIouThreshold: 0.80 #only use if iou < this
         #0.6
         handClass: 80
 
     displaySettings:
         fullScreen: False
         handColor: [0, 255, 0]
-        lineColor: [125, 125, 125] # Color in BGR
+        lineColor: [0, 255, 255] # Color in BGR
         objectColor: [0, 0, 255]
         handLineTh: 2 #Thickness in px
         objLineTh: 2
-        distLineTh: 1
+        distLineTh: 2
         runCamOnce: False
