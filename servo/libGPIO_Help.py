@@ -1,0 +1,3 @@
+import gpiod
+
+help(gpiod)
