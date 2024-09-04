@@ -1,6 +1,12 @@
 # sensorFusion
+A system to increase grip strength based on computer vision and myoelectric sensing.
 
-To install pre-requisits: **Note**<br>
-> pip install -r requirements.txt
+The computer vision system is in [CV](./cv "Python Based Computer Vision using YOLO")
 
+To install the code:
 > git clone https://github.com/iamtheeel/sensorFusion.git
+
+Then follow the directions in each subsystem
+
+Note: 
+Instructions on setting up the corel board are in the [running](./running "Real Time") Subsection
