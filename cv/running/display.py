@@ -29,10 +29,9 @@ class displayHandObject:
         self.handLineTh = conf['handLineTh']
         self.objLineTh = conf['objLineTh']
         self.distLineTh = conf['distLineTh']
-        self.conf = conf
 
         self.waitKeyTime = 0 #ms, wait until the key is pressed
-        if(self.conf['runCamOnce'] == False):
+        if(conf['runCamOnce'] == False):
             self.waitKeyTime = 1 #ms, will run through with a delay
 
         #cv2.namedWindow("sensorFusion", cv2.WINDOW_NORMAL )

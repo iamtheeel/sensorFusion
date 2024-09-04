@@ -38,7 +38,7 @@ class modelRunTime:
 
         # Load the state dict
         if device == "tpu":
-            thresh = max(configs['runTime']['distSettings']['handThreshold'],
+            thresh = min(configs['runTime']['distSettings']['handThreshold'],
                          configs['runTime']['distSettings']['objectThreshold'])
             self.model = EdgeTPUModel(modelFile, configs['training']['dataSet'], 
                                       conf_thresh=thresh, #only over this
