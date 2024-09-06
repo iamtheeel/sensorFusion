@@ -22,7 +22,7 @@ sys.path.insert(0, '../..')
 from ConfigParser import ConfigParser
 
 # Internal
-from running.modelRunTime import modelRunTime
+from modelRunTime import modelRunTime
 
 ## Configuration
 config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
