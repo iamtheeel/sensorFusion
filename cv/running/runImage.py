@@ -16,6 +16,7 @@ import logging
 import cv2
 import sys
 import os
+import time
 
 # From MICLab
 sys.path.insert(0, '../..')
@@ -68,17 +69,19 @@ if __name__ == "__main__":
     ## Get image
     if configs['runTime']['imgSrc'] == 'webCam':
         # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
-        camera = cv2.VideoCapture(configs['runTime']['camId'])
-        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
-        camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
-        camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
+        os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;tcp'
+        camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_FFMPEG)
+        #camera = cv2.VideoCapture(configs['runTime']['camId'])
+        #camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
+        #camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
+        #camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
     
         # Get the image
         runCam = True
         while runCam:
             logger.info("---------------------------------------------")
             camStat, image = camera.read()
-            #logger.info(f"camera status: {camStat}")
+            logger.info(f"camera status: {camStat}")
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
                 ## TODO: Check if we are keeping up ##
@@ -92,6 +95,8 @@ if __name__ == "__main__":
                         runCam = False
             else:
                 logger.info(f"Image not ready: {configs['runTime']['camId']}")
+            
+            #time.sleep(1.0)
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch
