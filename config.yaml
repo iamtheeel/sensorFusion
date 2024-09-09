@@ -41,8 +41,11 @@ runTime:
     #camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
     #camId: 3 #
-    camId: "rtsp://192.168.1.254:554/rtsp_live0" # 
-    #camId: "rtsp://192.168.1.254:554/live" # Full image
+    #camId: "rtsp://192.168.1.254:554/stream" # 
+    camId: "rtsp://192.168.1.254:554/h264Preview" # 
+    #camId: "rtsp://192.168.1.254:554/rtsp_live0" # 
+    #camId: "rtsp://192.168.1.254:554/preview" # fail 
+    #camId: "rtsp://192.168.1.254:554/live" # fail 
     #camId: "rtsp://192.168.1.254:554/"    #Full image
     camRateHz: 5
 

@@ -69,19 +69,37 @@ if __name__ == "__main__":
     ## Get image
     if configs['runTime']['imgSrc'] == 'webCam':
         # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
-        os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;tcp'
-        camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_FFMPEG)
+        os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
+        #camera = cv2.VideoCapture(f"rtspsrc location={configs['runTime']['camId']} ! rtph264depay ! h264parse ! avdec_h264 max-threads=1 ! video/x-raw,  width=(int)640, height=(int)480, format=(string)BGRx !  videoconvert ", cv2.CAP_ANY)
+        camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
         #camera = cv2.VideoCapture(configs['runTime']['camId'])
         #camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
         #camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
-        #camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
+        # Settings not used in the RTSP stream
+        camera.set(cv2.CAP_PROP_READ_TIMEOUT_MSEC, 30)
+        camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
+        camera.set(cv2.CAP_PROP_BUFFERSIZE, 10) # Limit the buffer to always grab the latest frame
+        #camera.set(cv2.CAP_PROP_XI_BUFFER_POLICY)
+
+        fps = camera.get(cv2.CAP_PROP_FPS) # Glasses at 30FPS
+        bufSize = camera.get(cv2.CAP_PROP_BUFFERSIZE)
+        bufPol = camera.get(cv2.CAP_PROP_XI_BUFFER_POLICY)
+        timeOut = camera.get(cv2.CAP_PROP_READ_TIMEOUT_MSEC)
+        print(f"FPS: {fps}, buff Size: {bufSize} timeOut: {timeOut}")
+
+        #exit()
     
         # Get the image
         runCam = True
         while runCam:
             logger.info("---------------------------------------------")
+            tStart = time.time_ns()
+            ## For the glasses the stream is too slow and borking out.
+            # Try single frame
             camStat, image = camera.read()
-            logger.info(f"camera status: {camStat}")
+            camReadTime_ms = (time.time_ns()-tStart)/(1e6)
+            logger.info(f"camera status: {camStat}, {camReadTime_ms:.3f}ms")
+            camStat = False # don't go to inference
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
                 ## TODO: Check if we are keeping up ##
@@ -91,12 +109,24 @@ if __name__ == "__main__":
                 if configs['debugs']['dispResults']:
                     exitStatus = handObjDisp.draw(image, distCalc, validRes)
                     if exitStatus == ord('q'):  # q = 113
-                        logger.info(f"********   quit now ***********")
                         runCam = False
+                        logger.info(f"********   quit now ***********")
             else:
                 logger.info(f"Image not ready: {configs['runTime']['camId']}")
+                #camera.release()
+                #camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
             
-            #time.sleep(1.0)
+            #time.sleep(1/5)
+            '''
+            #Flush the buffer
+            while(True):
+                isEmpty = camera.grab()
+                print(f"is empty: {isEmpty}")
+                if isEmpty == False:
+                    break
+            '''
+        # Destructor
+        camera.release()
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch
