@@ -72,6 +72,7 @@ if __name__ == "__main__":
         os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
         #camera = cv2.VideoCapture(f"rtspsrc location={configs['runTime']['camId']} ! rtph264depay ! h264parse ! avdec_h264 max-threads=1 ! video/x-raw,  width=(int)640, height=(int)480, format=(string)BGRx !  videoconvert ", cv2.CAP_ANY)
         camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
+        #camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_DSHOW, cv2.CAP_ANY)
         #camera = cv2.VideoCapture(configs['runTime']['camId'])
         #camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
         #camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
@@ -99,7 +100,20 @@ if __name__ == "__main__":
             camStat, image = camera.read()
             camReadTime_ms = (time.time_ns()-tStart)/(1e6)
             logger.info(f"camera status: {camStat}, {camReadTime_ms:.3f}ms")
-            camStat = False # don't go to inference
+
+            #if camStat:
+            while(camReadTime_ms < 10): #if our grab time is < 30 milisec we are behind
+                tStart = time.time_ns()
+                camStat, image = camera.read()
+                #camera.grab()
+                camReadTime_ms = (time.time_ns()-tStart)/(1e6)
+                logger.info(f"grab status: {camStat}, {camReadTime_ms:.3f}ms")
+            #else:
+            #    camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
+
+            #print(camReadTime_ms)
+            #camStat = False # don't go to inference
+
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
                 ## TODO: Check if we are keeping up ##

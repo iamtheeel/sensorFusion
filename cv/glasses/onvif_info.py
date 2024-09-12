@@ -22,4 +22,4 @@ Ports   80: Bad response
         580: Refused
         8080: Refused
 '''
-mycam = ONVIFCamera('192.168.1.254', 443, 'Sunglasses DV-1a60', '12345678', '/home/josh//Documents/MIC/sensorFusion/cv/glasses/')
+mycam = ONVIFCamera('192.168.1.254', 80, 'Sunglasses DV-1a60', '12345678', '/home/josh//Documents/MIC/sensorFusion/cv/glasses/')
