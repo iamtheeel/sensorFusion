@@ -54,10 +54,12 @@ else:
 import distance
 import display
 
+from camera import camera
 # From edgetpu
 
 
 if __name__ == "__main__":
+
     ## set the model information
 
     infer = modelRunTime(configs, device)
@@ -67,7 +69,10 @@ if __name__ == "__main__":
     handObjDisp = display.displayHandObject(configs['runTime']['displaySettings'])
     
     ## Get image
-    if configs['runTime']['imgSrc'] == 'webCam':
+    if configs['runTime']['imgSrc'] == 'camera':
+        ## Load the camera
+        inputCam = camera(configs)
+        '''
         # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
         os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
         #camera = cv2.VideoCapture(f"rtspsrc location={configs['runTime']['camId']} ! rtph264depay ! h264parse ! avdec_h264 max-threads=1 ! video/x-raw,  width=(int)640, height=(int)480, format=(string)BGRx !  videoconvert ", cv2.CAP_ANY)
@@ -87,6 +92,7 @@ if __name__ == "__main__":
         bufPol = camera.get(cv2.CAP_PROP_XI_BUFFER_POLICY)
         timeOut = camera.get(cv2.CAP_PROP_READ_TIMEOUT_MSEC)
         print(f"FPS: {fps}, buff Size: {bufSize} timeOut: {timeOut}")
+        '''
 
         #exit()
     
@@ -94,29 +100,10 @@ if __name__ == "__main__":
         runCam = True
         while runCam:
             logger.info("---------------------------------------------")
-            tStart = time.time_ns()
-            ## For the glasses the stream is too slow and borking out.
-            # Try single frame
-            camStat, image = camera.read()
-            camReadTime_ms = (time.time_ns()-tStart)/(1e6)
-            logger.info(f"camera status: {camStat}, {camReadTime_ms:.3f}ms")
-
-            #if camStat:
-            while(camReadTime_ms < 10): #if our grab time is < 30 milisec we are behind
-                tStart = time.time_ns()
-                camStat, image = camera.read()
-                #camera.grab()
-                camReadTime_ms = (time.time_ns()-tStart)/(1e6)
-                logger.info(f"grab status: {camStat}, {camReadTime_ms:.3f}ms")
-            #else:
-            #    camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
-
-            #print(camReadTime_ms)
-            #camStat = False # don't go to inference
+            camStat, image = inputCam.getImage()
 
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
-                ## TODO: Check if we are keeping up ##
                 results = infer.runInference(image)
 
                 validRes = distCalc.loadData(results, device)
@@ -130,15 +117,6 @@ if __name__ == "__main__":
                 #camera.release()
                 #camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
             
-            #time.sleep(1/5)
-            '''
-            #Flush the buffer
-            while(True):
-                isEmpty = camera.grab()
-                print(f"is empty: {isEmpty}")
-                if isEmpty == False:
-                    break
-            '''
         # Destructor
         camera.release()
 

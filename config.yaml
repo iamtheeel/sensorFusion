@@ -33,7 +33,7 @@ runTime:
     #imgSrc: "directory"
     #imgSrc: "appleHand_hand_4.jpg"
     #imgSrc: "dataset3_310.jpg"
-    imgSrc: "webCam"
+    imgSrc: "camera"
     #imageDir: "../datasets/combinedData/images/val"
     imageDir: "../datasets/testImages"
 
