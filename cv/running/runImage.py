@@ -57,6 +57,13 @@ import display
 from camera import camera
 # From edgetpu
 
+from threading import Thread
+runThread = False
+def getImage(cam):
+    logger.info(f"Init Camera Thread")
+    while runThread:
+        cam.capImage()
+
 
 if __name__ == "__main__":
 
@@ -72,53 +79,36 @@ if __name__ == "__main__":
     if configs['runTime']['imgSrc'] == 'camera':
         ## Load the camera
         inputCam = camera(configs)
-        '''
-        # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
-        os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
-        #camera = cv2.VideoCapture(f"rtspsrc location={configs['runTime']['camId']} ! rtph264depay ! h264parse ! avdec_h264 max-threads=1 ! video/x-raw,  width=(int)640, height=(int)480, format=(string)BGRx !  videoconvert ", cv2.CAP_ANY)
-        camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
-        #camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_DSHOW, cv2.CAP_ANY)
-        #camera = cv2.VideoCapture(configs['runTime']['camId'])
-        #camera.set(cv2.CAP_PROP_FRAME_HEIGHT, configs['training']['imageSize'][0])
-        #camera.set(cv2.CAP_PROP_FRAME_WIDTH,  configs['training']['imageSize'][1])
-        # Settings not used in the RTSP stream
-        camera.set(cv2.CAP_PROP_READ_TIMEOUT_MSEC, 30)
-        camera.set(cv2.CAP_PROP_FPS, configs['runTime']['camRateHz'])
-        camera.set(cv2.CAP_PROP_BUFFERSIZE, 10) # Limit the buffer to always grab the latest frame
-        #camera.set(cv2.CAP_PROP_XI_BUFFER_POLICY)
+        runThread = True
+        camThread = Thread(target=getImage, args=(inputCam, ))
+        camThread.start()
 
-        fps = camera.get(cv2.CAP_PROP_FPS) # Glasses at 30FPS
-        bufSize = camera.get(cv2.CAP_PROP_BUFFERSIZE)
-        bufPol = camera.get(cv2.CAP_PROP_XI_BUFFER_POLICY)
-        timeOut = camera.get(cv2.CAP_PROP_READ_TIMEOUT_MSEC)
-        print(f"FPS: {fps}, buff Size: {bufSize} timeOut: {timeOut}")
-        '''
-
-        #exit()
-    
         # Get the image
         runCam = True
         while runCam:
-            logger.info("---------------------------------------------")
+            #logger.info("---------------------------------------------")
             camStat, image = inputCam.getImage()
 
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
-                results = infer.runInference(image)
 
+                results = infer.runInference(image)
                 validRes = distCalc.loadData(results, device)
+
                 if configs['debugs']['dispResults']:
                     exitStatus = handObjDisp.draw(image, distCalc, validRes)
                     if exitStatus == ord('q'):  # q = 113
                         runCam = False
                         logger.info(f"********   quit now ***********")
-            else:
-                logger.info(f"Image not ready: {configs['runTime']['camId']}")
+            #else:
+            #    logger.info(f"Image not ready: {configs['runTime']['camId']}")
                 #camera.release()
                 #camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
             
         # Destructor
-        camera.release()
+        runThread = False
+        camThread.join() # join the thread back to main
+        camera.thisCam.release() 
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch

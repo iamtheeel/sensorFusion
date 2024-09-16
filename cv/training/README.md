@@ -47,7 +47,7 @@ Configurations:
 >        - debug: True
 >            - Prints out possibly usefull information
 >    - training:
->        - imageSize [height, width]: [480, 640]
+>        - imageSize [width, height]: [640, 480]
 >            - Note, most settings assume a square image, will select the larger of the two numbers
 >        - dataSet:
 >            - the location and name of the dataset configuration file
@@ -74,7 +74,7 @@ Configurations:
 >        - debug: True
 >            - Prints out possibly usefull information
 >    - training:
->        - imageSize [height, width]: [480, 640]
+>        - imageSize [width, height]: [640, 480]
 >            - Note, most settings assume a square image, will select the larger of the two numbers
 >        - dataSet:
 >            - the location and name of the dataset configuration file

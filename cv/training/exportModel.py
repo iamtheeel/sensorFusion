@@ -37,7 +37,7 @@ if debug == False:
     logger.disabled = True
 
 
-imgSZ = max(configs['training']['imageSize'][0], configs['training']['imageSize'][1]) #must be square
+imgSZ = max(configs['training']['imageSize']) #must be square
 weightsDir = configs['training']['weightsDir']
 weightsFile = configs['training']['weightsFile']
 dataSet = configs['training']['dataSet']

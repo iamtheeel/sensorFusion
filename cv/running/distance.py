@@ -40,7 +40,7 @@ class distanceCalculator:
         self.handObject = None
 
         self.bestCenter = (0,0)
-        self.handCenter = (self.modelImgSize[0], self.modelImgSize[1])            # Init to LR
+        self.handCenter = (self.modelImgSize[1], self.modelImgSize[0])            # Init to LR
         self.handConf = 0.0
 
         self.bestDist = self.calcDist(self.grabObject)
