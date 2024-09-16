@@ -64,10 +64,13 @@ class camera:
 
     def getImage(self):
         if self.camStat and self.camType == 'rtsp':
+            # Camera is set to WVGA(480x848): labeled as WVGA, but it is FWVGA
             #Crop the image to what we are expecting
             imgH, imgW, _ = self.image.shape
-            cropW = int((imgW - self.imgW)/2)
-            self.image = self.image[0:self.imgH, cropW:cropW+self.imgW]
+            #self.logger.info(f"Image size (h, w, ch): {self.image.shape}")
+            if imgW > self.imgW:
+                cropW = int((imgW - self.imgW)/2)
+                self.image = self.image[0:self.imgH, cropW:cropW+self.imgW]
 
             #self.logger.info(f"Image new size (h, w, ch): {self.image.shape}")
             # Resize changes the aspect ratio

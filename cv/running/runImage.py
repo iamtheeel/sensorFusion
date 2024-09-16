@@ -92,7 +92,7 @@ if __name__ == "__main__":
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
 
-                #logger.info(f"Image size: {image.shape}")
+                logger.info(f"Image size: {image.shape}")
 
                 results = infer.runInference(image)
                 validRes = distCalc.loadData(results, device)
