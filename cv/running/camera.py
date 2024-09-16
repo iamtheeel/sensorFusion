@@ -86,7 +86,10 @@ class camera:
           camReadTime_ms = (time.time_ns()-tStart)/(1e6)
           self.logger.info(f"grab status: {self.camStat}, {camReadTime_ms:.3f}ms")
 
+          if self.camStat == False:
+              self.logger.error(f"Camera Seems Borked, restart stream")
+              self.startStream
+
           #else:
           #  # We seem to have lost our camera, try restarting
-          #  self.logger.error(f"Camera Seems Borked, restart stream")
           #  self.startStream()
