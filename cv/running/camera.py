@@ -22,6 +22,8 @@ class camera:
         self.camStat = None
         self.image = None
         self.thisCam = None
+        self.imgH = config['training']['imageSize'][0]
+        self.imgW = config['training']['imageSize'][1]
 
         ## Logging
         debug = config['debugs']['debug']
@@ -45,12 +47,15 @@ class camera:
         else:
             # the rtsp can not change settings
             camera.set(cv2.CAP_PROP_FPS, config['runTime']['camRateHz'])
-            camera.set(cv2.CAP_PROP_FRAME_WIDTH,  config['training']['imageSize'][0])
-            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, config['training']['imageSize'][1])
+            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
+            camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
 
         self.startStream()
         self.logger.info(f"Camera Stream Started")
         self.camTimeout_ns = 50*1000*1000 # 30 ms
+
+    def destroy(self):
+        self.thisCam.release()
 
     def startStream(self):
         # TODO: check to see if camera is there
@@ -58,7 +63,14 @@ class camera:
 
     def getImage(self):
         if self.camStat and self.camType == 'rtsp':
-            self.image = cv2.resize(self.image, self.config['training']['imageSize'])
+            #Crop the image to what we are expecting
+            imgH, imgW, _ = self.image.shape
+            cropW = int((imgW - self.imgW)/2)
+            self.image = self.image[0:self.imgH, cropW:cropW+self.imgW]
+            #self.logger.info(f"Image new size (h, w, ch): {self.image.shape}")
+            # Resize changes the aspect ratio
+            #self.image = cv2.resize(self.image, (self.imgW, self.imgH))
+
         return self.camStat, self.image
 
     def capImage (self):

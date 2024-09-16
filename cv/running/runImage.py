@@ -86,7 +86,7 @@ if __name__ == "__main__":
         # Get the image
         runCam = True
         while runCam:
-            #logger.info("---------------------------------------------")
+            logger.info("---------------------------------------------")
             camStat, image = inputCam.getImage()
 
             if camStat:
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         # Destructor
         runThread = False
         camThread.join() # join the thread back to main
-        camera.thisCam.release() 
+        camera.destroy() 
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch
@@ -139,17 +139,3 @@ if __name__ == "__main__":
         if configs['debugs']['dispResults']:
             handObjDisp.draw(image, distCalc, validRes)
     
-
-    
-
-'''
-# Run the model
-
-            exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
-            logger.info(f"exitSatus: {exitStatus}: ")
-
-            if exitStatus == ord('q'):  # q = 113
-                logger.info(f"********   quit now ***********")
-                exit()
-
-'''

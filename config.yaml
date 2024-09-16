@@ -20,8 +20,7 @@ training:
     scratchTrain: False #Train from scratch
     # img size should be multiple of 16,
     # Export requires it to be square
-    imageSize: [640, 480] #w, h
-    #imageSize: [480, 640] #h, w
+    imageSize: [480, 640] #h, w
 
     #HyperPerams
     epochs: 1
