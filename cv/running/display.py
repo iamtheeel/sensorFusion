@@ -43,6 +43,7 @@ class displayHandObject:
         if isinstance(imgFile, str):
             thisImg =  cv2.imread(imgFile)
             #logger.info(f"Image File: {imgFile}")
+
             self.waitKeyTime = 0 #ms, will wait untill the key is pressed
         else:
             thisImg =  imgFile

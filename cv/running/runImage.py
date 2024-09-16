@@ -92,11 +92,15 @@ if __name__ == "__main__":
             if camStat:
                 if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
 
+                #logger.info(f"Image size: {image.shape}")
+
                 results = infer.runInference(image)
                 validRes = distCalc.loadData(results, device)
 
                 if configs['debugs']['dispResults']:
+                    # Show the image
                     exitStatus = handObjDisp.draw(image, distCalc, validRes)
+
                     if exitStatus == ord('q'):  # q = 113
                         runCam = False
                         logger.info(f"********   quit now ***********")
@@ -108,7 +112,7 @@ if __name__ == "__main__":
         # Destructor
         runThread = False
         camThread.join() # join the thread back to main
-        camera.destroy() 
+        del camera 
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch

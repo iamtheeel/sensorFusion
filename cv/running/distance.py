@@ -78,7 +78,7 @@ class distanceCalculator:
                 self.handCenter = self.findCenter(object)
                 self.handObject = object
             elif object[confField] >= self.oThresh: 
-                logger.info(f"loadData, object: {object}")
+                #logger.info(f"loadData, object: {object}")
                 self.nNonHand += 1
                 ## we still want to be able to display if we don't have a hand
                 # use the best confidence untill we can be bothered to show multiple objectes

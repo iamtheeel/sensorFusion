@@ -16,7 +16,7 @@ from pathlib import Path
 
 import logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("runModel")
+logger = logging.getLogger("modelRunTime")
 
 class modelRunTime:
     def __init__(self, configs, device) -> None:
@@ -65,7 +65,7 @@ class modelRunTime:
 
             #inference time, nms time
             logger.info(f"TPU Inference, nms time: {self.model.get_last_inference_time()}") 
-            logger.info(f"TPU Results: {type(yoloResults)}, {yoloResults}")
+            #logger.info(f"TPU Results: {type(yoloResults)}, {yoloResults}")
             return yoloResults
 
         else:

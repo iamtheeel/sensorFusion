@@ -54,7 +54,8 @@ class camera:
         self.logger.info(f"Camera Stream Started")
         self.camTimeout_ns = 50*1000*1000 # 30 ms
 
-    def destroy(self):
+    def __del__(self):
+        self.logger.info(f"Closing Camera Stream")
         self.thisCam.release()
 
     def startStream(self):
@@ -67,6 +68,7 @@ class camera:
             imgH, imgW, _ = self.image.shape
             cropW = int((imgW - self.imgW)/2)
             self.image = self.image[0:self.imgH, cropW:cropW+self.imgW]
+
             #self.logger.info(f"Image new size (h, w, ch): {self.image.shape}")
             # Resize changes the aspect ratio
             #self.image = cv2.resize(self.image, (self.imgW, self.imgH))
@@ -79,10 +81,10 @@ class camera:
         while(camReadTime_ms < 10): #if our grab time is < 30 milisec we are behind
           # VideoCapture::waitAny() is supported by V4L backend only
           #if self.thisCam.waitAny([self.thisCam],  self.camTimeout_ns): # wait for produce a frame
-          self.logger.info(f"Get the next frame")
+          #self.logger.info(f"Get the next frame")
           tStart = time.time_ns()
           self.camStat, self.image = self.thisCam.read()
-          #self.thisCam.grab()
+
           camReadTime_ms = (time.time_ns()-tStart)/(1e6)
           self.logger.info(f"grab status: {self.camStat}, {camReadTime_ms:.3f}ms")
 
