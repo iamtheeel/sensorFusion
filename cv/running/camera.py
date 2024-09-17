@@ -93,6 +93,7 @@ class camera:
 
           if self.camStat == False:
               self.logger.error(f"Camera Seems Borked, restart stream")
+              del self.thisCam
               self.startStream
 
           #else:
