@@ -10,93 +10,132 @@
 # Using a PCA9685 16CH 12Bit PWM Led Driver
 # 
 ###
+#
+# Notes:
+#
+#
+###
 
-## Configuration
-import sys, os
-sys.path.insert(0, '..')  # ConfigParser is in the project root
-from ConfigParser import ConfigParser
-config = ConfigParser(os.path.join(os.getcwd(), '../config.yaml'))
-configs = config.get_config()
+from periphery import I2C
+from math import floor
 
 ## Logging
 import logging
-debug = configs['debugs']['debug']
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-if debug == False:
-    logging.disable(level=logging.CRITICAL)
-    logger.disabled = True
 
 from time import sleep
 
 ## Configure I2C
-from periphery import I2C
-# Connected to I2C2 which is /dev/i2c-1
-# There is sombody at 1, nobody at 0 or 2
-i2c = I2C("/dev/i2c-1")
-device = 0x40
 
 ## Configure Timing
 center_us = 1500
 full_CW_us = 2000
 full_CCW_us = 1000
 
-#Register List
-MODE1 = [0x00] 
-MODE2 = [0x01]
-PRESC = [0xFE] # Timer prescailer
+
+class servo:
+    #Register List
+    MODE1 = [0x00] 
+    MODE2 = [0x01]
+    PRESC = [0xFE] # Timer prescailer
+
+    def __init__(self, configs):
+        self.i2c_device = configs['i2c']['device']
+        self.servoRate = configs['servos']['pwm_Hz']
+
+        # Init the I2C device
+        self.i2c_port = I2C(configs['i2c']['port'])
+
+        self.config = configs #Stash the rest of the configs for later use
+
+        #restert, extclk, Auto Increemnt, SLEEP, res, res, res, ALLCALL
+        # Note you can not turn off extclock by setting value = 0, must reset board
+        self.readReg(self.MODE1, printResp=True)
+        self.readReg(self.MODE2, printResp=True)
+
+        self.setPSC(self.servoRate, displayVal=True)
+
+        #logger.info(f"Done with configs, setting sleep off")
+        #self.setSleep(False)
+
+    def __del__(self):
+        # Set Sleep
+        self.i2c_port.close()
+
+    def readReg(self, regToRead, printResp=False):
+        msgs = [I2C.Message(regToRead), I2C.Message([0x00], read = True)]
+        self.i2c_port.transfer(self.i2c_device, msgs)
+
+        if printResp:
+            logger.info(f"readRge 0x{regToRead[0]:02x}: 0b{msgs[1].data[0]:08b}, 0x{msgs[1].data[0]:02x}")
+        else:
+            sleep(0.1)
+
+        return msgs[1].data[0]
+
+    def writeReg(self, regToWrite, newVal, returnState=False, printResp=False):
+        msgs = [I2C.Message(regToWrite + [newVal], read = False)]
+        self.i2c_port.transfer(self.i2c_device, msgs)
+        sleep(0.1)
+
+        if returnState or printResp:
+            readVal = self.readReg(regToWrite)
+
+        if printResp:
+            logger.info(f"after write: 0x{regToWrite[0]:02x}: 0b{readVal:08b}, 0x{readVal:02x}")
+
+        if returnState:
+            return readVal
+            
+    def setSleep(self, sleepState):
+        mode1_state = self.readReg(self.MODE1)
+        if sleepState == False:
+            mode1_state &= ~(1<<4) # Turn off SLEEP
+        else:
+            mode1_state |=  (1<<4) # Turn on SLEEP
+
+        logger.debug(f"val to write: 0b{mode1_state:08b}, 0x{mode1_state:02x}")
+        self.writeReg(self.MODE1, mode1_state, printResp=False)
+
+    # To restart, clear sleep bit, then set restart bit
+    #def restart:
+        #newVal = read_1 &  ~(1<<4) # Turn off SLEEP
+        #newVal = msgs[1].data[0] |  (1<<7) # Reset
+
+    def setPSC(self, update_rate, displayVal=False):
+        #prescale value PSC =  round(osc_clock/(4096*update_rate)) - 1
+        # 4095 = 2^12 for 12 bit clock
+        PSC = round(self.config['i2c']['clock_MHz'] * 1e6 /(pow(2,12) * update_rate) -1)
+        #logger.info(f"Setting new PSC: 0x{PSC:02x}")
+
+        self.setSleep(True) # sleep has to be on to program the prescailer
+        ## Set the PSC
+        self.writeReg(self.PRESC, PSC, printResp=displayVal)
+        self.setSleep(False)
 
 
-def readReg(regToRead):
-    msgs = [I2C.Message(regToRead), I2C.Message([0x00], read = True)]
-    i2c.transfer(device, msgs)
-    #print(f"Read Reg: 0x{msgs[0].data[0]:02x}, 0b{msgs[1].data[0]:08b}, 0x{msgs[1].data[0]:02x}")
-    sleep(0.1)
-    return msgs[1].data[0]
+    def servo_uSec2HB_LB(self, uSec):
+        timeStep_us = (1/self.servoRate)/pow(2,12)*1e6
+        #logger.info(f"timeStep: {timeStep_us}us")
+        counts = int(round(uSec/timeStep_us, 0))
+        over8bit = counts/pow(2,8)
+        #logger.info(f"uSec: {uSec}, counts: {counts}, over8bit: {over8bit}")
 
-def writeReg(regToWrite, newVal, readAfter=False):
-    msgs = [I2C.Message(regToWrite + [newVal], read = False)]
-    i2c.transfer(device, msgs)
-    sleep(0.1)
+        highBit = floor(over8bit)
+        lowBit = counts - highBit*pow(2,8)
 
-    #This does not work
-    if readAfter:
-        newVal = readReg(regToRead)
-        return newVal
+        return highBit, lowBit
 
-def servo_uSec2HB_LB(uSec):
-    highBit = 0
-    lowBit = 33
-    return highBit, lowBit
+    def setPulseW_us(self, servo_num, uSec):
+        hb, lb = self.servo_uSec2HB_LB(uSec)
 
-# Read
-read_1 = readReg(MODE1)
-print(f"Initial read: 0x{MODE1[0]:02x}, 0b{read_1:08b}, 0x{read_1:02x}")
+        logger.info(f"For servo: {servo_num} uS, HB: 0x{hb:02x}, LB:  0x{lb:02x}")
 
+    def setPulseW_HB_LB(self, servo_num, HB, LB):
+        logger.info(f"setPulseW_HB_LB: {servo_num}")
 
-# Write
-#msgs = [I2C.Message(PRESC + [0x1E])] # Array of elements --> [Register, Message]
-
-#newVal = msgs[1].data[0] |  (1<<7) # Reset
-#newVal = msgs[1].data[0] & ~(1<<0) # Turn off all call
-#newVal = read_1 |  (1<<0) # Turn on ALLCALL
-
-#newVal = read_1 &  ~(1<<4) # Turn off SLEEP
-#writeReg(MODE1, newVal )
-
-#Set clock
-read_1 = readReg(MODE1)
-newVal = read_1 |  (1<<4) # Turn on SLEEP
-writeReg(MODE1, newVal )
-read_2 = readReg(MODE1)
-print(f"after write : 0x{MODE1[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
-
-writeReg(PRESC, 0x79) # Calculated to 50Hz
-writeReg(PRESC, 0x80) # From Measured
-read_psc = readReg(PRESC)
-print(f"PreScailer : 0x{PRESC[0]:02x}, 0b{read_psc:08b}, 0x{read_psc:02x}")
-
-
+"""
 
 '''
 #newVal = msgs[1].data[0] | (1<<4) # Turn off sleep mode
@@ -212,3 +251,4 @@ print(f"LED0_OFF_H New : 0x{LED0_OFF_H[0]:02x}, 0b{LED0_OFF_H_State:08b}, 0x{LED
 
 
 i2c.close()
+"""
