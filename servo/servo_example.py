@@ -44,22 +44,20 @@ if __name__ == "__main__":
     register = sCont.MODE1
     print(f"Set Auto increment off, bit: {bit}")
 
-    mode1_state = sCont.readReg(register)
-    mode1_state &= ~(1<<bit) # Clear 
+    mode1_state = sCont.readReg(register) #Read the current state
+    mode1_state &= ~(1<<bit) # Clear the offending bit
+    #mode1_state |= (1<<bit) # Set the offending bit
     sCont.writeReg(register, mode1_state, printResp=True)
     
-    servoNum = 0
+    servoNum = 15
     sCont.readServoState(servoNum)
-    waitTime = 1 #s
-    numIters = 10
+    waitTime = 0.5 #s
+    numIters = 2
 
     # Set the pwm perioud
     pulseWidths = [650, 1500, 2500]
-    for counts in list(range(1, numIters)):
+    for counts in list(range(0, numIters)):
       for pw in pulseWidths:
-        #highBit, lowBit = sCont.servo_uSec2HB_LB(pw)
-        #logger.info(f"For pulse width: {pw} uS, HB: 0x{highBit:02x}, LB:  0x{lowBit:02x}")
-        #sCont.setPulseW_us(servoNum, pw)
         sCont.setPulseW_us(servoNum, pw)
 
         logger.info(f"wait: {waitTime}s")

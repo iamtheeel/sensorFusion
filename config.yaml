@@ -85,3 +85,4 @@ servos:
 
     servos: 
         pwm_Hz: 50
+        leavRunning: False

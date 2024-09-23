@@ -56,8 +56,12 @@ class servo:
 
     def __del__(self):
         # Set Sleep
-        #self.setSleep(True)
-        sleep(0.01)
+        logger.info(f"Shutting down")
+
+        if self.config['servos']['leavRunning']:
+            logger.info(f"Leaving the servos running")
+        else:
+            self.setSleep(True)
         self.i2c_port.close()
 
     def readReg(self, regToRead, printResp=False):
