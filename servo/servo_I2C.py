@@ -64,13 +64,14 @@ def writeReg(regToWrite, newVal, readAfter=False):
         newVal = readReg(regToRead)
         return newVal
 
-    
-#register = [0x00]
-register = MODE1
+def servo_uSec2HB_LB(uSec):
+    highBit = 0
+    lowBit = 33
+    return highBit, lowBit
 
 # Read
-read_1 = readReg(register)
-print(f"Initial read: 0x{register[0]:02x}, 0b{read_1:08b}, 0x{read_1:02x}")
+read_1 = readReg(MODE1)
+print(f"Initial read: 0x{MODE1[0]:02x}, 0b{read_1:08b}, 0x{read_1:02x}")
 
 
 # Write
@@ -80,10 +81,22 @@ print(f"Initial read: 0x{register[0]:02x}, 0b{read_1:08b}, 0x{read_1:02x}")
 #newVal = msgs[1].data[0] & ~(1<<0) # Turn off all call
 #newVal = read_1 |  (1<<0) # Turn on ALLCALL
 
+#newVal = read_1 &  ~(1<<4) # Turn off SLEEP
+#writeReg(MODE1, newVal )
+
+#Set clock
+read_1 = readReg(MODE1)
 newVal = read_1 |  (1<<4) # Turn on SLEEP
-writeReg(register, newVal )
-read_2 = readReg(register)
-print(f"after write : 0x{register[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
+writeReg(MODE1, newVal )
+read_2 = readReg(MODE1)
+print(f"after write : 0x{MODE1[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
+
+writeReg(PRESC, 0x79) # Calculated to 50Hz
+writeReg(PRESC, 0x80) # From Measured
+read_psc = readReg(PRESC)
+print(f"PreScailer : 0x{PRESC[0]:02x}, 0b{read_psc:08b}, 0x{read_psc:02x}")
+
+
 
 '''
 #newVal = msgs[1].data[0] | (1<<4) # Turn off sleep mode
@@ -135,26 +148,58 @@ print(f"LED0_OFF_H Initial : 0x{LED0_OFF_H[0]:02x}, 0b{LED0_OFF_H_State:08b}, 0x
 read_1 = readReg(MODE1)
 newVal = read_1 |  (1<<4) # Turn on SLEEP
 writeReg(MODE1, newVal )
-read_2 = readReg(MODE1)
-print(f"Sleep ON : 0x{register[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
+#read_2 = readReg(MODE1)
+#print(f"Sleep ON : 0x{register[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
 
 ### Make the changes
 # Note: all registers need to be written
+# Example 1 (20% with 10% delay
+'''
 writeReg(LED0_ON_L, 0x99)
 writeReg(LED0_ON_H, 0x1)
 writeReg(LED0_OFF_L, 0xCC)
 writeReg(LED0_OFF_H, 0x4)
+'''
 
+#if pwmSet = 1000:
+#90 CCW, 1000uS
+logger.info(f"Set to CCW")
+# 90Deg CW on std servo = 2500uS
+writeReg(LED0_ON_L, 0x00)
+writeReg(LED0_ON_H, 0x00)
+#writeReg(LED0_OFF_L, 0xCD)
+#writeReg(LED0_OFF_H, 0x00)
+# 90Deg CW on our servo = 2450 uS
+writeReg(LED0_OFF_L, 0xF6)
+writeReg(LED0_OFF_H, 0x01)
 
 ### Turn sleep back off
-read_1 = readReg(MODE1)
-newVal = read_1 & ~(1<<4) # Turn off SLEEP
+mode_1_val = readReg(MODE1)
+newVal = mode_1_val & ~(1<<4) # Turn off SLEEP
 writeReg(MODE1, newVal )
-read_2 = readReg(MODE1)
-print(f"Sleep OFF : 0x{register[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
+waitTime = 2 #s
+logger.info(f"CCW set wait: {waitTime}s")
+sleep(waitTime)
 
-# Set new values
-#Recheck
+read_1 = readReg(MODE1)
+newVal = read_1 |  (1<<4) # Turn on SLEEP
+writeReg(MODE1, newVal )
+
+logger.info(f"Set to CW")
+# 90Deg CW on std servo = 2000uS
+writeReg(LED0_ON_L, 0x00)
+writeReg(LED0_ON_H, 0x00)
+#writeReg(LED0_OFF_L, 0x9A)
+#writeReg(LED0_OFF_H, 0x01)
+# 90Deg CW on our servo = 650 uS
+writeReg(LED0_OFF_L, 0x85)
+writeReg(LED0_OFF_H, 0x00)
+
+mode_1_val = readReg(MODE1)
+newVal = mode_1_val & ~(1<<4) # Turn off SLEEP
+writeReg(MODE1, newVal )
+
+####Recheck
 LED0_ON_L_State = readReg(LED0_ON_L)
 LED0_ON_H_State = readReg(LED0_ON_H)
 LED0_OFF_L_State = readReg(LED0_OFF_L)
