@@ -15,6 +15,7 @@ import servo_I2C
 
 import sys
 import os
+from time import sleep
 
 # From MICLab
 sys.path.insert(0, '..')
@@ -38,21 +39,30 @@ if __name__ == "__main__":
 
     sCont = servo_I2C.servo(configs['servos'])
 
-    ''' Example of modding single bit
+    # Example of modding single bit
     bit = 5 #AI bit (5)
-    register = servoControler.MODE1
+    register = sCont.MODE1
     print(f"Set Auto increment off, bit: {bit}")
 
-    mode1_state = servoControler.readReg(register)
+    mode1_state = sCont.readReg(register)
     mode1_state &= ~(1<<bit) # Clear 
     sCont.writeReg(register, mode1_state, printResp=True)
-    '''
     
+    servoNum = 0
+    sCont.readServoState(servoNum)
+    waitTime = 2 #s
+
     # Set the pwm perioud
-    pulseWidths = [1000, 1500, 2000, 2579]
+    pulseWidths = [650, 1500, 2500]
     for pw in pulseWidths:
         #highBit, lowBit = sCont.servo_uSec2HB_LB(pw)
         #logger.info(f"For pulse width: {pw} uS, HB: 0x{highBit:02x}, LB:  0x{lowBit:02x}")
-        servoNum = 0
+        #sCont.setPulseW_us(servoNum, pw)
         sCont.setPulseW_us(servoNum, pw)
 
+        logger.info(f"wait: {waitTime}s")
+        sCont.readServoState(servoNum, printVal = True)
+        sleep(waitTime)
+
+
+    del sCont #deconstruct

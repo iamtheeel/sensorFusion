@@ -36,9 +36,12 @@ full_CCW_us = 1000
 
 class servo:
     #Register List
-    MODE1 = [0x00] 
-    MODE2 = [0x01]
-    PRESC = [0xFE] # Timer prescailer
+    MODE1 = 0x00 
+    MODE2 = 0x01
+    PRESC = 0xFE # Timer prescailer
+
+    # Servo Registers (LED in doc)
+    SERVO_BASE = {"ON_L": 0x06, "ON_H": 0x07, "OFF_L": 0x08, "OFF_H": 0x09} # we expect a list hence the [0xYY]
 
     def __init__(self, configs):
         self.i2c_device = configs['i2c']['device']
@@ -57,25 +60,27 @@ class servo:
         self.setPSC(self.servoRate, displayVal=True)
 
         #logger.info(f"Done with configs, setting sleep off")
-        #self.setSleep(False)
+        self.setSleep(False)
 
     def __del__(self):
         # Set Sleep
+        #self.setSleep(True)
+        sleep(0.01)
         self.i2c_port.close()
 
     def readReg(self, regToRead, printResp=False):
-        msgs = [I2C.Message(regToRead), I2C.Message([0x00], read = True)]
+        msgs = [I2C.Message([regToRead]), I2C.Message([0x00], read = True)]
         self.i2c_port.transfer(self.i2c_device, msgs)
 
         if printResp:
-            logger.info(f"readRge 0x{regToRead[0]:02x}: 0b{msgs[1].data[0]:08b}, 0x{msgs[1].data[0]:02x}")
+            logger.info(f"readRge 0x{regToRead:02x}: 0b{msgs[1].data[0]:08b}, 0x{msgs[1].data[0]:02x}")
         else:
             sleep(0.1)
 
         return msgs[1].data[0]
 
     def writeReg(self, regToWrite, newVal, returnState=False, printResp=False):
-        msgs = [I2C.Message(regToWrite + [newVal], read = False)]
+        msgs = [I2C.Message([regToWrite] + [newVal], read = False)]
         self.i2c_port.transfer(self.i2c_device, msgs)
         sleep(0.1)
 
@@ -83,11 +88,36 @@ class servo:
             readVal = self.readReg(regToWrite)
 
         if printResp:
-            logger.info(f"after write: 0x{regToWrite[0]:02x}: 0b{readVal:08b}, 0x{readVal:02x}")
+            logger.info(f"after write: 0x{regToWrite:02x}: 0b{readVal:08b}, 0x{readVal:02x}")
 
         if returnState:
             return readVal
-            
+
+    def getServoAddresses(self, servo_num):
+        ON_L_ADDR = self.SERVO_BASE['ON_L']+4*servo_num
+        ON_H_ADDR = self.SERVO_BASE['ON_H']+4*servo_num
+        OFF_L_ADDR = self.SERVO_BASE['OFF_L']+4*servo_num
+        OFF_H_ADDR = self.SERVO_BASE['OFF_H']+4*servo_num
+
+        return ON_L_ADDR, ON_H_ADDR, OFF_L_ADDR, OFF_H_ADDR
+
+    def readServoState(self, servo_num, printVal = False):
+        # Get the addresses
+        ON_L_ADDR, ON_H_ADDR, OFF_L_ADDR, OFF_H_ADDR = self.getServoAddresses(servo_num)
+
+        ON_L_State = self.readReg(ON_L_ADDR)
+        ON_H_State = self.readReg(ON_H_ADDR)
+        OFF_L_State = self.readReg(OFF_L_ADDR)
+        OFF_H_State = self.readReg(OFF_H_ADDR)
+
+        if printVal:
+            print(f"Servo{servo_num}_ON_L : 0x{ON_L_ADDR:02x}, 0b{ON_L_State:08b}, 0x{ON_L_State:02x}")
+            print(f"Servo{servo_num}_ON_H : 0x{ON_H_ADDR:02x}, 0b{ON_H_State:08b}, 0x{ON_H_State:02x}")
+            print(f"Servo{servo_num}_OFF_L: 0x{OFF_L_ADDR:02x}, 0b{OFF_L_State:08b}, 0x{OFF_L_State:02x}")
+            print(f"Servo{servo_num}_OFF_H: 0x{OFF_H_ADDR:02x}, 0b{OFF_H_State:08b}, 0x{OFF_H_State:02x}")
+
+        return ON_L_State, ON_H_State, OFF_L_State, OFF_H_State
+
     def setSleep(self, sleepState):
         mode1_state = self.readReg(self.MODE1)
         if sleepState == False:
@@ -130,21 +160,21 @@ class servo:
     def setPulseW_us(self, servo_num, uSec):
         hb, lb = self.servo_uSec2HB_LB(uSec)
 
-        logger.info(f"For servo: {servo_num} uS, HB: 0x{hb:02x}, LB:  0x{lb:02x}")
+        logger.info(f"For servo: {servo_num}, Time: {uSec}uS, HB: 0x{hb:02x}, LB:  0x{lb:02x}")
+        self.setPulseW_HB_LB(servo_num, hb, lb)
 
     def setPulseW_HB_LB(self, servo_num, HB, LB):
         logger.info(f"setPulseW_HB_LB: {servo_num}")
+        ON_L_ADDR, ON_H_ADDR, OFF_L_ADDR, OFF_H_ADDR = self.getServoAddresses(servo_num)\
 
+        self.setSleep(True)
+        #We must write all 4 registers for each servo every time
+        self.writeReg(ON_L_ADDR, 0x00) # We want 0 delay
+        self.writeReg(ON_H_ADDR, 0x00)
+        self.writeReg(OFF_L_ADDR, LB)
+        self.writeReg(OFF_H_ADDR, HB)
+        self.setSleep(False)
 """
-
-'''
-#newVal = msgs[1].data[0] | (1<<4) # Turn off sleep mode
-print(f"TrnOn Sleep :       0b{newVal:08b}")
-msgs = [I2C.Message(register + [newVal], read = False)]
-i2c.transfer(device, msgs)
-sleep(0.1)
-'''
-
 
 
 '''
@@ -167,21 +197,7 @@ print(f" check value: 0x{msgs[0].data[0]:02x}, 0b{msgs[1].data[0]:08b}, 0x{msgs[
 '''
 
 
-# LED Registers
-LED0_ON_L  = [0x06] 
-LED0_ON_H  = [0x07] 
-LED0_OFF_L = [0x08] 
-LED0_OFF_H = [0x09] 
 
-# Read the LED
-LED0_ON_L_State = readReg(LED0_ON_L)
-LED0_ON_H_State = readReg(LED0_ON_H)
-LED0_OFF_L_State = readReg(LED0_OFF_L)
-LED0_OFF_H_State = readReg(LED0_OFF_H)
-print(f"LED0_ON_L Initial : 0x{LED0_ON_L[0]:02x}, 0b{LED0_ON_L_State:08b}, 0x{LED0_ON_L_State:02x}")
-print(f"LED0_ON_H Initial : 0x{LED0_ON_H[0]:02x}, 0b{LED0_ON_H_State:08b}, 0x{LED0_ON_H_State:02x}")
-print(f"LED0_OFF_L Initial : 0x{LED0_OFF_L[0]:02x}, 0b{LED0_OFF_L_State:08b}, 0x{LED0_OFF_L_State:02x}")
-print(f"LED0_OFF_H Initial : 0x{LED0_OFF_H[0]:02x}, 0b{LED0_OFF_H_State:08b}, 0x{LED0_OFF_H_State:02x}")
 
 
 read_1 = readReg(MODE1)
