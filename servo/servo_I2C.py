@@ -26,14 +26,6 @@ logger = logging.getLogger(__name__)
 
 from time import sleep
 
-## Configure I2C
-
-## Configure Timing
-center_us = 1500
-full_CW_us = 2000
-full_CCW_us = 1000
-
-
 class servo:
     #Register List
     MODE1 = 0x00 
@@ -174,7 +166,6 @@ class servo:
         self.writeReg(OFF_L_ADDR, LB)
         self.writeReg(OFF_H_ADDR, HB)
         self.setSleep(False)
-"""
 
 
 '''
@@ -196,75 +187,3 @@ i2c.transfer(device, msgs)
 print(f" check value: 0x{msgs[0].data[0]:02x}, 0b{msgs[1].data[0]:08b}, 0x{msgs[1].data[0]:02x}")
 '''
 
-
-
-
-
-read_1 = readReg(MODE1)
-newVal = read_1 |  (1<<4) # Turn on SLEEP
-writeReg(MODE1, newVal )
-#read_2 = readReg(MODE1)
-#print(f"Sleep ON : 0x{register[0]:02x}, 0b{read_2:08b}, 0x{read_2:02x}")
-
-### Make the changes
-# Note: all registers need to be written
-# Example 1 (20% with 10% delay
-'''
-writeReg(LED0_ON_L, 0x99)
-writeReg(LED0_ON_H, 0x1)
-writeReg(LED0_OFF_L, 0xCC)
-writeReg(LED0_OFF_H, 0x4)
-'''
-
-#if pwmSet = 1000:
-#90 CCW, 1000uS
-logger.info(f"Set to CCW")
-# 90Deg CW on std servo = 2500uS
-writeReg(LED0_ON_L, 0x00)
-writeReg(LED0_ON_H, 0x00)
-#writeReg(LED0_OFF_L, 0xCD)
-#writeReg(LED0_OFF_H, 0x00)
-# 90Deg CW on our servo = 2450 uS
-writeReg(LED0_OFF_L, 0xF6)
-writeReg(LED0_OFF_H, 0x01)
-
-### Turn sleep back off
-mode_1_val = readReg(MODE1)
-newVal = mode_1_val & ~(1<<4) # Turn off SLEEP
-writeReg(MODE1, newVal )
-waitTime = 2 #s
-logger.info(f"CCW set wait: {waitTime}s")
-sleep(waitTime)
-
-read_1 = readReg(MODE1)
-newVal = read_1 |  (1<<4) # Turn on SLEEP
-writeReg(MODE1, newVal )
-
-logger.info(f"Set to CW")
-# 90Deg CW on std servo = 2000uS
-writeReg(LED0_ON_L, 0x00)
-writeReg(LED0_ON_H, 0x00)
-#writeReg(LED0_OFF_L, 0x9A)
-#writeReg(LED0_OFF_H, 0x01)
-# 90Deg CW on our servo = 650 uS
-writeReg(LED0_OFF_L, 0x85)
-writeReg(LED0_OFF_H, 0x00)
-
-mode_1_val = readReg(MODE1)
-newVal = mode_1_val & ~(1<<4) # Turn off SLEEP
-writeReg(MODE1, newVal )
-
-####Recheck
-LED0_ON_L_State = readReg(LED0_ON_L)
-LED0_ON_H_State = readReg(LED0_ON_H)
-LED0_OFF_L_State = readReg(LED0_OFF_L)
-LED0_OFF_H_State = readReg(LED0_OFF_H)
-print(f"LED0_ON_L New : 0x{LED0_ON_L[0]:02x}, 0b{LED0_ON_L_State:08b}, 0x{LED0_ON_L_State:02x}")
-print(f"LED0_ON_H New : 0x{LED0_ON_H[0]:02x}, 0b{LED0_ON_H_State:08b}, 0x{LED0_ON_H_State:02x}")
-print(f"LED0_OFF_L New : 0x{LED0_OFF_L[0]:02x}, 0b{LED0_OFF_L_State:08b}, 0x{LED0_OFF_L_State:02x}")
-print(f"LED0_OFF_H New : 0x{LED0_OFF_H[0]:02x}, 0b{LED0_OFF_H_State:08b}, 0x{LED0_OFF_H_State:02x}")
-
-
-
-i2c.close()
-"""

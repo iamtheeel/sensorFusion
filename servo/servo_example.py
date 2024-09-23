@@ -50,11 +50,13 @@ if __name__ == "__main__":
     
     servoNum = 0
     sCont.readServoState(servoNum)
-    waitTime = 2 #s
+    waitTime = 1 #s
+    numIters = 10
 
     # Set the pwm perioud
     pulseWidths = [650, 1500, 2500]
-    for pw in pulseWidths:
+    for counts in list(range(1, numIters)):
+      for pw in pulseWidths:
         #highBit, lowBit = sCont.servo_uSec2HB_LB(pw)
         #logger.info(f"For pulse width: {pw} uS, HB: 0x{highBit:02x}, LB:  0x{lowBit:02x}")
         #sCont.setPulseW_us(servoNum, pw)
