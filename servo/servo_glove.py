@@ -49,22 +49,28 @@ if __name__ == "__main__":
     #mode1_state |= (1<<bit) # Set the offending bit
     sCont.writeReg(register, mode1_state, printResp=True)
     
-    #servoNum = 15
+    servoList = [0, 1, 2,3]
     #sCont.readServoState(servoNum)
-    numIters = 5
+
     
-    pw = 1000
-    pulseWidths = [1000, 2000 ]
+    servoMax = 2500
+    servoMin = 500
+    while(True):
+        keyInput = input("Enter Servo MicroSeconds (q to quit) <enter>:")
+        if keyInput == 'q':
+            logger.info("Quitting on user input")
+            exit()
+        pulseWidth = int(keyInput)
 
-    for counts in list(range(0, numIters)):
-        for pw in pulseWidths:
-
+        if pulseWidth <= servoMax and pulseWidth >= servoMin:
+            print(f"Setting servo(s) to: {pulseWidth}")
             sCont.setSleep(True)
-            sCont.setPulseW_us(0, pw)
-            sCont.setPulseW_us(1, pw)
-            sCont.setPulseW_us(2, pw)
-            sCont.setPulseW_us(3, pw)
+            sCont.setPulseW_us(servoList[0], pulseWidth)
+            sCont.setPulseW_us(servoList[1], pulseWidth)
+            sCont.setPulseW_us(servoList[2], pulseWidth)
+            sCont.setPulseW_us(servoList[3], pulseWidth)
             sCont.setSleep(False)
-            sleep(0.5)
+        else:
+            logger.error(f"Invalid Input. Must be < {servoMax} and > {servoMin}")
 
-    del sCont #deconstruct
+
