@@ -49,21 +49,22 @@ if __name__ == "__main__":
     #mode1_state |= (1<<bit) # Set the offending bit
     sCont.writeReg(register, mode1_state, printResp=True)
     
-    servoNum = 15
-    sCont.readServoState(servoNum)
-    waitTime = 0.5 #s
-    numIters = 2
+    #servoNum = 15
+    #sCont.readServoState(servoNum)
+    numIters = 5
     
+    pw = 1000
+    pulseWidths = [1000, 2000 ]
 
-    # Set the pwm perioud
-    pulseWidths = [650, 1500, 2500]
     for counts in list(range(0, numIters)):
-      for pw in pulseWidths:
-        sCont.setPulseW_us(servoNum, pw)
+        for pw in pulseWidths:
 
-        logger.info(f"wait: {waitTime}s")
-        sCont.readServoState(servoNum, printVal = True)
-        sleep(waitTime)
-
+            sCont.setSleep(True)
+            sCont.setPulseW_us(0, pw)
+            sCont.setPulseW_us(1, pw)
+            sCont.setPulseW_us(2, pw)
+            sCont.setPulseW_us(3, pw)
+            sCont.setSleep(False)
+            sleep(0.5)
 
     del sCont #deconstruct

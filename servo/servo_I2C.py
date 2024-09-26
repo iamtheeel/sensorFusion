@@ -156,20 +156,20 @@ class servo:
     def setPulseW_us(self, servo_num, uSec):
         hb, lb = self.servo_uSec2HB_LB(uSec)
 
-        logger.info(f"For servo: {servo_num}, Time: {uSec}uS, HB: 0x{hb:02x}, LB:  0x{lb:02x}")
+        #logger.info(f"For servo: {servo_num}, Time: {uSec}uS, HB: 0x{hb:02x}, LB:  0x{lb:02x}")
         self.setPulseW_HB_LB(servo_num, hb, lb)
 
     def setPulseW_HB_LB(self, servo_num, HB, LB):
-        logger.info(f"setPulseW_HB_LB: {servo_num}")
+        #logger.info(f"setPulseW_HB_LB: {servo_num}")
         ON_L_ADDR, ON_H_ADDR, OFF_L_ADDR, OFF_H_ADDR = self.getServoAddresses(servo_num)\
 
-        self.setSleep(True)
         #We must write all 4 registers for each servo every time
+        #self.setSleep(True)
         self.writeReg(ON_L_ADDR, 0x00) # We want 0 delay
         self.writeReg(ON_H_ADDR, 0x00)
         self.writeReg(OFF_L_ADDR, LB)
         self.writeReg(OFF_H_ADDR, HB)
-        self.setSleep(False)
+        #self.setSleep(False)
 
 
 '''
