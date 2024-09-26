@@ -78,7 +78,6 @@ class servo:
     def writeReg(self, regToWrite, newVal, returnState=False, printResp=False):
         msgs = [I2C.Message([regToWrite] + [newVal], read = False)]
         self.i2c_port.transfer(self.i2c_device, msgs)
-        sleep(0.1)
 
         if returnState or printResp:
             readVal = self.readReg(regToWrite)
