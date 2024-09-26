@@ -162,13 +162,15 @@ class servo:
         #logger.info(f"setPulseW_HB_LB: {servo_num}")
         ON_L_ADDR, ON_H_ADDR, OFF_L_ADDR, OFF_H_ADDR = self.getServoAddresses(servo_num)\
 
+        # This does not work
         #We must write all 4 registers for each servo every time
-        #self.setSleep(True)
+        #msgs = [I2C.Message([ON_L_ADDR, ON_H_ADDR, OFF_L_ADDR, OFF_H_ADDR] + [0x00, 0x00, LB, HB], read = False)]
+        #self.i2c_port.transfer(self.i2c_device, msgs)
+
         self.writeReg(ON_L_ADDR, 0x00) # We want 0 delay
         self.writeReg(ON_H_ADDR, 0x00)
         self.writeReg(OFF_L_ADDR, LB)
         self.writeReg(OFF_H_ADDR, HB)
-        #self.setSleep(False)
 
 
 '''
