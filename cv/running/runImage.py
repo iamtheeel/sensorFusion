@@ -12,24 +12,22 @@
 ###
 
 import platform
-import logging
 import cv2
 import sys
 import os
 import time
 
+
 # From MICLab
 sys.path.insert(0, '../..')
 from ConfigParser import ConfigParser
-
-# Internal
-from modelRunTime import modelRunTime
 
 ## Configuration
 config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
 configs = config.get_config()
 
 ## Logging
+import logging
 debug = configs['debugs']['debug']
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -51,6 +49,7 @@ else:
 
 
 ## Import our items after we set the log leve
+from modelRunTime import modelRunTime
 import distance
 import display
 
