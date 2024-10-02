@@ -4,7 +4,7 @@ debugs:
     dispResults: True
 
 training:
-    dataSet: "../datasets/coco_withHand.yaml"
+    dataSet: "../datasets/coco_8Class.yaml"
     modelsDir: "../models"
     modelFile: "yolov5nu.yaml"
     #modelFile: "yolov5.yaml"

@@ -34,7 +34,7 @@ dataSetList = ['Dataset', 'dataset_ver1', 'dataset_ver2', 'dataset_ver3_white_ba
 # Outputs
 #outName = 'foo' # small set for testing
 #outName = 'combinedData' # 2 class
-outName = 'coco_withHand' # coco pluss hand
+outName = 'coco_8Class' # coco pluss hand
 outBaseDir = "./datasets"
 
 
@@ -74,7 +74,8 @@ for dataSet in dataSetList:
     if dataSet == 'dataset_ver3_white_background' or dataSet == 'appleHand':
         subDirList = ['.'] # no sub dir
     elif dataSet == 'Dataset':
-        subDirList = ['apple', 'hand']
+        #subDirList = ['apple', 'hand']
+        subDirList = ['apple', 'hand', 'banana', 'can', 'marker', 'toothpaste']
     else: 
         subDirList = ['test', 'train']
 
