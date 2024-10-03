@@ -4,7 +4,7 @@ debugs:
     dispResults: True
 
 training:
-    dataSet: "../datasets/coco_withHand.yaml"
+    dataSet: "../datasets/coco_7Class.yaml"
     modelsDir: "../models"
     modelFile: "yolov5nu.yaml"
     #modelFile: "yolov5.yaml"
@@ -12,7 +12,9 @@ training:
     #weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
 
-    weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
+    weightsForTransfer: "yolov5nu.pt"
+    weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
+    #weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
 
     transLearn: True
@@ -23,7 +25,7 @@ training:
     imageSize: [480, 640] #h, w
 
     #HyperPerams
-    epochs: 1
+    epochs: 300
 
 runTime:
     ## Inference Source
