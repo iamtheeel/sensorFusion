@@ -4,21 +4,28 @@ debugs:
     dispResults: True
 
 training:
-    dataSet: "../datasets/coco_7Class.yaml"
+    dataSet: "../datasets/coco_withHand.yaml"
+    #dataSet: "../datasets/coco_7Class.yaml"
     modelsDir: "../models"
-    modelFile: "yolov5nu.yaml"
-    #modelFile: "yolov5.yaml"
     weightsDir: "../weights"
-    #weightsFile: "yolov5nu.pt" # Pre trained (640px), won't export at 608x608, won't export...
-    #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
 
-    weightsForTransfer: "yolov5nu.pt"
-    weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
-    #weightsFile: "yolov5nu_tran_hsv_h-1.0_81class.pt"
+    #modelFile: "yolov5nu.yaml"
+    #weightsForTransfer: "yolov5nu.pt"
+    #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
+    #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
 
+    #modelFile: "yolov8n.yaml"
+    #weightsForTransfer: "yolov8n.pt"
+    #weightsFile: "yolov8n_tran_2class.pt"
+
+    modelFile: "yolo11n.yaml"
+    weightsForTransfer: "yolo11n.pt"
+    weightsFile: "yolo11n_tran_2class.pt"
+
+
     transLearn: True
-    freezeLayer: 10 # First 10 layers are the backbone (10: freezes 0-9)
+    freezeLayer: 11 # First 10 layers are the backbone (10: freezes 0-9)
     scratchTrain: False #Train from scratch
     # img size should be multiple of 16,
     # Export requires it to be square
