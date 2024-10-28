@@ -44,15 +44,16 @@ class camera:
         if(self.camType == 'rtsp'):
             # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
             os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
-        else:
-            # the rtsp can not change settings
-            camera.set(cv2.CAP_PROP_FPS, config['runTime']['camRateHz'])
-            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
-            camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
+        #else:
+        #    # the rtsp can not change settings
+        #    camera.set(cv2.CAP_PROP_FPS, config['runTime']['camRateHz'])
+        #    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
+        #    camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
 
         self.startStream()
         self.logger.info(f"Camera Stream Started")
         self.camTimeout_ns = 50*1000*1000 # 30 ms
+
 
     def __del__(self):
         self.logger.info(f"Closing Camera Stream")
@@ -61,6 +62,12 @@ class camera:
     def startStream(self):
         # TODO: check to see if camera is there
         self.thisCam = cv2.VideoCapture(self.config['runTime']['camId'], cv2.CAP_ANY)
+        if(self.camType != 'rtsp'):
+            # the rtsp can not change settings
+            print(f"Cam settings")
+            self.thisCam.set(cv2.CAP_PROP_FPS, self.config['runTime']['camRateHz'])
+            self.thisCam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
+            self.thisCam.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
 
     def getImage(self):
         if self.camStat and self.camType == 'rtsp':
@@ -80,22 +87,18 @@ class camera:
 
     def capImage (self):
 
-        camReadTime_ms = 0
-        while(camReadTime_ms < 10): #if our grab time is < 30 milisec we are behind
-          # VideoCapture::waitAny() is supported by V4L backend only
-          #if self.thisCam.waitAny([self.thisCam],  self.camTimeout_ns): # wait for produce a frame
-          #self.logger.info(f"Get the next frame")
-          tStart = time.time_ns()
-          self.camStat, self.image = self.thisCam.read()
 
-          camReadTime_ms = (time.time_ns()-tStart)/(1e6)
-          self.logger.info(f"grab status: {self.camStat}, {camReadTime_ms:.3f}ms")
+        if self.camStat and self.camType == 'rtsp':
+            # VideoCapture::waitAny() is supported by V4L backend only
+            #if self.thisCam.waitAny([self.thisCam],  self.camTimeout_ns): # wait for produce a frame
+            #self.logger.info(f"Get the next frame")
+            tStart = time.time_ns()
+            self.camStat, self.image = self.thisCam.read()
+        
+            if self.camStat == False:
+                self.logger.error(f"Camera Seems Borked, restart stream")
+                del self.thisCam
+                self.startStream
 
-          if self.camStat == False:
-              self.logger.error(f"Camera Seems Borked, restart stream")
-              del self.thisCam
-              self.startStream
-
-          #else:
-          #  # We seem to have lost our camera, try restarting
-          #  self.startStream()
+        else:
+            self.camStat, self.image = self.thisCam.read()

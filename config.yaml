@@ -2,6 +2,8 @@ debugs:
     debug: True 
     showInfResults: False
     dispResults: True
+    runInfer: True
+    saveImages: True
 
 training:
     dataSet: "../datasets/coco_withHand.yaml"
@@ -9,19 +11,20 @@ training:
     modelsDir: "../models"
     weightsDir: "../weights"
 
-    #modelFile: "yolov5nu.yaml"
-    #weightsForTransfer: "yolov5nu.pt"
+    modelFile: "yolov5nu.yaml"
+    weightsForTransfer: "yolov5nu.pt"
+    weightsFile: "yolov5nu_tran_hsv_h-1.0_2class.pt"
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
-    #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
 
     #modelFile: "yolov8n.yaml"
     #weightsForTransfer: "yolov8n.pt"
     #weightsFile: "yolov8n_tran_2class.pt"
 
-    modelFile: "yolo11n.yaml"
-    weightsForTransfer: "yolo11n.pt"
-    weightsFile: "yolo11n_tran_2class.pt"
+    #modelFile: "yolo11n.yaml"
+    #weightsForTransfer: "yolo11n.pt"
+    #weightsFile: "yolo11n_tran_2class.pt"
 
 
     transLearn: True
@@ -41,9 +44,9 @@ runTime:
     #imgSrc: "dataset3_310.jpg"
     imgSrc: "camera"
     #imageDir: "../datasets/combinedData/images/val"
-    imageDir: "../datasets/testImages"
+    #imageDir: "../datasets/testImages"
+    imageDir: "../datasets/bar"
 
-    runInfer: False
 
     camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
