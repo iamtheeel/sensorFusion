@@ -12,17 +12,15 @@
 ###
 
 import platform
-import cv2
-import sys
-import os
-import time
+import os, sys
+#import cv2
+#import time
 
 
 # From MICLab
+## Configuration
 sys.path.insert(0, '../..')
 from ConfigParser import ConfigParser
-
-## Configuration
 config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
 configs = config.get_config()
 
@@ -93,8 +91,9 @@ if __name__ == "__main__":
 
                 logger.info(f"Image size: {image.shape}")
 
-                results = infer.runInference(image)
-                validRes = distCalc.loadData(results, device)
+                if(configs['runTime']['runInfer']):
+                    results = infer.runInference(image)
+                    validRes = distCalc.loadData(results, device)
 
                 if configs['debugs']['dispResults']:
                     # Show the image
