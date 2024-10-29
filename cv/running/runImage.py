@@ -12,17 +12,15 @@
 ###
 
 import platform
-import cv2
-import sys
-import os
+import os, sys
+#import cv2
 import time
 
 
 # From MICLab
+## Configuration
 sys.path.insert(0, '../..')
 from ConfigParser import ConfigParser
-
-## Configuration
 config = ConfigParser(os.path.join(os.getcwd(), '../../config.yaml'))
 configs = config.get_config()
 
@@ -63,50 +61,86 @@ def getImage(cam):
     while runThread:
         cam.capImage()
 
+def sanitizeStr(str):
+    import re
+    #str = str.replace(" ", "_")
+    str = re.sub(r"[^\w\s]", "-", str) # Remove special chars
+    str = re.sub(r"\s+", "-", str) #remove white space
+    return str
+
 
 if __name__ == "__main__":
-
     ## set the model information
-
-    infer = modelRunTime(configs, device)
+    if(configs['debugs']['runInfer']):
+        infer = modelRunTime(configs, device)
     
     distCalc = distance.distanceCalculator(configs['training']['imageSize'], 
                                            configs['runTime']['distSettings'])
-    handObjDisp = display.displayHandObject(configs['runTime']['displaySettings'])
+    handObjDisp = display.displayHandObject(configs)
     
     ## Get image
     if configs['runTime']['imgSrc'] == 'camera':
+
+        ## Set up the file saves
+        imageFile = ""
+        if(configs['debugs']['saveImages']):
+            subject = sanitizeStr(input("Enter the subject ID: \n> "))
+            object  = sanitizeStr(input("Enter the object: \n> "))
+            run     = sanitizeStr(input("Enter the run (The run will start on <enter>): \n> "))
+
+            logger.info(f"subject: {subject}")
+            logger.info(f"object: {object}")
+            logger.info(f"run: {run}")
+            imageFile = f"{subject}_{object}_{run}"
+
         ## Load the camera
         inputCam = camera(configs)
         runThread = True
         camThread = Thread(target=getImage, args=(inputCam, ))
         camThread.start()
 
+        startTime = time.time()
+        endTime = startTime
+        frameTime = 1/configs['runTime']['camRateHz']
+
         # Get the image
         runCam = True
         while runCam:
-            logger.info("---------------------------------------------")
-            camStat, image = inputCam.getImage()
+            endTime = time.time()
+            camStat = False
+            if(endTime - startTime) >= frameTime: 
+                #logger.info(f"Get next image")
+                camStat, image = inputCam.getImage()
 
             if camStat:
-                if configs['runTime']['displaySettings']['runCamOnce']: runCam = False
-
+                logger.info("---------------------------------------------")
                 logger.info(f"Image size: {image.shape}")
 
-                results = infer.runInference(image)
-                validRes = distCalc.loadData(results, device)
+                if(configs['debugs']['runInfer']):
+                    results = infer.runInference(image)
+                    validRes = distCalc.loadData(results, device)
+                else: 
+                    validRes = False
 
                 if configs['debugs']['dispResults']:
                     # Show the image
-                    exitStatus = handObjDisp.draw(image, distCalc, validRes)
+                    exitStatus = handObjDisp.draw(image, distCalc, validRes, imageFile)
 
                     if exitStatus == ord('q'):  # q = 113
                         runCam = False
                         logger.info(f"********   quit now ***********")
+
+                #endTime = time.time()
+                runTime = (endTime-startTime)
+                logger.info(f"Total Loop time: {runTime*1000:.2f}ms, {1/runTime:.1f}Hz")
+                startTime = endTime
             #else:
             #    logger.info(f"Image not ready: {configs['runTime']['camId']}")
-                #camera.release()
-                #camera = cv2.VideoCapture(configs['runTime']['camId'], cv2.CAP_ANY)
+
+            if(configs['runTime']['displaySettings']['runCamOnce']): 
+                logger.info(f"Exit after one shot")
+                runCam = False
+
             
         # Destructor
         runThread = False

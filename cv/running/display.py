@@ -11,6 +11,8 @@
 #
 ###
 import cv2
+import datetime
+import os
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -19,9 +21,9 @@ logger = logging.getLogger("display")
 #TODO: Change label position if the location obstructs it
 
 class displayHandObject:
-    def __init__(self,  conf ) -> None:
+    def __init__(self,  config) -> None:
         logger.info("Init: displayHandObject")
-
+        conf = config['runTime']['displaySettings']
         self.handColor = conf['handColor']
         self.objectColor = conf['objectColor']
         self.lineColor = conf['lineColor']
@@ -38,8 +40,17 @@ class displayHandObject:
         cv2.namedWindow("sensorFusion", cv2.WINDOW_AUTOSIZE )
         cv2.moveWindow("sensorFusion", 10,10) #Does not work with Wayland
         #cv2.putText(img='', text="Loading", org=[10,10], fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=5, color=self.objectColor)
+        self.saveFile = config['debugs']['saveImages']
+        self.imageDir = config['runTime']['imageDir']
+        if(not os.path.exists(self.imageDir)):
+            logger.error(f"Image Dir does not exist, creating: {self.imageDir}")
+            try:
+                os.makedirs(self.imageDir)
+            except Exception as e:
+                print(f"Could not create {self.imageDir}, {e}")
+                exit()
 
-    def draw(self, imgFile, dist, valid):
+    def draw(self, imgFile, dist, valid, saveFileName=""):
         if isinstance(imgFile, str):
             thisImg =  cv2.imread(imgFile)
             #logger.info(f"Image File: {imgFile}")
@@ -68,6 +79,13 @@ class displayHandObject:
         #cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_TOPMOST, 1)
 
         cv2.imshow("sensorFusion", thisImg)
+
+        if(self.saveFile):
+            startDateTime = '{date:%Y%m%d-%H%M%S-%f}'.format( date=datetime.datetime.now() )[:-3]
+            saveFileName = f"{self.imageDir}/{startDateTime}_{saveFileName}.jpg"
+            logger.info(f"Saving file: {saveFileName}")
+            cv2.imwrite(saveFileName, thisImg)
+
 
         waitkey = cv2.waitKey(self.waitKeyTime)
         return waitkey

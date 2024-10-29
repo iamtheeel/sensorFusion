@@ -9,6 +9,7 @@
 #
 # Save the model to TensorFlow MicroControler
 # must run python 3.11
+# 3.12 does not work, 3.9 does not work. Must be 3.11
 #
 # Must run under Linux
 # Note: takes a bloody long time!   Mostly mem ops, cpu stays low, looks hung, but is not
@@ -56,5 +57,6 @@ must use python 3.11 for the exporter to work as of 7/7/24
 tstart = time.time()
 model.export(format="edgetpu", data=dataSet, imgsz=imgSZ, int8=True) #Edge TPU is linux only #Img is H, w
 ###Ramhog, running on 640px takes ~20gb of ram, and the ram error is not clear##
+# Up to 30GB now!
 tend = time.time()
 logger.info(f"Export time: {tstart-tend}")
