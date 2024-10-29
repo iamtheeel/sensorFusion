@@ -63,12 +63,12 @@ runTime:
         imagePxlPer_mm: 1.0
         handThreshold: 0.50
         objectThreshold: 0.60
-        nmsIouThreshold: 0.80 #only use if iou < this
+        nmsIouThreshold: 0.90 #only use if iou < this
         #0.6
         handClass: 80
 
     displaySettings:
-        fullScreen: False
+        fullScreen: True
         handColor: [0, 255, 0]
         lineColor: [0, 255, 255] # Color in BGR
         objectColor: [0, 0, 255]
