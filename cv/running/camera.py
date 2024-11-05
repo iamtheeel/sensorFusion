@@ -17,7 +17,7 @@ import cv2
 import time
 
 class camera:
-    def __init__(self, config):
+    def __init__(self, config, camID):
         self.config = config
         self.camStat = None
         self.image = None
@@ -33,7 +33,8 @@ class camera:
             logging.disable(level=logging.CRITICAL)
             self.logger.disabled = True
 
-        camID = config['runTime']['camId']
+        self.camID = camID
+        #camID = config['runTime']['camId']
 
         # right now there are two options, USB id (int), or rtsp (string)
         self.camType = 'USB'
@@ -61,7 +62,7 @@ class camera:
 
     def startStream(self):
         # TODO: check to see if camera is there
-        self.thisCam = cv2.VideoCapture(self.config['runTime']['camId'], cv2.CAP_ANY)
+        self.thisCam = cv2.VideoCapture(self.camID, cv2.CAP_ANY)
         if(self.camType != 'rtsp'):
             # the rtsp can not change settings
             print(f"Cam settings")

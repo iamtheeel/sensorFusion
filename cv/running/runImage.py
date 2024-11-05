@@ -55,10 +55,15 @@ from camera import camera
 # From edgetpu
 
 from threading import Thread
-runThread = False
-def getImage(cam):
+run_cam1Thread = False
+def get_cam1Image(cam):
     logger.info(f"Init Camera Thread")
-    while runThread:
+    while run_cam1Thread:
+        cam.capImage()
+run_cam2Thread = False
+def get_cam2Image(cam):
+    logger.info(f"Init Camera 2 Thread")
+    while run_cam2Thread:
         cam.capImage()
 
 def sanitizeStr(str):
@@ -68,6 +73,30 @@ def sanitizeStr(str):
     str = re.sub(r"\s+", "-", str) #remove white space
     return str
 
+TODO:
+quit from multi cameras
+save from multi cameras
+timeing from multi cameras 
+
+def handleImage(image, dCalc, objDisp, camId = 1 ):
+    logger.info(f"------------------Camera {camId}---------------------------")
+    #logger.info(f"size: {image_1.shape}")
+
+    if(configs['debugs']['runInfer']):
+        results = infer.runInference(image)
+        validRes = dCalc.loadData(results, device)
+    else: 
+        validRes = False
+
+    if configs['debugs']['dispResults']:
+        # Show the image
+        exitStatus = objDisp.draw(image, dCalc, validRes, imageFile)
+
+        if exitStatus == ord('q'):  # q = 113
+            return False
+            logger.info(f"********   quit now ***********")
+        
+    return True
 
 if __name__ == "__main__":
     ## set the model information
@@ -77,10 +106,13 @@ if __name__ == "__main__":
     distCalc = distance.distanceCalculator(configs['training']['imageSize'], 
                                            configs['runTime']['distSettings'])
     handObjDisp = display.displayHandObject(configs)
+    if(configs['runTime']['nCameras'] == 2):
+        distCalc_2 = distance.distanceCalculator(configs['training']['imageSize'], 
+                                           configs['runTime']['distSettings'])
+        handObjDisp_2 = display.displayHandObject(configs, camNum=2)
     
     ## Get image
     if configs['runTime']['imgSrc'] == 'camera':
-
         ## Set up the file saves
         imageFile = ""
         if(configs['debugs']['saveImages']):
@@ -94,48 +126,48 @@ if __name__ == "__main__":
             imageFile = f"{subject}_{object}_{run}"
 
         ## Load the camera
-        inputCam = camera(configs)
-        runThread = True
-        camThread = Thread(target=getImage, args=(inputCam, ))
-        camThread.start()
+        inputCam_1 = camera(configs, configs['runTime']['camId'])
+        run_cam1Thread = True
+        camThread_1 = Thread(target=get_cam1Image, args=(inputCam_1, ))
+        camThread_1.start()
+        if(configs['runTime']['nCameras'] == 2):
+            inputCam_2 = camera(configs, configs['runTime']['camId_2'])
+            run_cam2Thread = True
+            camThread_2 = Thread(target=get_cam2Image, args=(inputCam_2, ))
+            camThread_2.start()
+
 
         startTime = time.time()
         endTime = startTime
         frameTime = 1/configs['runTime']['camRateHz']
 
         # Get the image
-        runCam = True
+        runCam = True # a q from either window exits
         while runCam:
             endTime = time.time()
-            camStat = False
+            camStat_1 = False
+            camStat_2 = False
             if(endTime - startTime) >= frameTime: 
                 #logger.info(f"Get next image")
-                camStat, image = inputCam.getImage()
+                camStat_1, image_1 = inputCam_1.getImage()
 
-            if camStat:
-                logger.info("---------------------------------------------")
-                logger.info(f"Image size: {image.shape}")
+                if(configs['runTime']['nCameras'] == 2):
+                    camStat_2, image_2 = inputCam_2.getImage()
+                    print(f"Get cam 2: {camStat_2}")
 
-                if(configs['debugs']['runInfer']):
-                    results = infer.runInference(image)
-                    validRes = distCalc.loadData(results, device)
-                else: 
-                    validRes = False
-
-                if configs['debugs']['dispResults']:
-                    # Show the image
-                    exitStatus = handObjDisp.draw(image, distCalc, validRes, imageFile)
-
-                    if exitStatus == ord('q'):  # q = 113
-                        runCam = False
-                        logger.info(f"********   quit now ***********")
-
-                #endTime = time.time()
-                runTime = (endTime-startTime)
-                logger.info(f"Total Loop time: {runTime*1000:.2f}ms, {1/runTime:.1f}Hz")
-                startTime = endTime
+            if camStat_1:
+                runCam = handleImage(image_1, distCalc, handObjDisp, camId=1)
             #else:
             #    logger.info(f"Image not ready: {configs['runTime']['camId']}")
+                ## TODO: Fixe the timing to take account two cameras
+                runTime = (endTime-startTime)
+                logger.info(f"Total Loop time: {runTime*1000:.2f}ms, {1/runTime:.1f}Hz")
+             
+                startTime = endTime
+            if camStat_2:
+                print(f" ********    cam 2 ********")
+                runCam = handleImage(image_2, distCalc_2, handObjDisp_2, camId=2)
+
 
             if(configs['runTime']['displaySettings']['runCamOnce']): 
                 logger.info(f"Exit after one shot")
@@ -143,9 +175,14 @@ if __name__ == "__main__":
 
             
         # Destructor
-        runThread = False
-        camThread.join() # join the thread back to main
-        del camera 
+        run_cam1Thread = False
+        camThread_1.join() # join the thread back to main
+        del inputCam_1 
+        if(configs['runTime']['nCameras'] == 2):
+            run_cam2Thread = False
+            camThread_2.join() # join the thread back to main
+            del inputCam_2 
+
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch

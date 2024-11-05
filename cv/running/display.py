@@ -21,7 +21,7 @@ logger = logging.getLogger("display")
 #TODO: Change label position if the location obstructs it
 
 class displayHandObject:
-    def __init__(self,  config) -> None:
+    def __init__(self,  config, camNum=1) -> None:
         logger.info("Init: displayHandObject")
         conf = config['runTime']['displaySettings']
         self.handColor = conf['handColor']
@@ -37,8 +37,9 @@ class displayHandObject:
             self.waitKeyTime = 1 #ms, will run through with a delay
 
         #cv2.namedWindow("sensorFusion", cv2.WINDOW_NORMAL )
-        cv2.namedWindow("sensorFusion", cv2.WINDOW_AUTOSIZE )
-        cv2.moveWindow("sensorFusion", 10,10) #Does not work with Wayland
+        self.windowName = f"Camera {camNum}"
+        cv2.namedWindow(self.windowName, cv2.WINDOW_AUTOSIZE )
+        cv2.moveWindow(self.windowName, 10,10) #Does not work with Wayland
         #cv2.putText(img='', text="Loading", org=[10,10], fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=5, color=self.objectColor)
         self.saveFile = config['debugs']['saveImages']
         self.imageDir = config['runTime']['imageDir']
@@ -71,14 +72,14 @@ class displayHandObject:
             self.drawDistance(thisImg, dist)
 
         if self.fullScreen:
-            cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) 
+            cv2.setWindowProperty(self.windowName,cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) 
             # linux has full screen - but image is not
         #else:
-            #cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_AUTOSIZE) 
+            #cv2.setWindowProperty(self.windowName,cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_AUTOSIZE) 
 
-        #cv2.setWindowProperty("sensorFusion",cv2.WND_PROP_TOPMOST, 1)
+        #cv2.setWindowProperty(self.windowName,cv2.WND_PROP_TOPMOST, 1)
 
-        cv2.imshow("sensorFusion", thisImg)
+        cv2.imshow(self.windowName, thisImg)
 
         if(self.saveFile):
             startDateTime = '{date:%Y%m%d-%H%M%S-%f}'.format( date=datetime.datetime.now() )[:-3]
