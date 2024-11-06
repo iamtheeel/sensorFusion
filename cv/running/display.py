@@ -51,7 +51,7 @@ class displayHandObject:
                 print(f"Could not create {self.imageDir}, {e}")
                 exit()
 
-    def draw(self, imgFile, dist, valid, saveFileName=""):
+    def draw(self, imgFile, dist, valid, camNum, saveFileName=""):
         if isinstance(imgFile, str):
             thisImg =  cv2.imread(imgFile)
             #logger.info(f"Image File: {imgFile}")
@@ -83,7 +83,7 @@ class displayHandObject:
 
         if(self.saveFile):
             startDateTime = '{date:%Y%m%d-%H%M%S-%f}'.format( date=datetime.datetime.now() )[:-3]
-            saveFileName = f"{self.imageDir}/{startDateTime}_{saveFileName}.jpg"
+            saveFileName = f"{self.imageDir}/{camNum}_{startDateTime}_{saveFileName}.jpg"
             logger.info(f"Saving file: {saveFileName}")
             cv2.imwrite(saveFileName, thisImg)
 
