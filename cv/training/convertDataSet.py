@@ -29,12 +29,13 @@ from getLab import getLab
 baseDir = "../../data/version1" 
 
 #dataSetList = ['appleHand'] # For testing
-dataSetList = ['Dataset', 'dataset_ver1', 'dataset_ver2', 'dataset_ver3_white_background']
+dataSetList = ['dataset_ver1'] # For testing
+#dataSetList = ['Dataset', 'dataset_ver1', 'dataset_ver2', 'dataset_ver3_white_background']
 
 # Outputs
 #outName = 'foo' # small set for testing
 #outName = 'combinedData' # 2 class
-outName = 'coco_8Class' # coco pluss hand
+outName = 'appleHand' # coco pluss hand
 outBaseDir = "./datasets"
 
 
@@ -77,7 +78,8 @@ for dataSet in dataSetList:
         #subDirList = ['apple', 'hand']
         subDirList = ['apple', 'hand', 'banana', 'can', 'marker', 'toothpaste']
     else: 
-        subDirList = ['test', 'train']
+        #subDirList = ['test', 'train']
+        subDirList = ['test'] # no sub dir
 
     for subDir in subDirList:
         image_dir = baseDir + '/' + dataSet + '/' + subDir

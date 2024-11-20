@@ -45,11 +45,12 @@ class camera:
         if(self.camType == 'rtsp'):
             # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
             os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
-        #else:
+        else:
         #    # the rtsp can not change settings
+        # Some USB cameras can, cone can't
         #    camera.set(cv2.CAP_PROP_FPS, config['runTime']['camRateHz'])
-        #    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
-        #    camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
+            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
+            camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
 
         self.startStream()
         self.logger.info(f"Camera Stream Started")

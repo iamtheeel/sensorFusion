@@ -68,7 +68,6 @@ def get_cam2Image(cam):
 
 def sanitizeStr(str):
     import re
-    #str = str.replace(" ", "_")
     str = re.sub(r"[^\w\s]", "-", str) # Remove special chars
     str = re.sub(r"\s+", "-", str) #remove white space
     return str
