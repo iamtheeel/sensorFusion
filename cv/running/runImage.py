@@ -100,7 +100,9 @@ if __name__ == "__main__":
     
     distCalc = distance.distanceCalculator(configs['training']['imageSize'], 
                                            configs['runTime']['distSettings'])
+
     handObjDisp = display.displayHandObject(configs)
+
     if(configs['runTime']['nCameras'] == 2):
         distCalc_2 = distance.distanceCalculator(configs['training']['imageSize'], 
                                            configs['runTime']['distSettings'])

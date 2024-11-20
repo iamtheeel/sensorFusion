@@ -34,27 +34,21 @@ class camera:
             self.logger.disabled = True
 
         self.camID = camID
-        #camID = config['runTime']['camId']
+        #self.camID = config['runTime']['camId']
 
         # right now there are two options, USB id (int), or rtsp (string)
         self.camType = 'USB'
         if(type(camID) == str): self.camType = 'rtsp'
         
-        self.logger.info(f"camID: {self.camType} Type: {type(camID)}")
-
-        if(self.camType == 'rtsp'):
-            # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
-            os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
-        else:
-        #    # the rtsp can not change settings
-        # Some USB cameras can, cone can't
-        #    camera.set(cv2.CAP_PROP_FPS, config['runTime']['camRateHz'])
-            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
-            camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
+        self.logger.info(f"camID: {self.camID} Type: {self.camType}")
 
         self.startStream()
         self.logger.info(f"Camera Stream Started")
         self.camTimeout_ns = 50*1000*1000 # 30 ms
+
+        if(self.camType == 'rtsp'):
+            # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
+            os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
 
 
     def __del__(self):
