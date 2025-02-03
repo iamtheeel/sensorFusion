@@ -1,8 +1,8 @@
 debugs:
-    debug: True 
+    debug: False 
     showInfResults: False
     dispResults: True
-    runInfer: True
+    runInfer: False
     saveImages: False
 
 training:
@@ -48,9 +48,10 @@ runTime:
     imgSrc: "camera"
     #imageDir: "../datasets/combinedData/images/val"
     #imageDir: "../datasets/testImages"
-    imageDir: "../datasets/bar"
+    imageDir: "../images/test"
+    focus: 15  #inc of 5, 0-255, negitive for auto
 
-    nCameras: 2
+    nCameras: 1
     camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam

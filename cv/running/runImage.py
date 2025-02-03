@@ -73,7 +73,7 @@ def sanitizeStr(str):
     return str
 
 
-def handleImage(image, dCalc, objDisp, camId = 1 ):
+def httorchtorchtorchtorchorchrctorchtorchtorchttorchtorchtorchtorchorchhtorchoandleImage(image, dCalc, objDisp, camId = 1 ):
     logger.info(f"------------------Camera {camId}---------------------------")
     #logger.info(f"size: {image_1.shape}")
 
@@ -86,6 +86,7 @@ def handleImage(image, dCalc, objDisp, camId = 1 ):
     if configs['debugs']['dispResults']:
         # Show the image
         exitStatus = objDisp.draw(image, dCalc, validRes, camId, imageFile)
+        #exitStatus = True
 
         if exitStatus == ord('q'):  # q = 113
             return False
@@ -94,6 +95,18 @@ def handleImage(image, dCalc, objDisp, camId = 1 ):
     return True
 
 if __name__ == "__main__":
+    ## Set up the file saves
+    imageFile = ""
+    if(configs['debugs']['saveImages']):
+        subject = sanitizeStr(input("Enter the subject ID: \n> "))
+        object  = sanitizeStr(input("Enter the object: \n> "))
+        run     = sanitizeStr(input("Enter the run (The run will start on <enter>): \n> "))
+
+        logger.info(f"subject: {subject}")
+        logger.info(f"object: {object}")
+        logger.info(f"run: {run}")
+        imageFile = f"{subject}_{object}_{run}"
+
     ## set the model information
     if(configs['debugs']['runInfer']):
         infer = modelRunTime(configs, device)
@@ -110,18 +123,6 @@ if __name__ == "__main__":
     
     ## Get image
     if configs['runTime']['imgSrc'] == 'camera':
-        ## Set up the file saves
-        imageFile = ""
-        if(configs['debugs']['saveImages']):
-            subject = sanitizeStr(input("Enter the subject ID: \n> "))
-            object  = sanitizeStr(input("Enter the object: \n> "))
-            run     = sanitizeStr(input("Enter the run (The run will start on <enter>): \n> "))
-
-            logger.info(f"subject: {subject}")
-            logger.info(f"object: {object}")
-            logger.info(f"run: {run}")
-            imageFile = f"{subject}_{object}_{run}"
-
         ## Load the camera
         inputCam_1 = camera(configs, configs['runTime']['camId'])
         camThread_1 = Thread(target=get_cam1Image, args=(inputCam_1, ))
@@ -139,7 +140,8 @@ if __name__ == "__main__":
         # Get the image
         while all(runCam):
             thisTime = time.time()
-            camStat = [False]*configs['runTime']['nCameras'] 
+            camStat = [False, False]
+            #camStat = [False]*configs['runTime']['nCameras'] 
             dataRateTime[0] = (thisTime-startTime[0])
             if(dataRateTime[0]) >= frameTime: 
                 #logger.info(f"Get next image")

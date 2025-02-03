@@ -62,6 +62,10 @@ class camera:
             # the rtsp can not change settings
             print(f"Cam settings")
             self.thisCam.set(cv2.CAP_PROP_FPS, self.config['runTime']['camRateHz'])
+            if(self.config['runTime']['focus'] > -1):
+                self.thisCam.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+                self.thisCam.set(cv2.CAP_PROP_FOCUS, self.config['runTime']['focus'])
+            #self.thisCam.set(cv2.CAP_PROP_FOCUS, 10)
             self.thisCam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
             self.thisCam.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
 
