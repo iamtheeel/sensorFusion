@@ -97,13 +97,18 @@ def sanitizeStr(str):
     return str
 
 
-def handleImage(image, dCalc, objDisp, camId = 1 ):
+def handleImage(image, imgCapTime, dCalc, objDisp, camId = 1 ):
     logger.info(f"------------------Camera {camId}---------------------------")
     #logger.info(f"size: {image_1.shape}")
 
     if(configs['debugs']['runInfer']):
         results = infer.runInference(image)
         validRes = dCalc.loadData(results )
+
+        # Send the results over serial
+        # make object from serialComms.py
+        logger.info(f"Image Capture Time: {imgCapTime}")
+        # $24, "CV", imgCapTime (uint_32), handConf (uint8), object class (uint8), object conf (uint8), Distance (uint16), <LF><CR>
     else: 
         validRes = False
 
@@ -171,20 +176,20 @@ if __name__ == "__main__":
             dataRateTime[0] = (thisTime-startTime[0])
             if(dataRateTime[0]) >= frameTime: 
                 #logger.info(f"Get next image")
-                camStat[0], image_1 = inputCam_1.getImage()
+                camStat[0], image_1, camTime_1 = inputCam_1.getImage()
 
             if(configs['runTime']['nCameras'] == 2):
                 dataRateTime[1] = (thisTime-startTime[1])
                 if(dataRateTime[1]) >= frameTime: 
-                    camStat[1], image_2 = inputCam_2.getImage()
+                    camStat[1], image_2, camTime_2 = inputCam_2.getImage()
 
             if camStat[0]:
-                runCam[0] = handleImage(image_1, distCalc, handObjDisp, camId=1)
+                runCam[0] = handleImage(image_1, camTime_1, distCalc, handObjDisp, camId=1)
                 logger.info(f"Total cam 1 time: {dataRateTime[0]*1000:.2f}ms, {1/dataRateTime[0]:.1f}Hz")
                 startTime[0] = time.time()
 
             if camStat[1]:
-                runCam[1] = handleImage(image_2, distCalc_2, handObjDisp_2, camId=2)
+                runCam[1] = handleImage(image_2, camTime_2, distCalc_2, handObjDisp_2, camId=2)
                 logger.info(f"Total cam 2 time: {dataRateTime[1]*1000:.2f}ms, {1/dataRateTime[1]:.1f}Hz")
                 startTime[1] = time.time()
 

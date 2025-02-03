@@ -86,7 +86,7 @@ class camera:
             # Resize changes the aspect ratio
             #self.image = cv2.resize(self.image, (self.imgW, self.imgH))
 
-        return self.camStat, self.image
+        return self.camStat, self.image, self.thisCapTime.copy()
     
     def setZeroTime(self):
         self.zeroTime_ms = (time.time()*1000)
@@ -112,5 +112,5 @@ class camera:
         else:
             self.camStat, self.image = self.thisCam.read()
 
-        self.thisCapTime = np.int32(capTime_ms - self.zeroTime_ms)
-        self.logger.info(f"Zero time: {self.zeroTime_ms}ms, Cam read time: {type(capTime_ms)}, {capTime_ms}ms, zeroedCapTime: {type(self.thisCapTime)} {self.thisCapTime}ms")
+        self.thisCapTime = np.uint32(capTime_ms - self.zeroTime_ms)
+        #self.logger.info(f"Zero time: {self.zeroTime_ms}ms, Cam read time: {type(capTime_ms)}, {capTime_ms}ms, zeroedCapTime: {type(self.thisCapTime)} {self.thisCapTime}ms")
