@@ -13,7 +13,6 @@
 
 from ultralytics import YOLO
 from torchinfo import summary
-import logging
 import sys
 import os
 
@@ -30,6 +29,7 @@ if cuda.is_available(): device = "cuda"
 if backends.mps.is_available() and backends.mps.is_built(): device = "mps"
 
 ## Logging
+import logging
 debug = configs['debugs']['debug']
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -68,10 +68,10 @@ if transLearn:
               if any(x in k for x in freeze):
                      logger.info(f"Freezing layer {k}")
                      v.requires_grad = False
-elif configs['training']['transLearn']:
-       yoloModel = YOLO(modelFile)
+#elif configs['training']['transLearn']:
+       #yoloModel = YOLO(weightsFile)
 else:
-       yoloModel = YOLO(weightsFile)
+       yoloModel = YOLO(modelFile)
 
 yoloModel.info(detailed=True)
 '''

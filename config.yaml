@@ -32,7 +32,7 @@ training:
 
     transLearn: True
     freezeLayer: 11 # First 10 layers are the backbone (10: freezes 0-9)
-    scratchTrain: False #Train from scratch
+    #scratchTrain: False #Train from scratch
     # img size should be multiple of 16,
     # Export requires it to be square
     imageSize: [480, 640] #h, w
