@@ -15,6 +15,7 @@ import logging
 import os
 import cv2
 import time
+import numpy as np
 
 class camera:
     def __init__(self, config, camID):
@@ -50,6 +51,8 @@ class camera:
             # https://docs.opencv.org/4.10.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
             os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
 
+        self.setZeroTime()
+
 
     def __del__(self):
         self.logger.info(f"Closing Camera Stream")
@@ -84,16 +87,22 @@ class camera:
             #self.image = cv2.resize(self.image, (self.imgW, self.imgH))
 
         return self.camStat, self.image
+    
+    def setZeroTime(self):
+        self.zeroTime_ms = (time.time()*1000)
 
     def capImage (self):
 
+        capTime_ms = (time.time()*1000)
 
         if self.camStat and self.camType == 'rtsp':
             # VideoCapture::waitAny() is supported by V4L backend only
             #if self.thisCam.waitAny([self.thisCam],  self.camTimeout_ns): # wait for produce a frame
             #self.logger.info(f"Get the next frame")
-            tStart = time.time_ns()
             self.camStat, self.image = self.thisCam.read()
+            #camReadTime_ms = (time.time_ns()-tStart)/(1e6)
+            #self.logger.info(f"grab status: {self.camStat}, {camReadTime_ms:.3f}ms")
+            #there was a while to run this untill the Read time is > a threshold
         
             if self.camStat == False:
                 self.logger.error(f"Camera Seems Borked, restart stream")
@@ -102,3 +111,6 @@ class camera:
 
         else:
             self.camStat, self.image = self.thisCam.read()
+
+        self.thisCapTime = np.int32(capTime_ms - self.zeroTime_ms)
+        self.logger.info(f"Zero time: {self.zeroTime_ms}ms, Cam read time: {type(capTime_ms)}, {capTime_ms}ms, zeroedCapTime: {type(self.thisCapTime)} {self.thisCapTime}ms")

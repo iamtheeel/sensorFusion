@@ -1,5 +1,5 @@
 debugs:
-    debug: False 
+    debug: True 
     showInfResults: False
     dispResults: True
     runInfer: False
@@ -78,6 +78,8 @@ runTime:
         objLineTh: 2
         distLineTh: 2
         runCamOnce: False
+timeSync:
+    gpio_pin: 10
 
 servos:
     i2c:

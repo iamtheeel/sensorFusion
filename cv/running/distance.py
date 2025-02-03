@@ -46,7 +46,7 @@ class distanceCalculator:
         self.bestDist = self.calcDist(self.grabObject)
         #logger.info(f"zeroData, Max dist: {self.bestDist}")
 
-    def loadData(self, data, device):
+    def loadData(self, data ):
         '''
         Return True iff there is one and only one hand
         Loads the data used
@@ -58,12 +58,12 @@ class distanceCalculator:
             (Bool): Is or is not valid
         Raises:
         '''
-        #self.device = device
-        #if device == 'tpu': 
         classField = 5
         confField = 4
 
         self.zeroData()
+
+        self.time_ms = 0
 
         self.data = data
         

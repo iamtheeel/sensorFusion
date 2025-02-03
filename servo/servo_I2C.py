@@ -16,7 +16,7 @@
 #
 ###
 
-from periphery import I2C
+from periphery import I2C #pip install python-periphery
 from math import floor
 
 ## Logging

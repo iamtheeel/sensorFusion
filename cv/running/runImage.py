@@ -16,6 +16,7 @@ import os, sys
 #import cv2
 import time
 
+from threading import Thread
 
 # From MICLab
 ## Configuration
@@ -45,16 +46,36 @@ else:
     if torch.cuda.is_available(): device = "cuda" 
     if torch.backends.mps.is_available() and torch.backends.mps.is_built(): device = "mps"
 
+#Define the cameras
+from camera import camera
+inputCam_1 = camera(configs, configs['runTime']['camId'])
+if(configs['runTime']['nCameras'] == 2):
+    inputCam_2 = camera(configs, configs['runTime']['camId_2'])
+
+
+if device == "tpu":
+    runTimeCheckThread = True
+    gpioPin = configs['timeSync']['gpio_pin']
+    from periphery import GPIO  #pip install python-periphery
+    timeTrigerGPIO = GPIO(gpioPin, "in")
+    timeTrigerGPIO.edge = "raising" #“none”, “rising”, “falling”, or “both”
+
+    logger.info(f"GPIO pin {gpioPin} interupt support = {timeTrigerGPIO.supports_interrupts}")
+
+def checkClockReset_thread():
+    logger.info(f"Starting clock reset thread: GPIO {timeTrigerGPIO}")
+    while runTimeCheckThread:
+        timeTrigerGPIO.poll() #Wait for the edige
+        inputCam_1.setZeroTime()
+        if(configs['runTime']['nCameras'] == 2):
+            inputCam_2.setZeroTime()
+
 
 ## Import our items after we set the log leve
 from modelRunTime import modelRunTime
 import distance
 import display
 
-from camera import camera
-# From edgetpu
-
-from threading import Thread
 
 runCam = [True]* configs['runTime']['nCameras'] 
 def get_cam1Image(cam):
@@ -66,6 +87,9 @@ def get_cam2Image(cam):
     while runCam[1]:
         cam.capImage()
 
+
+
+
 def sanitizeStr(str):
     import re
     str = re.sub(r"[^\w\s]", "-", str) # Remove special chars
@@ -73,13 +97,13 @@ def sanitizeStr(str):
     return str
 
 
-def httorchtorchtorchtorchorchrctorchtorchtorchttorchtorchtorchtorchorchhtorchoandleImage(image, dCalc, objDisp, camId = 1 ):
+def handleImage(image, dCalc, objDisp, camId = 1 ):
     logger.info(f"------------------Camera {camId}---------------------------")
     #logger.info(f"size: {image_1.shape}")
 
     if(configs['debugs']['runInfer']):
         results = infer.runInference(image)
-        validRes = dCalc.loadData(results, device)
+        validRes = dCalc.loadData(results )
     else: 
         validRes = False
 
@@ -124,17 +148,19 @@ if __name__ == "__main__":
     ## Get image
     if configs['runTime']['imgSrc'] == 'camera':
         ## Load the camera
-        inputCam_1 = camera(configs, configs['runTime']['camId'])
         camThread_1 = Thread(target=get_cam1Image, args=(inputCam_1, ))
         camThread_1.start()
         if(configs['runTime']['nCameras'] == 2):
-            inputCam_2 = camera(configs, configs['runTime']['camId_2'])
             camThread_2 = Thread(target=get_cam2Image, args=(inputCam_2, ))
             camThread_2.start()
 
         startTime = [time.time()] * configs['runTime']['nCameras'] 
         dataRateTime = [0] * configs['runTime']['nCameras']  
         frameTime = 1/configs['runTime']['camRateHz']
+
+        if device == "tpu":
+            getTimeSetThread = Thread(target=checkClockReset_thread)
+            getTimeSetThread.start()
 
 
         # Get the image
@@ -175,6 +201,12 @@ if __name__ == "__main__":
             camThread_2.join() # join the thread back to main
             del inputCam_2 
 
+        
+        if device == "tpu":
+            runTimeCheckThread = False
+            getTimeSetThread.join()
+            timeTrigerGPIO.close()
+
 
     elif configs['runTime']['imgSrc'] == 'directory':
         import os, fnmatch
@@ -190,7 +222,7 @@ if __name__ == "__main__":
                 logger.info(f"File: {thisImgFile}")
                 results = infer.runInference(thisImgFile)
 
-                validRes = distCalc.loadData(results, device)
+                validRes = distCalc.loadData(results )
                 if configs['debugs']['dispResults']:
                     exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
                     if exitStatus == ord('q'):  # q = 113
@@ -201,7 +233,7 @@ if __name__ == "__main__":
         image = configs['runTime']['imageDir'] + '/' + configs['runTime']['imgSrc']
         results = infer.runInference(image)
 
-        validRes = distCalc.loadData(results, device)
+        validRes = distCalc.loadData(results)
         if configs['debugs']['dispResults']:
             handObjDisp.draw(image, distCalc, validRes)
     
