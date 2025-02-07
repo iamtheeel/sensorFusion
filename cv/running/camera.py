@@ -79,15 +79,16 @@ class camera:
         if self.camStat and self.camType == 'rtsp':
             # Camera is set to WVGA(480x848): labeled as WVGA, but it is FWVGA
             #Crop the image to what we are expecting
+            self.logger.info(f"Image size (h, w, ch): {self.image.shape}, correctW: {self.imgW}")
             imgH, imgW, _ = self.image.shape
-            #self.logger.info(f"Image size (h, w, ch): {self.image.shape}")
             if imgW > self.imgW:
-                cropW = int((imgW - self.imgW)/2)
-                self.image = self.image[0:self.imgH, cropW:cropW+self.imgW]
+                newWidth = int(self.imgW*(3/4)) # Fudge to change the aspect ratio
+                cropCenter = int((imgW - newWidth)/2) 
+                self.image = self.image[0:self.imgH, cropCenter:cropCenter+newWidth]
 
             #self.logger.info(f"Image new size (h, w, ch): {self.image.shape}")
             # Resize changes the aspect ratio
-            #self.image = cv2.resize(self.image, (self.imgW, self.imgH))
+            self.image = cv2.resize(self.image, (self.imgW, self.imgH))
 
         return self.camStat, self.image, self.thisCapTime.copy()
     
@@ -103,9 +104,12 @@ class camera:
             #if self.thisCam.waitAny([self.thisCam],  self.camTimeout_ns): # wait for produce a frame
             #self.logger.info(f"Get the next frame")
             self.camStat, self.image = self.thisCam.read()
-            #camReadTime_ms = (time.time_ns()-tStart)/(1e6)
+            '''
+            camReadTime_ms = (time.time_ns()-tStart)/(1e6)
+            there was a while to run this untill the Read time is > a threshold
+            Hoever we don't need it anymore as we are running through a thread
             #self.logger.info(f"grab status: {self.camStat}, {camReadTime_ms:.3f}ms")
-            #there was a while to run this untill the Read time is > a threshold
+            '''
         
             if self.camStat == False:
                 self.logger.error(f"Camera Seems Borked, restart stream")
@@ -115,5 +119,6 @@ class camera:
         else:
             self.camStat, self.image = self.thisCam.read()
 
+        # Get the time after the read, as the read waits for a new image
         self.thisCapTime = np.uint32(capTime_ms - self.zeroTime_ms)
         #self.logger.info(f"Zero time: {self.zeroTime_ms}ms, Cam read time: {type(capTime_ms)}, {capTime_ms}ms, zeroedCapTime: {type(self.thisCapTime)} {self.thisCapTime}ms")

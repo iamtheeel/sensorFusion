@@ -51,14 +51,15 @@ runTime:
     imageDir: "../images/test"
     focus: 15  #inc of 5, 0-255, negitive for auto
 
-    nCameras: 1
+    nCameras: 2
     camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image
     #camId: "rtsp://192.168.1.254:554/"    #Full image
-    camId_2: 2 # MAC webcam, laptop built in web cam
+    #camId_2: 0 # MAC webcam, laptop built in web cam
+    camId_2: "rtsp://192.168.1.254:554/"    #Full image
     camRateHz: 5
 
     distSettings:
