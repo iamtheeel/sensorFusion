@@ -7,3 +7,7 @@
 __*
 *__
 *_detect_*
+
+*.pt
+*.tflite
+*.onnx

@@ -52,6 +52,9 @@ class camera:
             os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'#;appsink|sync;false'
 
         self.setZeroTime()
+        #Preload the cap time in case we request an image that is not there
+        capTime_ms = (time.time()*1000)
+        self.thisCapTime = np.uint32(capTime_ms - self.zeroTime_ms)
 
 
     def __del__(self):

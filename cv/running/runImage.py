@@ -185,12 +185,17 @@ if __name__ == "__main__":
 
             if camStat[0]:
                 runCam[0] = handleImage(image_1, camTime_1, distCalc, handObjDisp, camId=1)
-                logger.info(f"Total cam 1 time: {dataRateTime[0]*1000:.2f}ms, {1/dataRateTime[0]:.1f}Hz")
+                logger.info(f"Total cam 1 time: {dataRateTime[0]*1000:.2f}ms, " \
+                            f"{1/dataRateTime[0]:.1f}Hz, " \
+                            f"Cap Time: {camTime_1}ms")
                 startTime[0] = time.time()
 
             if camStat[1]:
                 runCam[1] = handleImage(image_2, camTime_2, distCalc_2, handObjDisp_2, camId=2)
-                logger.info(f"Total cam 2 time: {dataRateTime[1]*1000:.2f}ms, {1/dataRateTime[1]:.1f}Hz")
+                logger.info(f"Total cam 2 time: {dataRateTime[1]*1000:.2f}ms, " \
+                            f"{1/dataRateTime[1]:.1f}Hz, " \
+                            f"Cap Time: {camTime_2}ms")
+
                 startTime[1] = time.time()
 
 
