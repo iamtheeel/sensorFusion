@@ -106,6 +106,7 @@ def sanitizeStr(str):
 
 def handleImage(image, imgCapTime, dCalc, objDisp, camId = 1 ):
     logger.info(f"------------------Camera {camId}---------------------------")
+    logger.info(f"Image Capture Time: {imgCapTime}")
     #logger.info(f"size: {image_1.shape}")
 
     if(configs['debugs']['runInfer']):
@@ -114,7 +115,6 @@ def handleImage(image, imgCapTime, dCalc, objDisp, camId = 1 ):
 
         # Send the results over serial
         # make object from serialComms.py
-        logger.info(f"Image Capture Time: {imgCapTime}")
         # $24, "CV", imgCapTime (uint_32), handConf (uint8), object class (uint8), object conf (uint8), Distance (uint16), <LF><CR>
     else: 
         validRes = False
