@@ -55,12 +55,19 @@ if(configs['runTime']['nCameras'] == 2):
 
 if device == "tpu":
     runTimeCheckThread = True
+    gpioChip = configs['timeSync']['gpio_chip']
     gpioPin = configs['timeSync']['gpio_pin']
     from periphery import GPIO  #pip install python-periphery
-    timeTrigerGPIO = GPIO(gpioPin, "in")
+    #timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}",gpioPin, "in")
+    # Might not work ask the chatbot
+    timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in", bias="pull_up")
     timeTrigerGPIO.edge = "raising" #“none”, “rising”, “falling”, or “both”
 
-    logger.info(f"GPIO pin {gpioPin} interupt support = {timeTrigerGPIO.supports_interrupts}")
+    '''
+
+    '''
+
+    logger.info(f"GPIO chip:pin {gpioChip}:{gpioPin} interupt support = {timeTrigerGPIO.supports_interrupts}")
 
 def checkClockReset_thread():
     logger.info(f"Starting clock reset thread: GPIO {timeTrigerGPIO}")

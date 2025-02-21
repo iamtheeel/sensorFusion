@@ -80,7 +80,8 @@ runTime:
         distLineTh: 2
         runCamOnce: False
 timeSync:
-    gpio_pin: 10
+    gpio_chip: 4
+    gpio_pin : 13
 
 servos:
     i2c:
