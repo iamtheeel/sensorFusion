@@ -3,7 +3,7 @@ debugs:
     showInfResults: False
     dispResults: True
     runInfer: False
-    saveImages: False
+    saveImages: True
 
 training:
     dataSet: "../datasets/appleHand.yaml"
@@ -48,13 +48,14 @@ runTime:
     imgSrc: "camera"
     #imageDir: "../datasets/combinedData/images/val"
     #imageDir: "../datasets/testImages"
-    imageDir: "../images/test"
+    #imageDir: "../images/fo"
+    imageDir: "../images/test_day2"
     focus: 15  #inc of 5, 0-255, negitive for auto
 
     nCameras: 2
-    camId: 0 # MAC webcam, laptop built in web cam
+    #camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
-    #camId: 2 #laptop USB webcam
+    camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image
     #camId: "rtsp://192.168.1.254:554/"    #Full image
