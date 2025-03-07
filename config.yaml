@@ -2,11 +2,15 @@ debugs:
     debug: True 
     showInfResults: False
     dispResults: True
-    runInfer: False
-    saveImages: True
+    runInfer: True
+    saveImages: False
 
 training:
-    dataSet: "../datasets/appleHand.yaml"
+    dataSetDir: "../datasets"
+    #dataSet: "../datasets/appleHand.yaml"
+    dataSet: "ExoGlove.v2-in-progess-25-03-06/data.yaml"
+ 
+    #dataSet: "../datasets/appleHand.yaml"
     #dataSet: "../datasets/coco_withHand.yaml"
     #dataSet: "../datasets/coco_7Class.yaml"
     modelsDir: "../models"
@@ -16,7 +20,8 @@ training:
     weightsForTransfer: "yolov5nu.pt"
     weightsFile: "yolov5nu_tran_hsv_h-1.0_2class.pt"
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
-    weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    weightsFile: "yolo8_12_day2_partlab-I_30Epochs_newAug.pt"
     #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
     weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
     #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite"
@@ -52,10 +57,11 @@ runTime:
     imageDir: "../images/test_day2"
     focus: 15  #inc of 5, 0-255, negitive for auto
 
-    nCameras: 2
+    nCameras: 1
+    camId: 0
     #camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
-    camId: 2 #laptop USB webcam
+    #camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image
     #camId: "rtsp://192.168.1.254:554/"    #Full image
@@ -64,17 +70,16 @@ runTime:
     camRateHz: 5
 
     distSettings:
-        imagePxlPer_mm: 1.0
+        imagePxlPer_mm: .51 #0.81
         handThreshold: 0.50
         objectThreshold: 0.60
         nmsIouThreshold: 0.90 #only use if iou < this
-        #0.6
-        handClass: 80
+        handClass: 4 #80
 
     displaySettings:
         fullScreen: False
         handColor: [0, 255, 0]
-        lineColor: [0, 255, 255] # Color in BGR
+        lineColor: [255, 0, 0] # Color in BGR, The distance is the same color
         objectColor: [0, 0, 255]
         handLineTh: 2 #Thickness in px
         objLineTh: 2

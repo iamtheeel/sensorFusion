@@ -24,12 +24,12 @@ class distanceCalculator:
     def __init__(self, trainImgSize, config) -> None:
         ##Configs
         self.modelImgSize = trainImgSize #What is the pxl count of the image directly to inferance
-        self.pxPerIn  = config['imagePxlPer_mm'] #How many pixels per mm
+        self.pxPer_mm  = config['imagePxlPer_mm'] #How many pixels per mm
         self.hThresh = config['handThreshold']
         self.oThresh = config['objectThreshold']
         self.handClassNum = config['handClass']
 
-        #logger.info(f"pxPerIn: {self.pxPerIn}")
+        #logger.info(f"pxPer_mm: {self.pxPer_mm}")
 
         self.zeroData()
 
@@ -129,7 +129,7 @@ class distanceCalculator:
         xDist = (self.handCenter[1]- center[1])
 
         pxlDist = math.sqrt(pow(yDist,2) + pow(xDist,2))
-        return pxlDist/self.pxPerIn
+        return pxlDist/self.pxPer_mm
 
     def getBox(self, object):
         '''
@@ -137,7 +137,7 @@ class distanceCalculator:
         Args:
             (tenor data): x1, y1, x2, y2, probability, class for each item
         Returns:
-            (Upper left and Lower Right Cornersf of the box)
+            (Upper left and Lower Right Corners of the box)
 
         '''
         x1, y1, x2, y2 = self.getXY(object)
