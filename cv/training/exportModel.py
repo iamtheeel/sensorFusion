@@ -41,7 +41,7 @@ if debug == False:
 imgSZ = max(configs['training']['imageSize']) #must be square
 weightsDir = configs['training']['weightsDir']
 weightsFile = configs['training']['weightsFile']
-dataSet = configs['training']['dataSet']
+dataSet = f"{configs['training']['dataSetDir']}/{configs['training']['dataSet']}"
 
 modelPath = Path(weightsDir)
 modelFile = modelPath/weightsFile

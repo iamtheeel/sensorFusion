@@ -41,7 +41,8 @@ logger.info(f"setup: Device = {device}")
 
 # Model settings
 image_sz = max( configs['training']['imageSize'])
-dataSet = configs['training']['dataSet']
+dataSet = f"{configs['training']['dataSetDir']}/{configs['training']['dataSet']}"
+
 # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/models/
 modelFile = configs['training']['modelsDir'] +'/' + configs['training']['modelFile']
 weightsFile = configs['training']['weightsDir'] +'/' + configs['training']['weightsFile']
@@ -85,5 +86,18 @@ modelSum = summary(model=yoloModel.model,
             row_settings=["var_names"]
             )
 '''
+augmentation_params = {
+    "hsv_h": 0.015,  # Default: 0.015 Adjusts the hue of the image by a fraction of the color wheel, introducing color variability.
+    "hsv_s": 0.5,  # Default: 0.7: Alters the saturation of the image by a fraction
+    "hsv_v": 0.4,  # Default: 0.4: Modifies the value (brightness) of the image by a fraction, helping the model to perform well under various lighting conditions.
+    "degrees": 10,  # Default: 180
+    "translate": 0.1,  # Default: 0.1
+    "scale": 0.05,  # Default: 0.5
+    "flipud": 0,  # Default: 0
+    "fliplr": 0.5,  # Default: 0.5
+    "mosaic": 0,  # Default: 1
+    "auto_augment": "",  # Default: "randaugment" (Options: randaugment, autoaugment, augmix)
+    "erasing": 0  # Default: 0.4 (For classification)
+}
 
-results = yoloModel.train(hsv_h=1.0, plots=True, pretrained=transLearn, data=dataSet, epochs=epochs, imgsz=image_sz, device=device) # cpu, cuda, mps
+results = yoloModel.train(plots=True, pretrained=transLearn, data=dataSet, epochs=epochs, imgsz=image_sz, device=device, **augmentation_params) # cpu, cuda, mps

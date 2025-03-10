@@ -6,25 +6,31 @@ debugs:
     saveImages: True
 
 training:
-    dataSet: "../datasets/appleHand.yaml"
+    #Note dataset download directory is '/home/coder/sensorFusion/cv/training/datasets'. You can update this in '/home/coder/.config/Ultralytics/settings.json'
+    # Should be: '/home/coder/sensorFusion/cv/datasets'
+    dataSetDir: "../datasets"
+    #dataSet: "../datasets/appleHand.yaml"
+    #dataSet: "ExoGlove.v2-in-progess-25-03-06/data.yaml" #Day 2 part train I ~ 1k images
+    dataSet: "day2_partII_2138Images/data.yaml"
     #dataSet: "../datasets/coco_withHand.yaml"
     #dataSet: "../datasets/coco_7Class.yaml"
     modelsDir: "../models"
     weightsDir: "../weights"
 
-    modelFile: "yolov5nu.yaml"
-    weightsForTransfer: "yolov5nu.pt"
-    weightsFile: "yolov5nu_tran_hsv_h-1.0_2class.pt"
+    #modelFile: "yolov5nu.yaml"
+    #weightsForTransfer: "yolov5nu.pt"
+    #weightsFile: "yolov5nu_tran_hsv_h-1.0_2class.pt"
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
-    weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
+    #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
     weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
     #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite"
 
-    #modelFile: "yolov8n.yaml"
-    #weightsForTransfer: "yolov8n.pt"
-    #weightsFile: "yolov8n_tran_2class.pt"
+    modelFile: "yolov8n.yaml"
+    weightsForTransfer: "yolov8n.pt"
+    weightsFile: "yolov8n_newDataset_inProgessI.pt"
 
+    # Will not run on TPU
     #modelFile: "yolo11n.yaml"
     #weightsForTransfer: "yolo11n.pt"
     #weightsFile: "yolo11n_tran_2class.pt"
