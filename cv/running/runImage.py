@@ -12,8 +12,8 @@
 ###
 
 import platform
-import os, sys
-#import cv2
+import os, sys, glob
+import cv2
 import time
 
 from threading import Thread
@@ -104,13 +104,13 @@ def sanitizeStr(str):
     return str
 
 
-def handleImage(image, imgCapTime, dCalc, objDisp, camId = 1 ):
+def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, camId = 1 ):
     logger.info(f"------------------Camera {camId}---------------------------")
     logger.info(f"Image Capture Time: {imgCapTime}")
     #logger.info(f"size: {image_1.shape}")
 
     if(configs['debugs']['runInfer']):
-        results = infer.runInference(image)
+        results, image = infer.runInference(image)
         validRes = dCalc.loadData(results )
 
         # Send the results over serial
@@ -225,32 +225,22 @@ if __name__ == "__main__":
             timeTrigerGPIO.close()
 
 
-    elif configs['runTime']['imgSrc'] == 'directory':
-        import os, fnmatch
-        image_dir = configs['runTime']['imageDir']
-        listing = os.scandir(image_dir)
-
-        for thisFile in listing:
-            #if fnmatch.fnmatch(thisFile, '*936.jpg'):
-            if fnmatch.fnmatch(thisFile, '*.jpg'):
-                #generate a list of files
-                thisImgFile = image_dir + "/" + thisFile.name
-                logger.info("---------------------------------------------")
-                logger.info(f"File: {thisImgFile}")
-                results = infer.runInference(thisImgFile)
-
-                validRes = distCalc.loadData(results )
-                if configs['debugs']['dispResults']:
-                    exitStatus = handObjDisp.draw(thisImgFile, distCalc, validRes)
-                    if exitStatus == ord('q'):  # q = 113
-                        logger.info(f"********   quit now ***********")
-                        exit()
-
     else: # single image
-        image = configs['runTime']['imageDir'] + '/' + configs['runTime']['imgSrc']
-        results = infer.runInference(image)
+        imagePath = configs['runTime']['imageDir'] + '/' + configs['runTime']['imgSrc']
+        imageFiles = glob.glob(imagePath)  # Find all matching images
+        imageFiles = sorted(imageFiles)  # Alphabetical sorting should work for timestamps
 
-        validRes = distCalc.loadData(results)
-        if configs['debugs']['dispResults']:
-            handObjDisp.draw(image, distCalc, validRes)
+        for i,image in enumerate(imageFiles, start=1): #Start the index at 1
+            logger.info("---------------------------------------------")
+            logger.info(f"File {i}/{len(imageFiles)}: {image}")
+            thisImg = cv2.imread(image)  # Read the image
+            #thisImg = cv2.rotate(thisImg, cv2.ROTATE_180)
+            results, image = infer.runInference(thisImg)
+
+            validRes = distCalc.loadData(results)
+            if configs['debugs']['dispResults']:
+                exitStatus = handObjDisp.draw(image, distCalc, validRes, asFile=True)
+                if exitStatus == ord('q'):  # q = 113
+                    logger.info(f"********   quit now ***********")
+                    exit()
     

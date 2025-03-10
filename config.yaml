@@ -1,6 +1,6 @@
 debugs:
     debug: True 
-    showInfResults: False
+    showInfResults: True
     dispResults: True
     runInfer: True
     saveImages: False
@@ -47,14 +47,19 @@ training:
 
 runTime:
     ## Inference Source
-    #imgSrc: "directory"
-    #imgSrc: "appleHand_hand_4.jpg"
-    #imgSrc: "dataset3_310.jpg"
-    imgSrc: "camera"
     #imageDir: "../datasets/combinedData/images/val"
     #imageDir: "../datasets/testImages"
     #imageDir: "../images/fo"
-    imageDir: "../images/test_day2"
+    #imageDir: "../images/test_day2"
+    imageDir: "/Volumes/Data/exoGlove/images_capture/day1"
+    #imageDir: "/Volumes/Data/exoGlove/images_capture/test_day2/cam-1_overhead/apple/sub3"
+    #imgSrc: "directory"
+    #imgSrc: "appleHand_hand_4.jpg"
+    #imgSrc: "dataset3_310.jpg"
+    #imgSrc: "camera"
+    #imgSrc: "*_apple_*"
+    imgSrc: "*"
+    #imgSrc: "1_20241121-130802-434_4_apple_2.jpg"
     focus: 15  #inc of 5, 0-255, negitive for auto
 
     nCameras: 1
@@ -78,9 +83,6 @@ runTime:
 
     displaySettings:
         fullScreen: False
-        handColor: [0, 255, 0]
-        lineColor: [255, 0, 0] # Color in BGR, The distance is the same color
-        objectColor: [0, 0, 255]
         handLineTh: 2 #Thickness in px
         objLineTh: 2
         distLineTh: 2

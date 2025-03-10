@@ -13,6 +13,7 @@
 import cv2
 import datetime
 import os
+import yaml #To get names from class number
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -24,9 +25,6 @@ class displayHandObject:
     def __init__(self,  config, camNum=1) -> None:
         logger.info("Init: displayHandObject")
         conf = config['runTime']['displaySettings']
-        self.handColor = conf['handColor']
-        self.objectColor = conf['objectColor']
-        self.lineColor = conf['lineColor']
         self.fullScreen = conf['fullScreen']
         self.handLineTh = conf['handLineTh']
         self.objLineTh = conf['objLineTh']
@@ -51,14 +49,28 @@ class displayHandObject:
                 print(f"Could not create {self.imageDir}, {e}")
                 exit()
 
-    def draw(self, imgFile, dist, valid, camNum, saveFileName=""):
-        if isinstance(imgFile, str):
-            thisImg =  cv2.imread(imgFile)
-            #logger.info(f"Image File: {imgFile}")
+        yoloConfig = f"{config['training']['dataSetDir']}/{config['training']['dataSet']}"
+        with open(yoloConfig, "r") as yoloConfigFile:
+            yolo_config = yaml.safe_load(yoloConfigFile)
+        self.class_names = yolo_config.get("names", []) # Get class names list
+        # Define a list of distinct colors (BGR format for OpenCV)
+        self.color_list = [
+            (0, 255, 0),   # Apple: Green
+            (0, 0, 128),   # Ball: Dark Red
+            (0, 128, 128), # Bottle: Teal
+            (0, 128, 0),   # Clip: Dark Green
+            (0, 0, 0),     # Glove: black
+            (255, 0, 0),   # Lid: Blue
+            (255, 255, 0), # Plate: Cyan
+            (128, 0, 128), # Spoon: Purple
+            (255, 0, 255), # Tape Spool: Magenta
+            (0, 0, 255),   # Dark Red
+            (255, 255, 255)# Line: White
+        ]
 
+    def draw(self, thisImg, dist, valid, camNum=None, saveFileName="", asFile = False):
+        if asFile:
             self.waitKeyTime = 0 #ms, will wait untill the key is pressed
-        else:
-            thisImg =  imgFile
 
         #logger.info(f"Image File shape: {thisImg.shape}")
 
@@ -79,6 +91,7 @@ class displayHandObject:
 
         #cv2.setWindowProperty(self.windowName,cv2.WND_PROP_TOPMOST, 1)
 
+
         cv2.imshow(self.windowName, thisImg)
 
         if(self.saveFile):
@@ -93,26 +106,49 @@ class displayHandObject:
 
     def drawObject(self, thisImg, dist):
         # The Object
-        objText = f"Target[{dist.grabObject[5]:.0f}]: {dist.grabObject[4]:.2f}"
+        detected_class_id = int(dist.grabObject[5])
+        targetColor = self.color_list[detected_class_id % len(self.color_list)]
+        objectname = self.class_names[detected_class_id] if detected_class_id < len(self.class_names) else "Unknown"
+
+        objText = f"{objectname}: {dist.grabObject[4]:.2f}%"
         #logger.info(f"drawObject: {dist.grabObject}")
         objUL, objLR = dist.getBox(dist.grabObject)
-        cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=self.objectColor, thickness=self.objLineTh)
-        cv2.circle(img=thisImg, center=dist.bestCenter, radius=5, color=self.objectColor, thickness=2) #BGR
-        cv2.putText(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.objectColor)
+        cv2.rectangle(img=thisImg, pt1=objUL, pt2=objLR, color=targetColor, thickness=self.objLineTh)
+        cv2.circle(img=thisImg, center=dist.bestCenter, radius=5, color=targetColor, thickness=2) #BGR
         #cv2.putText(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=self.objectColor)
+        self.putTextInBox(img=thisImg, text=objText, org=objUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, text_color=targetColor, box_color=[255, 255, 255])
 
     def drawHand(self, thisImg, dist):
         # The Hand
-        handText = f"Hand: {dist.handObject[4]:.2f}"
+        handText = f"Glove: {dist.handObject[4]:.2f}%"
         handUL, handLR = dist.getBox(dist.handObject)
-        cv2.rectangle(img=thisImg, pt1=handUL, pt2=handLR, color=self.handColor, thickness=self.handLineTh)
-        cv2.circle(img=thisImg, center=dist.handCenter, radius=5, color=self.handColor, thickness=2) #BGR
-        cv2.putText(img=thisImg, text=handText, org=handUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1.0, color=self.handColor)
+        cv2.rectangle(img=thisImg, pt1=handUL, pt2=handLR, color=self.color_list[4], thickness=self.handLineTh)
+        cv2.circle(img=thisImg, center=dist.handCenter, radius=5, color=self.color_list[4], thickness=2) #BGR
+        cv2.putText(img=thisImg, text=handText, org=handUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1.0, color=self.color_list[4])
 
     def drawDistance(self, thisImg, dist):
         # The distance
         distText =f"Distance: {dist.bestDist:.0f}mm"
-        distUL =  (5,40)  # The location of the text box
+        distUL =  (0,25)  # The location of the text box (x, y)
         logger.info(distText)
-        cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.lineColor, thickness=self.distLineTh)
-        cv2.putText(img=thisImg, text=distText, org=distUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=2, thickness=2, color=self.lineColor)
+        cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.color_list[10], thickness=self.distLineTh)
+        #cv2.putText(img=thisImg, text=distText, org=distUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=2, thickness=2, color=self.lineColor)
+        self.putTextInBox(img=thisImg, text=distText, org=distUL, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=2, thickness=2, text_color=self.color_list[10], padding=5)
+
+    def putTextInBox(self, img, text, org, fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=2, thickness=1, text_color=(255, 255, 255), box_color=(0, 0, 0), padding=2):
+        text_size, _ = cv2.getTextSize(text, fontFace, fontScale, thickness)
+        text_w, text_h = text_size  # Width and height of text
+
+        # Calculate box coordinates
+        box_x1, box_y1 = org[0] - padding, org[1] - text_h - padding
+        box_x2, box_y2 = org[0] + text_w + padding, org[1] + padding
+
+        # Ensure box is within image bounds
+        box_x1, box_y1 = max(0, box_x1), max(0, box_y1)
+        box_x2, box_y2 = min(img.shape[1], box_x2), min(img.shape[0], box_y2)
+
+        # Draw filled rectangle (background for text)
+        cv2.rectangle(img, (box_x1, box_y1), (box_x2, box_y2), box_color, cv2.FILLED)
+
+        # Draw the text on top of the box
+        cv2.putText(img, text, org, fontFace, fontScale, text_color, thickness)
