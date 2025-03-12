@@ -58,7 +58,8 @@ runTime:
     #imgSrc: "dataset3_310.jpg"
     #imgSrc: "camera"
     #imgSrc: "*_apple_*"
-    imgSrc: "*"
+    imgSrc: "*_spoon_*"
+    #imgSrc: "*"
     #imgSrc: "1_20241121-130802-434_4_apple_2.jpg"
     focus: 15  #inc of 5, 0-255, negitive for auto
 
