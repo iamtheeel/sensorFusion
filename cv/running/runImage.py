@@ -251,7 +251,7 @@ if __name__ == "__main__":
             validRes = distCalc.loadData(results)
             # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
             # Grab object from inference: 4=Confidence, 5 = class
-            serialPort.sendString(timeMS=0, handConf=distCalc.handConf, 
+            serialPort.sendString(timeMS=36888762, handConf=distCalc.handConf, 
                                   object=distCalc.grabObject[5], objectConf=distCalc.grabObject[4], distance=distCalc.bestDist)
 
             # Draw it
