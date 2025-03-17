@@ -95,9 +95,9 @@ augmentation_params = {
     "scale": 0.05,  # Default: 0.5
     "flipud": 0,  # Default: 0
     "fliplr": 0.5,  # Default: 0.5
-    "mosaic": 0,  # Default: 1
-    "auto_augment": "",  # Default: "randaugment" (Options: randaugment, autoaugment, augmix)
-    "erasing": 0  # Default: 0.4 (For classification)
+    "mosaic": 0  # Default: 1
+    # Not in this ver"auto_augment": "",  # Default: "randaugment" (Options: randaugment, autoaugment, augmix)
+    #"erasing": 0  # Default: 0.4 (For classification)
 }
 
 results = yoloModel.train(plots=True, pretrained=transLearn, data=dataSet, epochs=epochs, imgsz=image_sz, device=device, **augmentation_params) # cpu, cuda, mps
