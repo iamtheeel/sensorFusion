@@ -66,21 +66,21 @@ class modelRunTime:
             #inference time, nms time
             logger.info(f"TPU Inference, nms time: {self.model.get_last_inference_time()}") 
             #logger.info(f"TPU Results: {type(yoloResults)}, {yoloResults}")
-            return yoloResults
+            return yoloResults, image
 
         else:
             yoloResults = self.model.predict(image) # Returns a dict
-            logger.info(yoloResults[0].speed)
+            #logger.info(yoloResults[0].speed)
 
             #logger.info(f"Results.boxes: {type(yoloResults[0].boxes.data)}, {yoloResults[0].boxes.data}")
-            return yoloResults[0].boxes.data
+            return yoloResults[0].boxes.data, image
 
     def runInferenceTPUFile(self, image):
             logger.info(f"Running TPU file infernece")
             # Returns a numpy array: x1, x2, y1, y2, conf, class
             results = self.model.predict(image, save_img=self.debug, save_txt=self.debug)
 
-            return results
+            return results, image
 
     def runInferenceTPUWebCam(self, image):
             from utils import get_image_tensor

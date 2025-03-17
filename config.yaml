@@ -1,9 +1,9 @@
 debugs:
     debug: True 
-    showInfResults: False
+    showInfResults: True
     dispResults: True
-    runInfer: False
-    saveImages: True
+    runInfer: True
+    saveImages: False
 
 training:
     #Note dataset download directory is '/home/coder/sensorFusion/cv/training/datasets'. You can update this in '/home/coder/.config/Ultralytics/settings.json'
@@ -48,20 +48,27 @@ training:
 
 runTime:
     ## Inference Source
-    #imgSrc: "directory"
-    #imgSrc: "appleHand_hand_4.jpg"
-    #imgSrc: "dataset3_310.jpg"
-    imgSrc: "camera"
     #imageDir: "../datasets/combinedData/images/val"
     #imageDir: "../datasets/testImages"
     #imageDir: "../images/fo"
-    imageDir: "../images/test_day2"
-    focus: 15  #inc of 5, 0-255, negitive for auto
+    #imageDir: "../images/test_day2"
+    imageDir: "/Volumes/Data/exoGlove/images_capture/day1"
+    #imageDir: "/Volumes/Data/exoGlove/images_capture/test_day2/cam-1_overhead/apple/sub3"
+    #imgSrc: "directory"
+    #imgSrc: "appleHand_hand_4.jpg"
+    #imgSrc: "dataset3_310.jpg"
+    #imgSrc: "camera"
+    #imgSrc: "*_apple_*"
+    imgSrc: "*_spoon_*"
+    #imgSrc: "*"
+    #imgSrc: "1_20241121-130802-434_4_apple_2.jpg"
 
-    nCameras: 2
+    nCameras: 1
+    focus: 15  #inc of 5, 0-255, negitive for auto
+    camId: 0
     #camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
-    camId: 2 #laptop USB webcam
+    #camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image
     #camId: "rtsp://192.168.1.254:554/"    #Full image
@@ -70,7 +77,7 @@ runTime:
     camRateHz: 5
 
     distSettings:
-        imagePxlPer_mm: 1.0
+        imagePxlPer_mm: .51 #0.81
         handThreshold: 0.50
         objectThreshold: 0.60
         nmsIouThreshold: 0.90 #only use if iou < this
@@ -79,9 +86,6 @@ runTime:
 
     displaySettings:
         fullScreen: False
-        handColor: [0, 255, 0]
-        lineColor: [0, 255, 255] # Color in BGR
-        objectColor: [0, 0, 255]
         handLineTh: 2 #Thickness in px
         objLineTh: 2
         distLineTh: 2
@@ -101,3 +105,12 @@ servos:
     servos: 
         pwm_Hz: 50
         leavRunning: False
+
+comms:
+    #port: "/dev/ttyUSB0" # None to not use
+    port: "/dev/tty.SLAB_USBtoUART" # Mac
+    speed: 115200
+    dataBits: 8
+    stobBits: 1
+    parity: 'N'
+    id: "CV"

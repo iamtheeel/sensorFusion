@@ -11,3 +11,10 @@ __*
 *.pt
 *.tflite
 *.onnx
+
+runs
+weights
+yolo_ard
+images_capture
+randImages
+arch
