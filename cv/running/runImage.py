@@ -117,7 +117,7 @@ def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, cam
 
         # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
         # Grab object from inference: 4=Confidence, 5 = class
-        serialPort.sendString(timeMS=0, handConf=distCalc.handConf, 
+        serialPort.sendString(timeMS=imgCapTime, handConf=distCalc.handConf, 
                               object=distCalc.grabObject[5], objectConf=distCalc.grabObject[4], distance=distCalc.bestDist)
 
         # Send the results over serial

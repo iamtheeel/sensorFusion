@@ -41,9 +41,9 @@ class commsClass:
 
 
     def sendString(self, timeMS=0, handConf=0, object=None, objectConf=0, distance=0):
-        sendStr = f"${self.id}, {timeMS}, {handConf}, {object},{objectConf},{distance}\n\r"
+        sendStr = f"${self.id}, {timeMS}, {handConf}, {int(object)},{objectConf},{distance}\n\r"
         if self.port!= None:
-            #self.ser.write(unicode(sendStr))
-            self.ser.write(sendStr)
+            self.ser.write(sendStr.encode('utf-8'))  # Encode as 8 bit bytes
+            logger.info(f"Sending: {sendStr}")
 
         pass

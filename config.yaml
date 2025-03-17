@@ -61,9 +61,9 @@ runTime:
     imgSrc: "*_spoon_*"
     #imgSrc: "*"
     #imgSrc: "1_20241121-130802-434_4_apple_2.jpg"
-    focus: 15  #inc of 5, 0-255, negitive for auto
 
     nCameras: 1
+    focus: 15  #inc of 5, 0-255, negitive for auto
     camId: 0
     #camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
@@ -105,7 +105,8 @@ servos:
         leavRunning: False
 
 comms:
-    port: "/dev/ttyUSB0"
+    #port: "/dev/ttyUSB0" # None to not use
+    port: "/dev/tty.SLAB_USBtoUART" # Mac
     speed: 115200
     dataBits: 8
     stobBits: 1
