@@ -52,6 +52,8 @@ inputCam_1 = camera(configs, configs['runTime']['camId'])
 if(configs['runTime']['nCameras'] == 2):
     inputCam_2 = camera(configs, configs['runTime']['camId_2'])
 
+from serialComms import commsClass
+serialPort = commsClass(configs['comms'])
 
 if device == "tpu":
     runTimeCheckThread = True
@@ -112,6 +114,11 @@ def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, cam
     if(configs['debugs']['runInfer']):
         results, image = infer.runInference(image)
         validRes = dCalc.loadData(results )
+
+        # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
+        # Grab object from inference: 4=Confidence, 5 = class
+        serialPort.sendString(timeMS=0, handConf=distCalc.handConf, 
+                              object=distCalc.grabObject[5], objectConf=distCalc.grabObject[4], distance=distCalc.bestDist)
 
         # Send the results over serial
         # make object from serialComms.py
@@ -217,7 +224,6 @@ if __name__ == "__main__":
         if(configs['runTime']['nCameras'] == 2):
             camThread_2.join() # join the thread back to main
             del inputCam_2 
-
         
         if device == "tpu":
             runTimeCheckThread = False
@@ -235,12 +241,25 @@ if __name__ == "__main__":
             logger.info(f"File {i}/{len(imageFiles)}: {image}")
             thisImg = cv2.imread(image)  # Read the image
             #thisImg = cv2.rotate(thisImg, cv2.ROTATE_180)
-            results, image = infer.runInference(thisImg)
 
+            ## TODO: Move to handleImg
+            #    runCam[1] = handleImage(image_2, camTime_2, distCalc_2, handObjDisp_2, camId=2)
+
+            # Run inference
+            results, image = infer.runInference(thisImg)
+            # get the distance
             validRes = distCalc.loadData(results)
+            # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
+            # Grab object from inference: 4=Confidence, 5 = class
+            serialPort.sendString(timeMS=0, handConf=distCalc.handConf, 
+                                  object=distCalc.grabObject[5], objectConf=distCalc.grabObject[4], distance=distCalc.bestDist)
+
+            # Draw it
             if configs['debugs']['dispResults']:
                 exitStatus = handObjDisp.draw(image, distCalc, validRes, asFile=True)
                 if exitStatus == ord('q'):  # q = 113
                     logger.info(f"********   quit now ***********")
                     exit()
     
+
+    serialPort.close()      # close the serial port

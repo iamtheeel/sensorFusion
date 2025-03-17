@@ -103,3 +103,11 @@ servos:
     servos: 
         pwm_Hz: 50
         leavRunning: False
+
+comms:
+    port: "/dev/ttyUSB0"
+    speed: 115200
+    dataBits: 8
+    stobBits: 1
+    parity: 'N'
+    id: "CV"
