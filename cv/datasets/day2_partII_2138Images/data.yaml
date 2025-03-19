@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 9
+names: ['apple', 'ball', 'bottle', 'clip', 'glove', 'lid', 'plate', 'spoon', 'tape spool']
+
+roboflow:
+  workspace: exoglove
+  project: exoglove
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/exoglove/exoglove/dataset/4
