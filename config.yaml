@@ -28,7 +28,8 @@ training:
 
     modelFile: "yolov8n.yaml"
     weightsForTransfer: "yolov8n.pt"
-    weightsFile: "yolov8n_newDataset_inProgessII.pt"
+    weightsFile: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs.pt"
+    #weightsFile: "yolov8n_newDataset_inProgessII.pt"
 
     # Will not run on TPU
     #modelFile: "yolo11n.yaml"
@@ -52,7 +53,8 @@ runTime:
     #imageDir: "../datasets/testImages"
     #imageDir: "../images/fo"
     #imageDir: "../images/test_day2"
-    imageDir: "/Volumes/Data/exoGlove/images_capture/day1"
+    #imageDir: "/Volumes/Data/exoGlove/images_capture/day1" # On Mac
+    imageDir: "../images_capture/test_day2/cam-1_overhead/apple/sub3"
     #imageDir: "/Volumes/Data/exoGlove/images_capture/test_day2/cam-1_overhead/apple/sub3"
     #imgSrc: "directory"
     #imgSrc: "appleHand_hand_4.jpg"
@@ -107,8 +109,8 @@ servos:
         leavRunning: False
 
 comms:
-    #port: "/dev/ttyUSB0" # None to not use
-    port: "/dev/tty.SLAB_USBtoUART" # Mac
+    port: "/dev/ttyUSB0" # None to not use
+    #port: "/dev/tty.SLAB_USBtoUART" # Mac
     speed: 115200
     dataBits: 8
     stobBits: 1
