@@ -11,7 +11,8 @@ training:
     dataSetDir: "../datasets"
     #dataSet: "../datasets/appleHand.yaml"
     #dataSet: "ExoGlove.v2-in-progess-25-03-06/data.yaml" #Day 2 part train I ~ 1k images
-    dataSet: "day2_partII_2138Images/data.yaml"
+    dataSet: "day2_partIII_TopCamFullyLab/data.yaml"
+    #dataSet: "day2_partII_2138Images/data.yaml"
     #dataSet: "../datasets/coco_withHand.yaml"
     #dataSet: "../datasets/coco_7Class.yaml"
     modelsDir: "../models"
@@ -54,14 +55,16 @@ runTime:
     #imageDir: "../images/fo"
     #imageDir: "../images/test_day2"
     #imageDir: "/Volumes/Data/exoGlove/images_capture/day1" # On Mac
-    imageDir: "../images_capture/test_day2/cam-1_overhead/apple/sub3"
+    imageDir: "../images_capture/day1" # On Mac
+    #imageDir: "../images_capture/test_day2/cam-1_overhead/tape_spool/sub3"
     #imageDir: "/Volumes/Data/exoGlove/images_capture/test_day2/cam-1_overhead/apple/sub3"
     #imgSrc: "directory"
     #imgSrc: "appleHand_hand_4.jpg"
     #imgSrc: "dataset3_310.jpg"
     #imgSrc: "camera"
     #imgSrc: "*_apple_*"
-    imgSrc: "*_spoon_*"
+    imgSrc: "*_lid*"
+    #imgSrc: "*_spoon_*"
     #imgSrc: "*"
     #imgSrc: "1_20241121-130802-434_4_apple_2.jpg"
 
@@ -79,11 +82,10 @@ runTime:
     camRateHz: 5
 
     distSettings:
-        imagePxlPer_mm: .51 #0.81
+        imagePxlPer_mm: .51 #From cv/pxDistCalc.ods
         handThreshold: 0.50
         objectThreshold: 0.60
         nmsIouThreshold: 0.90 #only use if iou < this
-        #0.6
         handClass: 4
 
     displaySettings:
@@ -109,7 +111,8 @@ servos:
         leavRunning: False
 
 comms:
-    port: "/dev/ttyUSB0" # None to not use
+    # None to not use
+    port: "/dev/ttyUSB0" # Linux
     #port: "/dev/tty.SLAB_USBtoUART" # Mac
     speed: 115200
     dataBits: 8
