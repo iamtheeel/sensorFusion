@@ -12,6 +12,12 @@
 # 3.12 does not work, 3.9 does not work. Must be 3.11
 #
 # Must run under Linux
+# But not on the server... not that Linux... er, no clue why
+# Server Error:
+#       AssertionError arument 'int8' is not supported for format='edgecpu'
+#   Does not work with: ultralytics 8.3.92
+#   Works on : 8.2.51
+#   Might work if we remove the int8, as the edgeTpu is full_integer
 # Note: takes a bloody long time!   Mostly mem ops, cpu stays low, looks hung, but is not
 #
 #
@@ -55,8 +61,10 @@ must use python 3.11 for the exporter to work as of 7/7/24
 #model.export(format="tflite", data=dataSet, imgsz=(imgH, imgW), int8=True)
 # https://github.com/ultralytics/ultralytics/issues/1185  #I did not seem to have a problem tho
 tstart = time.time()
-model.export(format="edgetpu", data=dataSet, imgsz=imgSZ, int8=True) #Edge TPU is linux only #Img is H, w
 ###Ramhog, running on 640px takes ~20gb of ram, and the ram error is not clear##
-# Up to 30GB now!
+#model.export(format="edgetpu", data=dataSet, imgsz=imgSZ, int8=True) #Edge TPU is linux only #Img is H, w
+## Very particular about version, works with ulralytics v8.2.51, not with 8.3.92
+model.export(format="edgetpu", data=dataSet, imgsz=imgSZ) #Edge TPU is linux only #Img is H, w
+# Up to 30GB now! Cut the number of classes down and its 'only' ~15GB
 tend = time.time()
 logger.info(f"Export time: {tstart-tend}")

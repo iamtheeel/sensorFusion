@@ -23,20 +23,29 @@ training:
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_2class.pt"
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
-    #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
-    #weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
-    #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite"
-    weightsFile_tpu: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs.tflite"
 
     modelFile: "yolov8n.yaml"
     weightsForTransfer: "yolov8n.pt"
-    weightsFile: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs.pt"
+    #weightsFile: "yolo8_12_UL-Old_day2_partlab-I_30Epochs_newAug.pt" # 
+    weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_120epochs.pt" #  
+    #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_60epochs.pt" #  
+    #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_30epochs.pt" # Skipped "Int8=True"
+    #weightsFile: "yolo8_20_UL-New_day2_fullLabTopCam_30epochs.pt" # On server
+    weightsFile: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs.pt" # Tested on laptop with very good results 
+    #weightsFile: "yolo8_18_UL-New_day2_fullLabTopCam_120epochs.pt"
     #weightsFile: "yolov8n_newDataset_inProgessII.pt"
 
-    # Will not run on TPU
+    # > v8 Will not run on TPU, it runs, on the CPU... very slow!
     #modelFile: "yolo11n.yaml"
     #weightsForTransfer: "yolo11n.pt"
     #weightsFile: "yolo11n_tran_2class.pt"
+    ## Run YOLO8 or lower
+    #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
+    #weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
+    #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite"
+    ## Day2 Top Camera Data:
+    # 30 epochs: On server
+    weightsFile_tpu: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs_full_integer_quant_edgetpu.tflite"
 
 
     transLearn: True
