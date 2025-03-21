@@ -33,7 +33,7 @@ class commsClass:
         self.id = config['id']   
 
         #Serial<id=0xa81c10, open=False>(port='COM1', baudrate=19200, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=0, rtscts=0)
-        if self.port!= None:
+        if self.port!= "None":
             self.ser = serial.Serial(port=self.port, baudrate=self.speed, bytesize=self.dataBits, parity=self.parity, stopbits=self.stopBits)
 
     def close(self):
@@ -42,7 +42,7 @@ class commsClass:
 
     def sendString(self, timeMS=0, handConf=0, object=None, objectConf=0, distance=0):
         sendStr = f"${self.id},{timeMS},{handConf:.2f},{int(object)},{objectConf:.2f},{distance:.0f}\n\r" #\n\r = <LF> <CR>: 0x0A 0x0D
-        if self.port!= None:
+        if self.port!= "None":
             self.ser.write(sendStr.encode('utf-8'))  # Encode as 8 bit bytes
             logger.info(f"Sending: {sendStr}")
 

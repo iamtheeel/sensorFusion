@@ -62,14 +62,16 @@ if device == "tpu":
     from periphery import GPIO  #pip install python-periphery
     #timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}",gpioPin, "in")
     # Might not work ask the chatbot
-    timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in", bias="pull_up")
-    timeTrigerGPIO.edge = "raising" #“none”, “rising”, “falling”, or “both”
+    timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in")
+    #timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in", bias="pull_up")
+    timeTrigerGPIO.edge = "rising" #“none”, “rising”, “falling”, or “both”
 
     '''
 
     '''
 
-    logger.info(f"GPIO chip:pin {gpioChip}:{gpioPin} interupt support = {timeTrigerGPIO.supports_interrupts}")
+    logger.info(f"GPIO chip:pin {gpioChip}:{gpioPin}")
+    #logger.info(f"GPIO chip:pin {gpioChip}:{gpioPin} interupt support = {timeTrigerGPIO.supports_interrupts}")
 
 def checkClockReset_thread():
     logger.info(f"Starting clock reset thread: GPIO {timeTrigerGPIO}")

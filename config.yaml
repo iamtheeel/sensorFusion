@@ -112,7 +112,8 @@ servos:
 
 comms:
     # None to not use
-    port: "/dev/ttyUSB0" # Linux
+    port: "None" # TPU
+    #port: "/dev/ttyUSB0" # Linux
     #port: "/dev/tty.SLAB_USBtoUART" # Mac
     speed: 115200
     dataBits: 8
