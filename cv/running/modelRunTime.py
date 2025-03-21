@@ -40,7 +40,8 @@ class modelRunTime:
         if device == "tpu":
             thresh = min(configs['runTime']['distSettings']['handThreshold'],
                          configs['runTime']['distSettings']['objectThreshold'])
-            self.model = EdgeTPUModel(modelFile, configs['training']['dataSet'], 
+            dataSetFile = configs['training']['dataSetDir'] + '/' +configs['training']['dataSet']
+            self.model = EdgeTPUModel(modelFile, dataSetFile,
                                       conf_thresh=thresh, #only over this
                                       iou_thresh=configs['runTime']['distSettings']['nmsIouThreshold'],
                                       filter_classes=None,  # Not implemented
@@ -76,7 +77,7 @@ class modelRunTime:
             return yoloResults[0].boxes.data, image
 
     def runInferenceTPUFile(self, image):
-            logger.info(f"Running TPU file infernece")
+            #logger.info(f"Running TPU file infernece")
             # Returns a numpy array: x1, x2, y1, y2, conf, class
             results = self.model.predict(image, save_img=self.debug, save_txt=self.debug)
 
@@ -84,7 +85,7 @@ class modelRunTime:
 
     def runInferenceTPUWebCam(self, image):
             from utils import get_image_tensor
-            logger.info(f"Running TPU webcam infernece")
+            #logger.info(f"Running TPU webcam infernece")
             full_image, net_image, pad = get_image_tensor(image, self.input_size[0])
             pred = self.model.forward(net_image)
             results = self.model.process_predictions(det=pred[0], 

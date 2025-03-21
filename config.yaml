@@ -13,7 +13,7 @@ training:
     #dataSet: "ExoGlove.v2-in-progess-25-03-06/data.yaml" #Day 2 part train I ~ 1k images
     dataSet: "day2_partIII_TopCamFullyLab/data.yaml"
     #dataSet: "day2_partII_2138Images/data.yaml"
-    #dataSet: "../datasets/coco_withHand.yaml"
+    #dataSet: "coco_withHand.yaml"
     #dataSet: "../datasets/coco_7Class.yaml"
     modelsDir: "../models"
     weightsDir: "../weights"
@@ -42,7 +42,7 @@ training:
     ## Run YOLO8 or lower
     #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
     #weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
-    #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite"
+    #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite" # Does not run on TPU
     ## Day2 Top Camera Data:
     # 30 epochs: On server
     weightsFile_tpu: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs_full_integer_quant_edgetpu.tflite"
@@ -79,9 +79,8 @@ runTime:
 
     nCameras: 1
     focus: 15  #inc of 5, 0-255, negitive for auto
-    camId: 2
     #camId: 0 # MAC webcam, laptop built in web cam
-    #camId: 1 # Corel TPU, 
+    camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image

@@ -128,7 +128,7 @@ class displayHandObject:
 
     def drawDistance(self, thisImg, dist):
         # The distance
-        distText =f"Distance: {dist.bestDist:.0f}mm"
+        #distText =f"Distance: {dist.bestDist:.0f}mm"
         distUL =  (0,25)  # The location of the text box (x, y)
         logger.info(distText)
         cv2.line(img=thisImg, pt1=dist.bestCenter, pt2=dist.handCenter, color=self.color_list[10], thickness=self.distLineTh)
