@@ -24,8 +24,9 @@ training:
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
     #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
-    weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
+    #weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
     #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite"
+    weightsFile_tpu: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs.tflite"
 
     modelFile: "yolov8n.yaml"
     weightsForTransfer: "yolov8n.pt"
