@@ -120,7 +120,9 @@ servos:
 
 comms:
     # None to not use
-    port: "None" # TPU
+    port: "None" # Don't use the Seril
+    #port: "/dev/ttymxc0" # TPU Serial port 1 ##USED by Console, systemctl stop serial-getty@ttymcx0.service
+    port: "/dev/ttymxc2" # TPU Serial port 3 
     #port: "/dev/ttyUSB0" # Linux
     #port: "/dev/tty.SLAB_USBtoUART" # Mac
     speed: 115200

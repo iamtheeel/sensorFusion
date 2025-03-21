@@ -55,31 +55,39 @@ if(configs['runTime']['nCameras'] == 2):
 from serialComms import commsClass
 serialPort = commsClass(configs['comms'])
 
+def openPin():
+    pin = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in")
+    #timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in", bias="pull_up") # pull up not avail
+    pin.edge = "both" #“none”, “rising”, “falling”, or “both”
+    return pin
+
 if device == "tpu":
     runTimeCheckThread = True
+    from periphery import GPIO  #pip install python-periphery
     gpioChip = configs['timeSync']['gpio_chip']
     gpioPin = configs['timeSync']['gpio_pin']
-    from periphery import GPIO  #pip install python-periphery
-    #timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}",gpioPin, "in")
-    # Might not work ask the chatbot
-    timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in")
-    #timeTrigerGPIO = GPIO(f"/dev/gpiochip{gpioChip}", gpioPin, "in", bias="pull_up")
-    timeTrigerGPIO.edge = "rising" #“none”, “rising”, “falling”, or “both”
-
-    '''
-
-    '''
-
     logger.info(f"GPIO chip:pin {gpioChip}:{gpioPin}")
+
+
     #logger.info(f"GPIO chip:pin {gpioChip}:{gpioPin} interupt support = {timeTrigerGPIO.supports_interrupts}")
 
 def checkClockReset_thread():
+    timeTrigerGPIO = openPin()
     logger.info(f"Starting clock reset thread: GPIO {timeTrigerGPIO}")
+
     while runTimeCheckThread:
-        timeTrigerGPIO.poll() #Wait for the edige
-        inputCam_1.setZeroTime()
-        if(configs['runTime']['nCameras'] == 2):
-            inputCam_2.setZeroTime()
+        #pinStatus = 
+        if timeTrigerGPIO.poll(0.25): #Wait for the edige
+            pinStatus = timeTrigerGPIO.read()
+            logger.info(f"Chekcing clock reset pin: {pinStatus}")
+            if pinStatus: 
+                inputCam_1.setZeroTime()
+                if(configs['runTime']['nCameras'] == 2): inputCam_2.setZeroTime()
+            # There is a bug and the interup is not clearing. So:
+            timeTrigerGPIO.close()
+            time.sleep(0.05) # wait for it to close
+            timeTrigerGPIO = openPin()
+
 
 
 ## Import our items after we set the log leve
@@ -110,7 +118,7 @@ def sanitizeStr(str):
 
 def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, camId = 1 ):
     logger.info(f"------------------Camera {camId}---------------------------")
-    logger.info(f"Image Capture Time: {imgCapTime}")
+    #logger.info(f"Image Capture Time: {imgCapTime}") # THisis in each cameras log
     #logger.info(f"size: {image_1.shape}")
 
     if(configs['debugs']['runInfer']):
