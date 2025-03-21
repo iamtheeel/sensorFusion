@@ -58,19 +58,18 @@ runTime:
     imageDir: "../images_capture/day1" # On Mac
     #imageDir: "../images_capture/test_day2/cam-1_overhead/tape_spool/sub3"
     #imageDir: "/Volumes/Data/exoGlove/images_capture/test_day2/cam-1_overhead/apple/sub3"
-    #imgSrc: "directory"
     #imgSrc: "appleHand_hand_4.jpg"
     #imgSrc: "dataset3_310.jpg"
-    #imgSrc: "camera"
+    imgSrc: "camera"
     #imgSrc: "*_apple_*"
-    imgSrc: "*_lid*"
+    #imgSrc: "*_lid*"
     #imgSrc: "*_spoon_*"
     #imgSrc: "*"
     #imgSrc: "1_20241121-130802-434_4_apple_2.jpg"
 
     nCameras: 1
     focus: 15  #inc of 5, 0-255, negitive for auto
-    camId: 0
+    camId: 2
     #camId: 0 # MAC webcam, laptop built in web cam
     #camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
