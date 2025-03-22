@@ -28,7 +28,7 @@ configs = config.get_config()
 ## Logging
 import logging
 debug = configs['debugs']['debug']
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename='log.txt', level=logging.INFO)
 logger = logging.getLogger(__name__)
 if debug == False:
     logging.disable(level=logging.CRITICAL)
@@ -238,7 +238,7 @@ if __name__ == "__main__":
         if device == "tpu":
             runTimeCheckThread = False
             getTimeSetThread.join()
-            timeTrigerGPIO.close()
+            #timeTrigerGPIO.close()
 
 
     else: # single image
