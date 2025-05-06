@@ -80,8 +80,7 @@ runTime:
     nCameras: 1
     focus: 15  #inc of 5, 0-255, negitive for auto
     #camId: 0 # MAC webcam, laptop built in web cam
-    camId: '/dev/video1' # Corel TPU, 
-    #camId: 1 # Corel TPU, 
+    camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image
@@ -103,8 +102,8 @@ runTime:
         objLineTh: 2
         distLineTh: 2
         runCamOnce: False
-        videoFile: ""
-        #videoFile: "videoOut.avi"
+        #videoFile: ""
+        videoFile: "videoOut.avi"
 timeSync:
     gpio_chip: 4
     gpio_pin : 13

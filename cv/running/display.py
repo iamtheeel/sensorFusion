@@ -24,6 +24,8 @@ logger = logging.getLogger("display")
 class displayHandObject:
     def __init__(self,  config, camNum=1) -> None:
         logger.info("Init: displayHandObject")
+        self.imageSize = config['training']['imageSize']
+        self.frameRate = config['runTime']['camRateHz']
         conf = config['runTime']['displaySettings']
         self.fullScreen = conf['fullScreen']
         self.handLineTh = conf['handLineTh']
@@ -45,7 +47,8 @@ class displayHandObject:
         if self.videoFile != '':
             self.cap = cv2.VideoCapture(0)
             fourcc = cv2.VideoWriter_fourcc(*'XVID')
-            self.videoOut = cv2.VideoWriter(self.videoFile, fourcc, 5.0, (640,480))
+            logger.info(f"Saving video: {self.videoFile}, h, w: {self.imageSize[1]}, {self.imageSize[0]}, rate: {self.frameRate}")
+            self.videoOut = cv2.VideoWriter(self.videoFile, fourcc, self.frameRate, (self.imageSize[1],self.imageSize[0]))
 
 
 
@@ -103,9 +106,9 @@ class displayHandObject:
         #cv2.setWindowProperty(self.windowName,cv2.WND_PROP_TOPMOST, 1)
 
         
-        if self.videoFile != '':
+        if self.videoFile != '': # Save video
             self.videoOut.write(thisImg)
-        cv2.imshow(self.windowName, thisImg)
+        cv2.imshow(self.windowName, thisImg) # Display the image
 
         if(self.saveFile):
             startDateTime = '{date:%Y%m%d-%H%M%S-%f}'.format( date=datetime.datetime.now() )[:-3]
