@@ -29,6 +29,7 @@ class displayHandObject:
         self.handLineTh = conf['handLineTh']
         self.objLineTh = conf['objLineTh']
         self.distLineTh = conf['distLineTh']
+        self.videoFile = conf['videoFile']
 
         self.waitKeyTime = 0 #ms, wait until the key is pressed
         if(conf['runCamOnce'] == False):
@@ -39,6 +40,16 @@ class displayHandObject:
         cv2.namedWindow(self.windowName, cv2.WINDOW_AUTOSIZE )
         cv2.moveWindow(self.windowName, 10,10) #Does not work with Wayland
         #cv2.putText(img='', text="Loading", org=[10,10], fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=5, color=self.objectColor)
+
+        ## Save video
+        if self.videoFile != '':
+            self.cap = cv2.VideoCapture(0)
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')
+            self.videoOut = cv2.VideoWriter(self.videoFile, fourcc, 5.0, (640,480))
+
+
+
+        # Save images
         self.saveFile = config['debugs']['saveImages']
         self.imageDir = config['runTime']['imageDir']
         if(not os.path.exists(self.imageDir)):
@@ -91,7 +102,9 @@ class displayHandObject:
 
         #cv2.setWindowProperty(self.windowName,cv2.WND_PROP_TOPMOST, 1)
 
-
+        
+        if self.videoFile != '':
+            self.videoOut.write(thisImg)
         cv2.imshow(self.windowName, thisImg)
 
         if(self.saveFile):

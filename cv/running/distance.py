@@ -62,16 +62,14 @@ class distanceCalculator:
         confField = 4
 
         self.zeroData()
-
         self.time_ms = 0
-
         self.data = data
         
         #logger.info(f"LoadData, Data: {data}")
 
         for object in data:
             #logger.info(f"LoadDataobject: {object}")
-            logger.info(f"LoadData, this object class: {object[classField]}, conf: {object[confField]}, hand class: {self.handClassNum}")
+            logger.info(f"LoadData, this object class: {object[classField]}, conf: {object[confField]}")
             if object[classField] == self.handClassNum and object[confField] >= self.hThresh:
                 self.nHands += 1
                 #self.hand = object

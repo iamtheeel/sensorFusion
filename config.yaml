@@ -27,7 +27,7 @@ training:
     modelFile: "yolov8n.yaml"
     weightsForTransfer: "yolov8n.pt"
     #weightsFile: "yolo8_12_UL-Old_day2_partlab-I_30Epochs_newAug.pt" # 
-    weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_120epochs.pt" #  
+    #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_120epochs.pt" #  
     #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_60epochs.pt" #  
     #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_30epochs.pt" # Skipped "Int8=True"
     #weightsFile: "yolo8_20_UL-New_day2_fullLabTopCam_30epochs.pt" # On server
@@ -43,8 +43,8 @@ training:
     #weightsFile_tpu: "yolov5nu_tran_hsv_h-1.0_81class_640px_full_integer_quant_edgetpu.tflite"
     #weightsFile_tpu: "yolov8n_tran_2class_full_integer_quant_edgetpu.tflite"
     #weightsFile_tpu: "yolo11n_tran_2class_full_integer_quant_edgetpu.tflite" # Does not run on TPU
-    ## Day2 Top Camera Data:
-    # 30 epochs: On server
+    #weightsFile_tpu: "yolo8_17_UL-Old_day2_fullLabTopCam_30epochs_full_integer_quant_edgetpu.tflite"
+    #weightsFile_tpu: "yolo8_18_UL-New_day2_fullLabTopCam_120epochs_full_integer_quant_edgetpu.tflite"
     weightsFile_tpu: "yolo8_19_UL-New_day2_fullLabTopCam_60epochs_full_integer_quant_edgetpu.tflite"
 
 
@@ -80,7 +80,8 @@ runTime:
     nCameras: 1
     focus: 15  #inc of 5, 0-255, negitive for auto
     #camId: 0 # MAC webcam, laptop built in web cam
-    camId: 1 # Corel TPU, 
+    camId: '/dev/video1' # Corel TPU, 
+    #camId: 1 # Corel TPU, 
     #camId: 2 #laptop USB webcam
     #camId: 3 #
     #camId: "rtsp://192.168.1.254:554/s1" # full image
@@ -102,6 +103,8 @@ runTime:
         objLineTh: 2
         distLineTh: 2
         runCamOnce: False
+        videoFile: ""
+        #videoFile: "videoOut.avi"
 timeSync:
     gpio_chip: 4
     gpio_pin : 13

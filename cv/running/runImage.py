@@ -79,9 +79,10 @@ def checkClockReset_thread():
         #pinStatus = 
         if timeTrigerGPIO.poll(0.25): #Wait for the edige
             pinStatus = timeTrigerGPIO.read()
-            logger.info(f"Chekcing clock reset pin: {pinStatus}")
+            logger.info(f"Checking clock reset pin: {pinStatus}")
             if pinStatus: 
                 inputCam_1.setZeroTime()
+                logger.info(f"Zero Clock: {pinStatus}")
                 if(configs['runTime']['nCameras'] == 2): inputCam_2.setZeroTime()
             # There is a bug and the interup is not clearing. So:
             timeTrigerGPIO.close()
