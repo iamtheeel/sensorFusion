@@ -131,11 +131,15 @@ def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, cam
         logger.info(f"Run inference on: Image size: {imageCopy.shape}")
         results, imageCopy = infer.runInference(imageCopy)
         logger.info(f"Infer done")
-        validRes = dCalc.loadData(results )
+        if isinstance(results, int): #Did we get a bad inference
+            validRes = False
+            logger.error(f"!!!Inference Failed!!!!")
+        else:
+            validRes = dCalc.loadData(results )
 
-        # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
-        # Grab object from inference: 4=Confidence, 5 = class
-        serialPort.sendString(timeMS=imgCapTime, handConf=distCalc.handConf, 
+            # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
+            # Grab object from inference: 4=Confidence, 5 = class
+            serialPort.sendString(timeMS=imgCapTime, handConf=distCalc.handConf, 
                               object=distCalc.grabObject[5], objectConf=distCalc.grabObject[4], distance=distCalc.bestDist)
 
         # Send the results over serial

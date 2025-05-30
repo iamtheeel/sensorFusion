@@ -87,7 +87,10 @@ class modelRunTime:
             from utils import get_image_tensor
             #logger.info(f"Running TPU webcam infernece")
             full_image, net_image, pad = get_image_tensor(image, self.input_size[0])
+            #logger.info(f"Done padding")
             pred = self.model.forward(net_image)
+            if isinstance(pred, int): return 0 # inference failed
+            #logger.info(f"Done forward path")
             results = self.model.process_predictions(det=pred[0], 
                                                      output_image=full_image, 
                                                      pad=pad,
@@ -96,6 +99,6 @@ class modelRunTime:
                                                      hide_labels=True,
                                                      hide_conf=True)
                         
-            #tinference, tnms = self.model.get_last_inference_time()
+            tinference, tnms = self.model.get_last_inference_time()
             #logger.info("Frame done in {}".format(tinference+tnms))
             return results

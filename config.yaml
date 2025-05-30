@@ -4,6 +4,9 @@ debugs:
     dispResults: True
     runInfer: True
     saveImages: False
+    logFile: 'log_2.txt'
+    videoFile: ""
+    #videoFile: "videoOut.avi"
 
 training:
     #Note dataset download directory is '/home/coder/sensorFusion/cv/training/datasets'. You can update this in '/home/coder/.config/Ultralytics/settings.json'
@@ -90,6 +93,7 @@ runTime:
     camRateHz: 5
 
     distSettings:
+        classMap: [0, 1, 0, 3, 4, 5, 6, 7, 8] #Remap the ojbects
         imagePxlPer_mm: .51 #From cv/pxDistCalc.ods
         handThreshold: 0.50
         objectThreshold: 0.60
@@ -102,8 +106,6 @@ runTime:
         objLineTh: 2
         distLineTh: 2
         runCamOnce: False
-        #videoFile: ""
-        videoFile: "videoOut.avi"
 timeSync:
     gpio_chip: 4
     gpio_pin : 13

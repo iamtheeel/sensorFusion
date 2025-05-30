@@ -28,6 +28,7 @@ class distanceCalculator:
         self.hThresh = config['handThreshold']
         self.oThresh = config['objectThreshold']
         self.handClassNum = config['handClass']
+        self.classMap = config['classMap']
 
         #logger.info(f"pxPer_mm: {self.pxPer_mm}")
 
@@ -68,6 +69,11 @@ class distanceCalculator:
         #logger.info(f"LoadData, Data: {data}")
 
         for object in data:
+            # E.x. if it reports a bottle, claim appleA
+            objClass = int(object[classField])
+            if len(self.classMap) >= objClass:
+                object[classField] = self.classMap[objClass]
+
             #logger.info(f"LoadDataobject: {object}")
             logger.info(f"LoadData, this object class: {object[classField]}, conf: {object[confField]}")
             if object[classField] == self.handClassNum and object[confField] >= self.hThresh:

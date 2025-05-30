@@ -16,6 +16,30 @@ from utils import plot_one_box, Colors, get_image_tensor
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
+
+#JMB Add to thread to catch/restart
+import threading
+def run_inference(interpreter, t_status, raw_output_holder):
+    try:
+        interpreter.invoke()
+        raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
+        raw_output_holder.append(raw_output)
+        t_status.append("ok")
+    except Exception as e:
+        print(f"Inference error: {e}")
+
+def run_inference_thread(interpreter):
+    t_status = []
+    raw_output_holder = []
+    t = threading.Thread(target=run_inference, args=(interpreter, t_status, raw_output_holder))
+    t.start()
+    t.join(timeout=0.3)
+    if t.is_alive():
+        return "Timeout", 0 #Can't return the results if there aint got none
+    else:
+        if t_status: return t_status[0], raw_output_holder[0]  #Good results
+        else:        return "unkown error", raw_output_holder[0]
+
 class EdgeTPUModel:
 
     def __init__(self, model_file, names_file, conf_thresh=0.25, iou_thresh=0.45, filter_classes=None, agnostic_nms=False, max_det=1000, v8=False):
@@ -162,17 +186,24 @@ class EdgeTPUModel:
             x = x[np.newaxis].astype(np.int8)
         else:
             x = x[np.newaxis].astype(np.uint8)
-        #print(f"v8: {self.v8}, image: {x}") 
+        #print(f"v8: {self.v8}, image: {x.shape}") 
 
         self.interpreter.set_tensor(self.input_details[0]['index'], x)
-        self.interpreter.invoke()
+        print(f"invoke")
+        #self.interpreter.invoke()
+        t_stat, raw_output = run_inference_thread(self.interpreter) #Call in a thread to detect and restart if there is an error
+        print(f"Thread: {t_stat}, {type(raw_output)}")
+        if isinstance(raw_output, int): return 0
         
         # Scale output
-        result = (common.output_tensor(self.interpreter, 0).astype('float32') - self.output_zero) * self.output_scale
+        #print(f"scale output")
+        #raw_output = common.output_tensor(self.interpreter, 0).copy() #MJB, use a copy so we con't hold on error
+        result = (raw_output.astype('float32') - self.output_zero) * self.output_scale
         if self.v8:
             result = np.transpose(result, [0, 2, 1])  # tranpose for yolov8 models
         
         self.inference_time = time.time() - tstart
+        print(f"inference time {self.inference_time}")
         
         if with_nms:
         

@@ -31,7 +31,7 @@ class displayHandObject:
         self.handLineTh = conf['handLineTh']
         self.objLineTh = conf['objLineTh']
         self.distLineTh = conf['distLineTh']
-        self.videoFile = conf['videoFile']
+        self.videoFile = config['debugs']['videoFile']
 
         self.waitKeyTime = 0 #ms, wait until the key is pressed
         if(conf['runCamOnce'] == False):

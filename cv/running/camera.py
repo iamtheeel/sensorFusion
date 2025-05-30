@@ -74,6 +74,7 @@ class camera:
             #self.thisCam.set(cv2.CAP_PROP_FOCUS, 10)
             self.thisCam.set(cv2.CAP_PROP_FRAME_HEIGHT, self.imgH)
             self.thisCam.set(cv2.CAP_PROP_FRAME_WIDTH,  self.imgW)
+        print(f"Stream Started")
 
     def getImage(self):
         if self.camStat and self.camType == 'rtsp':
@@ -117,7 +118,10 @@ class camera:
                 self.startStream
 
         else:
+            #self.camStat = False
+            #self.logger.info(f"Get image")
             self.camStat, self.image = self.thisCam.read()
+            #self.logger.info(f"Got image")
 
         # Get the time after the read, as the read waits for a new image
         self.thisCapTime = np.uint32(capTime_ms - self.zeroTime_ms)
