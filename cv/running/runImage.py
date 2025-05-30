@@ -28,7 +28,8 @@ configs = config.get_config()
 ## Logging
 import logging
 debug = configs['debugs']['debug']
-logging.basicConfig(filename='log.txt', level=logging.INFO)
+logging.basicConfig(filename=configs['debugs']['logFile'], level=logging.INFO)
+#logging.basicConfig(filename='log.txt', level=logging.INFO)
 logger = logging.getLogger(__name__)
 if debug == False:
     logging.disable(level=logging.CRITICAL)
@@ -118,12 +119,18 @@ def sanitizeStr(str):
 
 
 def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, camId = 1 ):
+    ##
+    # Immediatly make a copy
+    ##
+    imageCopy = image.copy()
     logger.info(f"------------------Camera {camId}---------------------------")
     #logger.info(f"Image Capture Time: {imgCapTime}") # THisis in each cameras log
     #logger.info(f"size: {image_1.shape}")
 
     if(configs['debugs']['runInfer']):
-        results, image = infer.runInference(image)
+        logger.info(f"Run inference on: Image size: {imageCopy.shape}")
+        results, imageCopy = infer.runInference(imageCopy)
+        logger.info(f"Infer done")
         validRes = dCalc.loadData(results )
 
         # send over serial: timeMS= 0, handConf= 0, object=None, objectConf=0, distance=0
@@ -139,7 +146,7 @@ def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, cam
 
     if configs['debugs']['dispResults']:
         # Show the image
-        exitStatus = objDisp.draw(image, dCalc, validRes, camId, imageFile)
+        exitStatus = objDisp.draw(imageCopy, dCalc, validRes, camId, imageFile)
         #exitStatus = True
 
         if exitStatus == ord('q'):  # q = 113
@@ -147,6 +154,14 @@ def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, cam
             logger.info(f"********   quit now ***********")
         
     return True
+
+def change_log_file(logger_ptr, fileName):
+    for handeler in logger_ptr.handlers[:]:
+        if isinstance(handler, logging.FileHandler):
+            logger_ptr.removeHandler(handler)
+            handler.close()
+    new_fHandle = logging.FileHandler(fileName)
+    logger_ptr.addHandler(new_fHandle)
 
 if __name__ == "__main__":
     ## Set up the file saves
@@ -160,6 +175,11 @@ if __name__ == "__main__":
         logger.info(f"object: {object}")
         logger.info(f"run: {run}")
         imageFile = f"{subject}_{object}_{run}"
+        # Set the log and video file to this run
+        change_log_file(logger, f'{imageFile}.txt')
+        if configs['debugs']['videoFile'] != "":
+            configs['debugs']['videoFile'] = f"{imageFile}.avi"
+            
 
     ## set the model information
     if(configs['debugs']['runInfer']):
