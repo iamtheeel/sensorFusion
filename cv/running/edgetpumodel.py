@@ -38,7 +38,7 @@ def run_inference_thread(interpreter):
         return "Timeout", 0 #Can't return the results if there aint got none
     else:
         if t_status: return t_status[0], raw_output_holder[0]  #Good results
-        else:        return "unkown error", raw_output_holder[0]
+        else:        return "unkown error", 0 # Bad inference
 
 class EdgeTPUModel:
 

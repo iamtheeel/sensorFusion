@@ -161,8 +161,8 @@ def handleImage(image, imgCapTime, dCalc, objDisp:display.displayHandObject, cam
 
 def change_log_file(logger_ptr, fileName):
     for handeler in logger_ptr.handlers[:]:
-        if isinstance(handler, logging.FileHandler):
-            logger_ptr.removeHandler(handler)
+        if isinstance(handeler, logging.FileHandler):
+            logger_ptr.removeHandler(handeler)
             handler.close()
     new_fHandle = logging.FileHandler(fileName)
     logger_ptr.addHandler(new_fHandle)
