@@ -163,7 +163,7 @@ def change_log_file(logger_ptr, fileName):
     for handeler in logger_ptr.handlers[:]:
         if isinstance(handeler, logging.FileHandler):
             logger_ptr.removeHandler(handeler)
-            handler.close()
+            handeler.close()
     new_fHandle = logging.FileHandler(fileName)
     logger_ptr.addHandler(new_fHandle)
 
@@ -266,7 +266,7 @@ if __name__ == "__main__":
             #timeTrigerGPIO.close()
 
 
-    else: # single image
+    else: # image file(s)
         imagePath = configs['runTime']['imageDir'] + '/' + configs['runTime']['imgSrc']
         imageFiles = glob.glob(imagePath)  # Find all matching images
         imageFiles = sorted(imageFiles)  # Alphabetical sorting should work for timestamps

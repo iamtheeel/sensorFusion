@@ -98,13 +98,16 @@ class camera:
 
     def capImage (self):
 
+        self.camStat, self.image = self.thisCam.read()
+        # Get the time after the read, as the read waits for a new image
+        #self.logger.info(f"Zero time: {self.zeroTime_ms}ms, Cam read time: {type(capTime_ms)}, {capTime_ms}ms, zeroedCapTime: {type(self.thisCapTime)} {self.thisCapTime}ms")
         capTime_ms = (time.time()*1000)
+        self.thisCapTime = np.uint32(capTime_ms - self.zeroTime_ms)
 
         if self.camStat and self.camType == 'rtsp':
             # VideoCapture::waitAny() is supported by V4L backend only
             #if self.thisCam.waitAny([self.thisCam],  self.camTimeout_ns): # wait for produce a frame
             #self.logger.info(f"Get the next frame")
-            self.camStat, self.image = self.thisCam.read()
             '''
             camReadTime_ms = (time.time_ns()-tStart)/(1e6)
             there was a while to run this untill the Read time is > a threshold
@@ -116,13 +119,3 @@ class camera:
                 self.logger.error(f"Camera Seems Borked, restart stream")
                 del self.thisCam
                 self.startStream
-
-        else:
-            #self.camStat = False
-            #self.logger.info(f"Get image")
-            self.camStat, self.image = self.thisCam.read()
-            #self.logger.info(f"Got image")
-
-        # Get the time after the read, as the read waits for a new image
-        self.thisCapTime = np.uint32(capTime_ms - self.zeroTime_ms)
-        #self.logger.info(f"Zero time: {self.zeroTime_ms}ms, Cam read time: {type(capTime_ms)}, {capTime_ms}ms, zeroedCapTime: {type(self.thisCapTime)} {self.thisCapTime}ms")
