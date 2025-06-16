@@ -17,21 +17,27 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
 
-#JMB Add to thread to catch/restart
+#MJB Add to thread to catch/restart
 import threading
-def run_inference(interpreter, t_status, raw_output_holder):
+def run_inference_thread(interpreter, x, t_status, raw_output_holder):
     try:
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
+
+        interpreter.set_tensor(input_details[0]['index'], x)
+
         interpreter.invoke()
-        raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
+        #raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
+        raw_output = interpreter.get_tensor(output_details[0]['index']).copy() #MJB, use a copy so we con't hold on error
         raw_output_holder.append(raw_output)
         t_status.append("ok")
     except Exception as e:
         print(f"Inference error: {e}")
 
-def run_inference_thread(interpreter):
+def run_inference_safe(interpreter, x):
     t_status = []
     raw_output_holder = []
-    t = threading.Thread(target=run_inference, args=(interpreter, t_status, raw_output_holder))
+    t = threading.Thread(target=run_inference_thread, args=(interpreter, x, t_status, raw_output_holder))
     t.start()
     t.join(timeout=0.3)
     if t.is_alive():
@@ -188,10 +194,13 @@ class EdgeTPUModel:
             x = x[np.newaxis].astype(np.uint8)
         #print(f"v8: {self.v8}, image: {x.shape}") 
 
-        self.interpreter.set_tensor(self.input_details[0]['index'], x)
+        # Move to thread
+        #self.interpreter.set_tensor(self.input_details[0]['index'], x)
+
+        #MJB: Trying to fix the crash
         print(f"invoke")
         #self.interpreter.invoke()
-        t_stat, raw_output = run_inference_thread(self.interpreter) #Call in a thread to detect and restart if there is an error
+        t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
         print(f"Thread: {t_stat}, {type(raw_output)}")
         if isinstance(raw_output, int): return 0
         
