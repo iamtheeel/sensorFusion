@@ -126,7 +126,7 @@ class EdgeTPUModel:
         self.interpreter = etpu.make_interpreter(self.model_file)
         #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
         # old way
-        self.tpu = TPUWorker(self.model_file, timeout=0.5) # MJB Create the TPU worker
+        self.tpu = TPUWorker(self.model_file, timeout=15.0) # MJB Create the TPU worker
         self.interpreter.allocate_tensors()
     
         self.input_details = self.interpreter.get_input_details()
