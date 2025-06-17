@@ -16,6 +16,8 @@ from utils import plot_one_box, Colors, get_image_tensor
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
+# MJB (from chatbot) we need to be able to restart
+from tpuWorker import TPUWorker
 
 #Threadding is not cutting it, we need to  use multiproc so we can kill the errent process
 # This will have too much overhead
@@ -121,6 +123,7 @@ class EdgeTPUModel:
         """
         # Load the model and allocate
         self.interpreter = etpu.make_interpreter(self.model_file)
+        self.tpu = TPUWorker(self.model_file, timeout=0.5) # MJB Create the TPU worker
         self.interpreter.allocate_tensors()
     
         self.input_details = self.interpreter.get_input_details()
@@ -211,9 +214,18 @@ class EdgeTPUModel:
         #MJB: Trying to fix the crash
         #print(f"invoke")
         #self.interpreter.invoke()
-        t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
+        #t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
         #print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
-        if isinstance(raw_output, int): return 0 # We did not get a result
+        #if isinstance(raw_output, int): return 0 # We did not get a result
+        status, output = self.tpu.infer(self.input_tensor)
+
+        if status == "ok":
+            print("Output shape:", output.shape)
+        elif status == "timeout":
+            print("Timeout occurred — restarting")
+            self.tpu.restart()
+        else:
+            print("Status:", status)
         
         # Scale output
         #print(f"scale output")
