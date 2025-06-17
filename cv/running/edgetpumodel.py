@@ -220,15 +220,16 @@ class EdgeTPUModel:
         #t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
         #print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
         #if isinstance(raw_output, int): return 0 # We did not get a result
-        status, output = self.tpu.infer(x)
-
+        status, raw_output = self.tpu.infer(x)
         if status == "ok":
             print("Output shape:", output.shape)
         elif status == "timeout":
             print("Timeout occurred — restarting")
             self.tpu.restart()
+            return 0
         else:
             print("Status:", status)
+            return 0
         
         # Scale output
         #print(f"scale output")
