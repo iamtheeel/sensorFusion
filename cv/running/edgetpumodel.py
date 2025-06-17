@@ -17,18 +17,28 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
 
+#Threadding is not cutting it, we need to  use multiproc so we can kill the errent process
+def run_inference_proc(model_path, input_data, result_queue):
+    self.interpreter = etpu.make_interpreter(self.model_file)
+    self.interpreter.allocate_tensors()
+    
 #MJB Add to thread to catch/restart
 import threading
+interpreter_lock = threading.RLock()
+#interpreter_lock = threading.Lock()
 def run_inference_thread(interpreter, x, t_status, raw_output_holder):
     try:
-        input_details = interpreter.get_input_details()
-        output_details = interpreter.get_output_details()
+        with interpreter_lock:
+            input_details = interpreter.get_input_details()
+            output_details = interpreter.get_output_details()
 
-        interpreter.set_tensor(input_details[0]['index'], x)
+            interpreter.set_tensor(input_details[0]['index'], x)
 
-        interpreter.invoke()
-        #raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
-        raw_output = interpreter.get_tensor(output_details[0]['index']).copy() #MJB, use a copy so we con't hold on error
+            logger.debug(f"Run Invoke()")
+            interpreter.invoke()
+            logger.debug(f"Done Invoke")
+            #raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
+            raw_output = interpreter.get_tensor(output_details[0]['index']).copy() #MJB, use a copy so we con't hold on error
         raw_output_holder.append(raw_output)
         t_status.append("ok")
     except Exception as e:
@@ -39,12 +49,14 @@ def run_inference_safe(interpreter, x):
     raw_output_holder = []
     t = threading.Thread(target=run_inference_thread, args=(interpreter, x, t_status, raw_output_holder))
     t.start()
-    t.join(timeout=0.3)
+    t.join(timeout=0.5)
+    #t.join()
     if t.is_alive():
         return "Timeout", 0 #Can't return the results if there aint got none
     else:
         if t_status: return t_status[0], raw_output_holder[0]  #Good results
         else:        return "unkown error", 0 # Bad inference
+
 
 class EdgeTPUModel:
 
@@ -201,7 +213,7 @@ class EdgeTPUModel:
         print(f"invoke")
         #self.interpreter.invoke()
         t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
-        print(f"Thread: {t_stat}, {type(raw_output)}")
+        print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
         if isinstance(raw_output, int): return 0
         
         # Scale output
