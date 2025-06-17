@@ -1,28 +1,29 @@
 python3 runImage.py 
 Cam settings
 Stream Started
-Timeout occurred — restarting
-[ WARN:0@0.265] global cap_v4l.cpp:999 open VIDEOIO(V4L2:/dev/video1): can't open camera by index
-[ERROR:0@0.267] global obsensor_uvc_stream_channel.cpp:158 getStreamChannelGroup Camera index out of range
+[ WARN:0@0.263] global cap_v4l.cpp:999 open VIDEOIO(V4L2:/dev/video1): can't open camera by index
+[ERROR:0@0.264] global obsensor_uvc_stream_channel.cpp:158 getStreamChannelGroup Camera index out of range
 Cam settings
 Stream Started
-Traceback (most recent call last):
-  File "/usr/lib/python3.7/multiprocessing/queues.py", line 242, in _feed
-      send_bytes(obj)
-        File "/usr/lib/python3.7/multiprocessing/connection.py", line 200, in send_bytes
-            self._send_bytes(m[offset:offset + size])
-              File "/usr/lib/python3.7/multiprocessing/connection.py", line 398, in _send_bytes
-                  self._send(buf)
-                    File "/usr/lib/python3.7/multiprocessing/connection.py", line 368, in _send
-                        n = write(self._handle, buf)
-                        BrokenPipeError: [Errno 32] Broken pipe
-                        Traceback (most recent call last):
-                          File "/usr/lib/python3.7/multiprocessing/queues.py", line 242, in _feed
-                              send_bytes(obj)
-                                File "/usr/lib/python3.7/multiprocessing/connection.py", line 200, in send_bytes
-                                    self._send_bytes(m[offset:offset + size])
-                                      File "/usr/lib/python3.7/multiprocessing/connection.py", line 404, in _send_bytes
-                                          self._send(header + buf)
-                                            File "/usr/lib/python3.7/multiprocessing/connection.py", line 368, in _send
-                                                n = write(self._handle, buf)
+[TPUWorker] Subprocess started
+[TPUWorker] Fatal startup error:
+ Traceback (most recent call last):
+   File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 160, in load_delegate
+       delegate = Delegate(library, options)
+         File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 119, in __init__
+             raise ValueError(capture.message)
+             ValueError
+
+             During handling of the above exception, another exception occurred:
+
+             Traceback (most recent call last):
+               File "/home/mendel/sensorFusion/cv/running/tpuWorker.py", line 11, in tpu_worker_loop
+                   interpreter = etpu.make_interpreter(model_path)
+                     File "/usr/lib/python3/dist-packages/pycoral/utils/edgetpu.py", line 87, in make_interpreter
+                         delegates = [load_edgetpu_delegate({'device': device} if device else {})]
+                           File "/usr/lib/python3/dist-packages/pycoral/utils/edgetpu.py", line 52, in load_edgetpu_delegate
+                               return tflite.load_delegate(_EDGETPU_SHARED_LIB, options or {})
+                                 File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 163, in load_delegate
+                                     library, str(e)))
+                                     ValueError: Failed to load delegate from libedgetpu.so.1
 
