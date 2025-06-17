@@ -122,7 +122,10 @@ class EdgeTPUModel:
         the interpreter that deals with the EdgetPU hardware.
         """
         # Load the model and allocate
+        # new way
         self.interpreter = etpu.make_interpreter(self.model_file)
+        #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
+        # old way
         self.tpu = TPUWorker(self.model_file, timeout=0.5) # MJB Create the TPU worker
         self.interpreter.allocate_tensors()
     
@@ -217,7 +220,7 @@ class EdgeTPUModel:
         #t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
         #print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
         #if isinstance(raw_output, int): return 0 # We did not get a result
-        status, output = self.tpu.infer(self.input_tensor)
+        status, output = self.tpu.infer(x)
 
         if status == "ok":
             print("Output shape:", output.shape)
