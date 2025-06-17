@@ -18,25 +18,24 @@ logger = logging.getLogger("EdgeTPUModel")
 
 
 #Threadding is not cutting it, we need to  use multiproc so we can kill the errent process
+# This will have too much overhead
 def run_inference_proc(model_path, input_data, result_queue):
     self.interpreter = etpu.make_interpreter(self.model_file)
     self.interpreter.allocate_tensors()
     
 #MJB Add to thread to catch/restart
 import threading
-interpreter_lock = threading.RLock()
-#interpreter_lock = threading.Lock()
+#interpreter_lock = threading.RLock() # This seems to make the error happen more often
+interpreter_lock = threading.Lock()
 def run_inference_thread(interpreter, x, t_status, raw_output_holder):
     try:
-        with interpreter_lock:
+        with interpreter_lock: # Should not be needed, we are the only caller
             input_details = interpreter.get_input_details()
             output_details = interpreter.get_output_details()
 
             interpreter.set_tensor(input_details[0]['index'], x)
 
-            logger.debug(f"Run Invoke()")
             interpreter.invoke()
-            logger.debug(f"Done Invoke")
             #raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
             raw_output = interpreter.get_tensor(output_details[0]['index']).copy() #MJB, use a copy so we con't hold on error
         raw_output_holder.append(raw_output)
@@ -210,11 +209,11 @@ class EdgeTPUModel:
         #self.interpreter.set_tensor(self.input_details[0]['index'], x)
 
         #MJB: Trying to fix the crash
-        print(f"invoke")
+        #print(f"invoke")
         #self.interpreter.invoke()
         t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
-        print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
-        if isinstance(raw_output, int): return 0
+        #print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
+        if isinstance(raw_output, int): return 0 # We did not get a result
         
         # Scale output
         #print(f"scale output")
@@ -224,7 +223,7 @@ class EdgeTPUModel:
             result = np.transpose(result, [0, 2, 1])  # tranpose for yolov8 models
         
         self.inference_time = time.time() - tstart
-        print(f"inference time {self.inference_time}")
+        logger.info(f"inference time {self.inference_time}")
         
         if with_nms:
         
