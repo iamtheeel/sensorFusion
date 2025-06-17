@@ -3,13 +3,23 @@ import traceback
 import numpy as np
 
 def tpu_worker_loop(model_path, input_queue, output_queue):
-    """Subprocess loop that owns the TPU interpreter and handles inference."""
     try:
         print("[TPUWorker] Subprocess started")
-        import pycoral.utils.edgetpu as etpu
+        import numpy as np
+        from tflite_runtime.interpreter import Interpreter, load_delegate
+        from pycoral.utils.edgetpu import load_edgetpu_delegate
 
-        interpreter = etpu.make_interpreter(model_path)
+        try:
+            delegate = load_edgetpu_delegate({'device': 'usb'})  # or 'pci' if you're using PCIe
+            print("[TPUWorker] Delegate loaded")
+        except Exception as e:
+            print("[TPUWorker] Failed to load delegate:", e)
+            output_queue.put(("fatal", f"Failed to load Edge TPU delegate: {e}"))
+            return
+
+        interpreter = Interpreter(model_path=model_path, experimental_delegates=[delegate])
         print("[TPUWorker] Interpreter created")
+
         interpreter.allocate_tensors()
         print("[TPUWorker] Tensors allocated")
 
@@ -21,7 +31,6 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
         while True:
             data = input_queue.get()
             if data == "STOP":
-                print("[TPUWorker] Stopping subprocess")
                 break
             try:
                 interpreter.set_tensor(input_index, data)
@@ -31,7 +40,8 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
             except Exception as e:
                 output_queue.put(("error", str(e)))
 
-    except Exception:
+    except Exception as e:
+        import traceback
         msg = traceback.format_exc()
         print("[TPUWorker] Fatal startup error:\n", msg)
         try:
