@@ -127,7 +127,7 @@ class EdgeTPUModel:
         # new way
         #self.interpreter = etpu.make_interpreter(self.model_file)
         delegate = etpu.load_edgetpu_delegate()
-        self.interpreter = Interpreter(model_path=model_path, experimental_delegates=[delegate])
+        self.interpreter = Interpreter(model_path=self.model_file, experimental_delegates=[delegate])
 
         #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
         # old way

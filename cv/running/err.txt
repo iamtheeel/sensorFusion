@@ -1,10 +1,3 @@
-python3 runImage.py 
-Cam settings
-Stream Started
-[ WARN:0@0.263] global cap_v4l.cpp:999 open VIDEOIO(V4L2:/dev/video1): can't open camera by index
-[ERROR:0@0.264] global obsensor_uvc_stream_channel.cpp:158 getStreamChannelGroup Camera index out of range
-Cam settings
-Stream Started
 [TPUWorker] Subprocess started
 [TPUWorker] Fatal startup error:
  Traceback (most recent call last):
@@ -26,4 +19,5 @@ Stream Started
                                  File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 163, in load_delegate
                                      library, str(e)))
                                      ValueError: Failed to load delegate from libedgetpu.so.1
+
 
