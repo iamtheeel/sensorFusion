@@ -59,15 +59,17 @@ class TPUWorker:
         self._start_worker()
 
     def stop(self):
-        if self.process.is_alive():
+        if hasattr(self, 'process') and self.process.is_alive():
             self.input_queue.put("STOP")
             self.process.join(timeout=1)
             if self.process.is_alive():
                 self.process.terminate()
                 self.process.join()
-        self.process.close()
-        self.input_queue.close()
-        self.output_queue.close()
+            self.process.close()
+        if hasattr(self, 'input_queue'):
+            self.input_queue.close()
+        if hasattr(self, 'output_queue'):
+            self.output_queue.close()
 
     def __del__(self):
         self.stop()
