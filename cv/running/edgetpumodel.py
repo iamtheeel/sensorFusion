@@ -18,6 +18,8 @@ logger = logging.getLogger("EdgeTPUModel")
 
 # MJB (from chatbot) we need to be able to restart
 from tpuWorker import TPUWorker
+from tflite_runtime.interpreter import Interpreter
+
 
 #Threadding is not cutting it, we need to  use multiproc so we can kill the errent process
 # This will have too much overhead
@@ -123,7 +125,10 @@ class EdgeTPUModel:
         """
         # Load the model and allocate
         # new way
-        self.interpreter = etpu.make_interpreter(self.model_file)
+        #self.interpreter = etpu.make_interpreter(self.model_file)
+        delegate = etpu.load_edgetpu_delegate()
+        self.interpreter = Interpreter(model_path=model_path, experimental_delegates=[delegate])
+
         #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
         # old way
         self.tpu = TPUWorker(self.model_file, timeout=15.0) # MJB Create the TPU worker
