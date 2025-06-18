@@ -1,23 +1,8 @@
-[TPUWorker] Subprocess started
-[TPUWorker] Fatal startup error:
- Traceback (most recent call last):
-   File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 160, in load_delegate
-       delegate = Delegate(library, options)
-         File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 119, in __init__
-             raise ValueError(capture.message)
-             ValueError
-
-             During handling of the above exception, another exception occurred:
-
-             Traceback (most recent call last):
-               File "/home/mendel/sensorFusion/cv/running/tpuWorker.py", line 11, in tpu_worker_loop
-                   interpreter = etpu.make_interpreter(model_path)
-                     File "/usr/lib/python3/dist-packages/pycoral/utils/edgetpu.py", line 87, in make_interpreter
-                         delegates = [load_edgetpu_delegate({'device': device} if device else {})]
-                           File "/usr/lib/python3/dist-packages/pycoral/utils/edgetpu.py", line 52, in load_edgetpu_delegate
-                               return tflite.load_delegate(_EDGETPU_SHARED_LIB, options or {})
-                                 File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 163, in load_delegate
-                                     library, str(e)))
-                                     ValueError: Failed to load delegate from libedgetpu.so.1
-
+[TPUWorker] Tensors allocated
+/home/mendel/sensorFusion/cv/running/tpuWorker.py:35: FutureWarning: elementwise comparison failed; returning scalar instead, but in the
+ future will perform elementwise comparison
+   if data == "STOP":
+   F driver/mmio_driver.cc:527] Non-OK-status: dma_scheduler_.NotifyRequestCompletion() status: Failed precondition: No active request to c
+   omplete
+   Aborted
 

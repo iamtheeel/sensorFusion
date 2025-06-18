@@ -1,6 +1,7 @@
 import multiprocessing
 import traceback
 import numpy as np
+import time
 
 def tpu_worker_loop(model_path, input_queue, output_queue):
     try:
@@ -10,7 +11,8 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
         from pycoral.utils.edgetpu import load_edgetpu_delegate
 
         try:
-            delegate = load_edgetpu_delegate({'device': 'usb'})  # or 'pci' if you're using PCIe
+            time.sleep(0.1)
+            delegate = load_edgetpu_delegate({'device': 'pci'})  # or 'pci' if you're using PCIe
             print("[TPUWorker] Delegate loaded")
         except Exception as e:
             print("[TPUWorker] Failed to load delegate:", e)
@@ -59,7 +61,7 @@ class TPUWorker:
         self._start_worker()
 
     def _start_worker(self):
-        ctx = multiprocessing.get_context("spawn")
+        ctx = multiprocessing.get_context("fork")
         self.input_queue = ctx.Queue()
         self.output_queue = ctx.Queue()
         self.process = ctx.Process(
