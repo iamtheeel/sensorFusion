@@ -2,6 +2,12 @@ import multiprocessing
 import traceback
 import numpy as np
 import time
+from pycoral.adapters import common
+
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("tpuWorker")
+
 
 def tpu_worker_loop(model_path, input_queue, output_queue):
     try:
@@ -25,10 +31,43 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
         interpreter.allocate_tensors()
         print("[TPUWorker] Tensors allocated")
 
-        in_details = interpreter.get_input_details()
-        out_details = interpreter.get_output_details()
-        input_index = in_details[0]['index']
-        output_index = out_details[0]['index']
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
+        #print(f"input_details: {input_details}")
+        #print(f"output_details: {output_details}")
+
+        #Set the zero and scale for the input matrix (x)
+        input_zero = input_details[0]['quantization'][1]
+        input_scale = input_details[0]['quantization'][0]
+        output_zero = output_details[0]['quantization'][1]
+        output_scale = output_details[0]['quantization'][0]
+        # If the model isn't quantized then these should be zero
+        # Check against small epsilon to avoid comparing float/int
+        if input_scale < 1e-9: input_scale = 1.0
+        if output_scale < 1e-9: output_scale = 1.0
+
+        #print("Input scale: {}".format(input_scale))
+        #print("Input zero: {}".format(input_zero))
+        #print("Output scale: {}".format(output_scale))
+        #print("Output zero: {}".format(output_zero))
+        print("Successfully loaded {}".format(model_path))
+
+        ## get_image_size
+        input_size = common.input_size(interpreter)
+        print("input_size: {}".format(input_size))
+
+
+        ## Set the in and out index for the queue
+        input_index = input_details[0]['index']
+        output_index = output_details[0]['index']
+
+        output_queue.put({"status": "ready",
+                          "input_zero": input_zero,
+                          "input_scale": input_scale,
+                          "output_zero": output_zero,
+                          "output_scale": output_scale,
+                          "input_size": input_size
+                        })
 
         while True:
             data = input_queue.get()
@@ -70,6 +109,21 @@ class TPUWorker:
             args=(self.model_path, self.input_queue, self.output_queue)
         )
         self.process.start()
+
+        # Wait for the init data
+        try:
+            init_info = self.output_queue.get(timeout=2.0) # Get the init information
+            if init_info.get("status") == "ready":
+                self.input_zero = init_info.get("input_zero") 
+                self.input_scale = init_info.get("input_scale") 
+                self.output_zero = init_info.get("output_zero") 
+                self.output_scale = init_info.get("output_scale") 
+                self.input_size = init_info.get("input_size") 
+            else:
+                raise RuntimeError(f"TPU worker failed on start: {str(info)}")
+        except Exception as e:
+            raise RuntimeError(f"TPU worker Did Not Return MetaData")
+
 
     def infer(self, input_data):
         if not self.process or not self.process.is_alive():

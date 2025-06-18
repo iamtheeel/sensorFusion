@@ -100,7 +100,7 @@ class EdgeTPUModel:
         
         self.get_names(names_file)
         self.make_interpreter()
-        self.get_image_size()
+        self.set_image_size()
         
     def get_names(self, path):
         """
@@ -131,36 +131,47 @@ class EdgeTPUModel:
 
         #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
         self.tpu = TPUWorker(self.model_file, timeout=15.0) # MJB Create the TPU worker
+        self.input_zero = self.tpu.input_zero
+        self.input_scale = self.tpu.input_scale
+        self.output_zero = self.tpu.output_zero
+        self.output_scale = self.tpu.output_scale
+        self.input_size = self.tpu.input_size
         # old way
-        self.interpreter.allocate_tensors()
+        #self.interpreter.allocate_tensors()
     
-        self.input_details = self.interpreter.get_input_details()
-        self.output_details = self.interpreter.get_output_details()
+        #self.input_details = self.interpreter.get_input_details()
+        #self.output_details = self.interpreter.get_output_details()
         
-        logger.debug(self.input_details)
-        logger.debug(self.output_details)
+        #logger.debug(self.input_details)
+        #logger.debug(self.output_details)
         
-        self.input_zero = self.input_details[0]['quantization'][1]
-        self.input_scale = self.input_details[0]['quantization'][0]
-        self.output_zero = self.output_details[0]['quantization'][1]
-        self.output_scale = self.output_details[0]['quantization'][0]
+        #self.input_zero = self.input_details[0]['quantization'][1]
+        #self.input_scale = self.input_details[0]['quantization'][0]
+        #self.output_zero = self.output_details[0]['quantization'][1]
+        #self.output_scale = self.output_details[0]['quantization'][0]
         
         # If the model isn't quantized then these should be zero
         # Check against small epsilon to avoid comparing float/int
-        if self.input_scale < 1e-9:
-            self.input_scale = 1.0
+        #if self.input_scale < 1e-9: self.input_scale = 1.0
         
-        if self.output_scale < 1e-9:
-            self.output_scale = 1.0
+        #if self.output_scale < 1e-9: self.output_scale = 1.0
     
-        logger.debug("Input scale: {}".format(self.input_scale))
-        logger.debug("Input zero: {}".format(self.input_zero))
-        logger.debug("Output scale: {}".format(self.output_scale))
-        logger.debug("Output zero: {}".format(self.output_zero))
+        logger.info("Input scale: {}".format(self.input_scale))
+        logger.info("Input zero: {}".format(self.input_zero))
+        logger.info("Output scale: {}".format(self.output_scale))
+        logger.info("Output zero: {}".format(self.output_zero))
+        logger.info("edgetpumodel: input_size: {self.input_size}")
         
         logger.info("Successfully loaded {}".format(self.model_file))
     
     def get_image_size(self):
+        if self.input_size is not None:
+            return self.input_size
+        else:
+            logger.warning("Interpreter is not yet loaded")
+            print("Interp has not been loaded yet")
+
+    def set_image_size(self):
         """
         Returns the expected size of the input image tensor
         """
@@ -228,7 +239,7 @@ class EdgeTPUModel:
         #'''
         status, raw_output = self.tpu.infer(x)
         if status == "ok":
-            print("Output shape:", output.shape)
+            print("Output shape:", raw_output.shape)
         elif status == "timeout":
             print("Timeout occurred — restarting")
             self.tpu.restart()

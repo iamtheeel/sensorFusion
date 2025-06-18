@@ -50,6 +50,7 @@ class modelRunTime:
                                       v8=True)
             # Prime with the image size
             self.input_size = self.model.get_image_size()
+            print(f"self.input_size: {type(self.input_size)}, {self.input_size}")
             x = (255*np.random.random((3,*self.input_size))).astype(np.int8)
             self.model.forward(x) 
         else:
