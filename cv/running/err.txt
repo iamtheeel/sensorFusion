@@ -1,8 +1,25 @@
-[TPUWorker] Tensors allocated
-/home/mendel/sensorFusion/cv/running/tpuWorker.py:35: FutureWarning: elementwise comparison failed; returning scalar instead, but in the
- future will perform elementwise comparison
-   if data == "STOP":
-   F driver/mmio_driver.cc:527] Non-OK-status: dma_scheduler_.NotifyRequestCompletion() status: Failed precondition: No active request to c
-   omplete
-   Aborted
+tream Started
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 160, in load_delegate
+      delegate = Delegate(library, options)
+        File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 119, in __init__
+            raise ValueError(capture.message)
+            ValueError
+
+            During handling of the above exception, another exception occurred:
+
+            Traceback (most recent call last):
+              File "runImage.py", line 190, in <module>
+                  infer = modelRunTime(configs, device)
+                    File "/home/mendel/sensorFusion/cv/running/modelRunTime.py", line 50, in __init__
+                        v8=True)
+                          File "/home/mendel/sensorFusion/cv/running/edgetpumodel.py", line 102, in __init__
+                              self.make_interpreter()
+                                File "/home/mendel/sensorFusion/cv/running/edgetpumodel.py", line 129, in make_interpreter
+                                    delegate = etpu.load_edgetpu_delegate()
+                                      File "/usr/lib/python3/dist-packages/pycoral/utils/edgetpu.py", line 52, in load_edgetpu_delegate
+                                          return tflite.load_delegate(_EDGETPU_SHARED_LIB, options or {})
+                                            File "/usr/lib/python3/dist-packages/tflite_runtime/interpreter.py", line 163, in load_delegate
+                                                library, str(e)))
+                                                ValueError: Failed to load delegate from libedgetpu.so.1
 
