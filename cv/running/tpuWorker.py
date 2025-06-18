@@ -35,6 +35,7 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
             if isinstance(data, str) and data == "STOP":
                 break
             try:
+                print("Received input:", type(data), getattr(data, "shape", None), getattr(data, "dtype", None))
                 interpreter.set_tensor(input_index, data)
                 interpreter.invoke()
                 result = interpreter.get_tensor(output_index).copy()
