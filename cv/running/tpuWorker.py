@@ -32,7 +32,7 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
 
         while True:
             data = input_queue.get()
-            if data == "STOP":
+            if isinstance(data, str) and data == "STOP":
                 break
             try:
                 interpreter.set_tensor(input_index, data)
