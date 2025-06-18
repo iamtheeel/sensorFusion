@@ -126,12 +126,12 @@ class EdgeTPUModel:
         # Load the model and allocate
         # new way
         #self.interpreter = etpu.make_interpreter(self.model_file)
-        delegate = etpu.load_edgetpu_delegate()
-        self.interpreter = Interpreter(model_path=self.model_file, experimental_delegates=[delegate])
+        #delegate = etpu.load_edgetpu_delegate()
+        #self.interpreter = Interpreter(model_path=self.model_file, experimental_delegates=[delegate])
 
         #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
-        # old way
         self.tpu = TPUWorker(self.model_file, timeout=15.0) # MJB Create the TPU worker
+        # old way
         self.interpreter.allocate_tensors()
     
         self.input_details = self.interpreter.get_input_details()
@@ -225,6 +225,7 @@ class EdgeTPUModel:
         #t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
         #print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
         #if isinstance(raw_output, int): return 0 # We did not get a result
+        #'''
         status, raw_output = self.tpu.infer(x)
         if status == "ok":
             print("Output shape:", output.shape)
@@ -235,6 +236,7 @@ class EdgeTPUModel:
         else:
             print("Status:", status)
             return 0
+        #'''
         
         # Scale output
         #print(f"scale output")
