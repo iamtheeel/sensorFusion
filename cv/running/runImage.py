@@ -253,6 +253,7 @@ if __name__ == "__main__":
 
             
         # Destructor
+        infer.exit()
         runCam = [False, False] # Kill both cameras
         camThread_1.join() # join the thread back to main
         del inputCam_1 

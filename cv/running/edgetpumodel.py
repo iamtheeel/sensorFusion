@@ -21,46 +21,6 @@ from tpuWorker import TPUWorker
 from tflite_runtime.interpreter import Interpreter
 
 
-#Threadding is not cutting it, we need to  use multiproc so we can kill the errent process
-# This will have too much overhead
-def run_inference_proc(model_path, input_data, result_queue):
-    self.interpreter = etpu.make_interpreter(self.model_file)
-    self.interpreter.allocate_tensors()
-    
-#MJB Add to thread to catch/restart
-import threading
-#interpreter_lock = threading.RLock() # This seems to make the error happen more often
-interpreter_lock = threading.Lock()
-def run_inference_thread(interpreter, x, t_status, raw_output_holder):
-    try:
-        with interpreter_lock: # Should not be needed, we are the only caller
-            input_details = interpreter.get_input_details()
-            output_details = interpreter.get_output_details()
-
-            interpreter.set_tensor(input_details[0]['index'], x)
-
-            interpreter.invoke()
-            #raw_output = common.output_tensor(interpreter, 0).copy() #MJB, use a copy so we con't hold on error
-            raw_output = interpreter.get_tensor(output_details[0]['index']).copy() #MJB, use a copy so we con't hold on error
-        raw_output_holder.append(raw_output)
-        t_status.append("ok")
-    except Exception as e:
-        print(f"Inference error: {e}")
-
-def run_inference_safe(interpreter, x):
-    t_status = []
-    raw_output_holder = []
-    t = threading.Thread(target=run_inference_thread, args=(interpreter, x, t_status, raw_output_holder))
-    t.start()
-    t.join(timeout=0.5)
-    #t.join()
-    if t.is_alive():
-        return "Timeout", 0 #Can't return the results if there aint got none
-    else:
-        if t_status: return t_status[0], raw_output_holder[0]  #Good results
-        else:        return "unkown error", 0 # Bad inference
-
-
 class EdgeTPUModel:
 
     def __init__(self, model_file, names_file, conf_thresh=0.25, iou_thresh=0.45, filter_classes=None, agnostic_nms=False, max_det=1000, v8=False):
@@ -130,7 +90,7 @@ class EdgeTPUModel:
         #self.interpreter = Interpreter(model_path=self.model_file, experimental_delegates=[delegate])
 
         #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
-        self.tpu = TPUWorker(self.model_file, timeout=15.0) # MJB Create the TPU worker
+        self.tpu = TPUWorker(self.model_file, timeout=1.0) # MJB Create the TPU worker
         self.input_zero = self.tpu.input_zero
         self.input_scale = self.tpu.input_scale
         self.output_zero = self.tpu.output_zero
@@ -239,7 +199,8 @@ class EdgeTPUModel:
         #'''
         status, raw_output = self.tpu.infer(x)
         if status == "ok":
-            print("Output shape:", raw_output.shape)
+            pass
+            #print("Output shape:", raw_output.shape)
         elif status == "timeout":
             print("Timeout occurred — restarting")
             self.tpu.restart()
@@ -370,3 +331,7 @@ class EdgeTPUModel:
               cv2.imwrite(output_path, output_image)
             
         return det
+
+    def exit(self):
+        logger.info(f"Exiting TPU Inference")
+        self.tpu.stop()

@@ -56,6 +56,12 @@ class modelRunTime:
         else:
             self.model = YOLO(modelFile)  # 
 
+    def exit(self):
+        if self.device == "tpu":
+            print("exit inference")
+            self.model.exit()
+        
+
     def runInference(self, image):
         #logger.info(f"image type: {type(image)}")
 
