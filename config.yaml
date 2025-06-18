@@ -2,6 +2,7 @@ debugs:
     debug: True 
     showInfResults: True
     dispResults: True
+    tpuThreadTimeout: 0.5 #Inference timeout before restarting the thread
     runInfer: True
     saveImages: False
     logFile: 'log_2.txt'

@@ -23,7 +23,7 @@ from tflite_runtime.interpreter import Interpreter
 
 class EdgeTPUModel:
 
-    def __init__(self, model_file, names_file, conf_thresh=0.25, iou_thresh=0.45, filter_classes=None, agnostic_nms=False, max_det=1000, v8=False):
+    def __init__(self, model_file, names_file, conf_thresh=0.25, iou_thresh=0.45, filter_classes=None, agnostic_nms=False, max_det=1000, v8=False, timeOut=1.0):
         """
         Creates an object for running a Yolov5 model on an EdgeTPU
         
@@ -59,8 +59,7 @@ class EdgeTPUModel:
         self.colors = Colors()  # create instance for 'from utils.plots import colors'
         
         self.get_names(names_file)
-        self.make_interpreter()
-        self.set_image_size()
+        self.make_interpreter(timeOut)
         
     def get_names(self, path):
         """
@@ -78,43 +77,19 @@ class EdgeTPUModel:
         
         self.names = names
     
-    def make_interpreter(self):
+    def make_interpreter(self, timeout):
         """
         Internal function that loads the tflite file and creates
         the interpreter that deals with the EdgetPU hardware.
         """
         # Load the model and allocate
         # new way
-        #self.interpreter = etpu.make_interpreter(self.model_file)
-        #delegate = etpu.load_edgetpu_delegate()
-        #self.interpreter = Interpreter(model_path=self.model_file, experimental_delegates=[delegate])
-
-        #self.input_tensor = np.zeros((1, 224, 224, 3), dtype=np.uint8)  # example
-        self.tpu = TPUWorker(self.model_file, timeout=1.0) # MJB Create the TPU worker
+        self.tpu = TPUWorker(self.model_file, timeout=timeout) # MJB Create the TPU worker
         self.input_zero = self.tpu.input_zero
         self.input_scale = self.tpu.input_scale
         self.output_zero = self.tpu.output_zero
         self.output_scale = self.tpu.output_scale
         self.input_size = self.tpu.input_size
-        # old way
-        #self.interpreter.allocate_tensors()
-    
-        #self.input_details = self.interpreter.get_input_details()
-        #self.output_details = self.interpreter.get_output_details()
-        
-        #logger.debug(self.input_details)
-        #logger.debug(self.output_details)
-        
-        #self.input_zero = self.input_details[0]['quantization'][1]
-        #self.input_scale = self.input_details[0]['quantization'][0]
-        #self.output_zero = self.output_details[0]['quantization'][1]
-        #self.output_scale = self.output_details[0]['quantization'][0]
-        
-        # If the model isn't quantized then these should be zero
-        # Check against small epsilon to avoid comparing float/int
-        #if self.input_scale < 1e-9: self.input_scale = 1.0
-        
-        #if self.output_scale < 1e-9: self.output_scale = 1.0
     
         logger.info("Input scale: {}".format(self.input_scale))
         logger.info("Input zero: {}".format(self.input_zero))
@@ -130,17 +105,6 @@ class EdgeTPUModel:
         else:
             logger.warning("Interpreter is not yet loaded")
             print("Interp has not been loaded yet")
-
-    def set_image_size(self):
-        """
-        Returns the expected size of the input image tensor
-        """
-        if self.interpreter is not None:
-            self.input_size = common.input_size(self.interpreter)
-            logger.debug("Expecting input shape: {}".format(self.input_size))
-            return self.input_size
-        else:
-            logger.warning("Interpreter is not yet loaded")
 
     def predict(self, image_path, save_img=True, save_txt=True):
         logger.info("Attempting to load {}".format(image_path))
@@ -187,16 +151,8 @@ class EdgeTPUModel:
             x = x[np.newaxis].astype(np.uint8)
         #print(f"v8: {self.v8}, image: {x.shape}") 
 
-        # Move to thread
-        #self.interpreter.set_tensor(self.input_details[0]['index'], x)
 
-        #MJB: Trying to fix the crash
-        #print(f"invoke")
-        #self.interpreter.invoke()
-        #t_stat, raw_output = run_inference_safe(self.interpreter, x) #Call in a thread to detect and restart if there is an error
-        #print(f"Inference Thread Status: {t_stat}, Output Type: {type(raw_output)}")
-        #if isinstance(raw_output, int): return 0 # We did not get a result
-        #'''
+        #MJB: Beable to detect the TPU crash and restart
         status, raw_output = self.tpu.infer(x)
         if status == "ok":
             pass
@@ -208,7 +164,6 @@ class EdgeTPUModel:
         else:
             print("Status:", status)
             return 0
-        #'''
         
         # Scale output
         #print(f"scale output")

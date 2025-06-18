@@ -50,12 +50,10 @@ def tpu_worker_loop(model_path, input_queue, output_queue):
         #print("Input zero: {}".format(input_zero))
         #print("Output scale: {}".format(output_scale))
         #print("Output zero: {}".format(output_zero))
-        print("Successfully loaded {}".format(model_path))
+        #print("Successfully loaded {}".format(model_path))
 
         ## get_image_size
         input_size = common.input_size(interpreter)
-        print("input_size: {}".format(input_size))
-
 
         ## Set the in and out index for the queue
         input_index = input_details[0]['index']

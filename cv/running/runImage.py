@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
             
         # Destructor
-        infer.exit()
+        infer.exit() # We must exit for the TPU
         runCam = [False, False] # Kill both cameras
         camThread_1.join() # join the thread back to main
         del inputCam_1 

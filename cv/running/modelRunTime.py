@@ -23,6 +23,7 @@ class modelRunTime:
         self.device = device 
         self.configs = configs
         self.debug = configs['debugs']['showInfResults']
+        tpuTimeout = configs['debugs']['tpuThreadTimeout']
 
         if device == "tpu":
             from edgetpumodel import EdgeTPUModel
@@ -47,7 +48,7 @@ class modelRunTime:
                                       filter_classes=None,  # Not implemented
                                       agnostic_nms=False,
                                       max_det=100,
-                                      v8=True)
+                                      v8=True, timeOut=tpuTimeout)
             # Prime with the image size
             self.input_size = self.model.get_image_size()
             print(f"self.input_size: {type(self.input_size)}, {self.input_size}")
