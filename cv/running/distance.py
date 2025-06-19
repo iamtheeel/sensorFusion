@@ -93,6 +93,7 @@ class distanceCalculator:
 
 
         # If we have multiple hands use the one with the highest confidence
+        # Its own loop to leave room for multi gloves
         if self.nHands >= 1:
             for object in data:
                 if object[classField] == self.handClassNum and object[confField] >= self.hThresh and object[confField] > self.handConf:
@@ -100,9 +101,6 @@ class distanceCalculator:
                     self.handCenter = self.findCenter(object)
                     self.handObject = object
 
-        #if len(data) < 2: 
-        #    logger.info(f"loadData: must be more than 1 object. len of data: {len(data)}")
-        #    return False
 
         if self.nNonHand == 0 or self.nHands == 0:
             logger.info(f"loadData: we need at least one hand:{self.nHands} and one target:{self.nNonHand}")

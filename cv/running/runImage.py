@@ -78,7 +78,7 @@ def checkClockReset_thread():
 
     while runTimeCheckThread:
         #pinStatus = 
-        if timeTrigerGPIO.poll(0.25): #Wait for the edige
+        if timeTrigerGPIO.poll(0.25): #Wait for the edge. Pure interup is not imprelented
             pinStatus = timeTrigerGPIO.read()
             logger.info(f"Checking clock reset pin: {pinStatus}")
             if pinStatus: 
