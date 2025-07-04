@@ -15,7 +15,7 @@ training:
     dataSetDir: "../datasets"
     #dataSet: "../datasets/appleHand.yaml"
     #dataSet: "ExoGlove.v2-in-progess-25-03-06/data.yaml" #Day 2 part train I ~ 1k images
-    dataSet: "day2_partIII_TopCamFullyLab/data.yaml"
+    dataSet: "day2_partII_TopCamFullyLab/data.yaml"
     #dataSet: "day2_partII_2138Images/data.yaml"
     #dataSet: "coco_withHand.yaml"
     #dataSet: "../datasets/coco_7Class.yaml"
@@ -28,8 +28,10 @@ training:
     #weightsFile: "yolov5nu_tran_hsv_h-1.0_7class.pt"
     #weightsFile: "yolov5nu_transferFromCOCO.pt" # Transfer Learing, 81 classes, 640px
 
-    modelFile: "yolov8n.yaml"
-    weightsForTransfer: "yolov8n.pt"
+    #modelFile: "yolov8n.yaml"
+    modelFile: "yolo11n.yaml"  # From ultralitics: modify n classes
+    weightsForTransfer: "yolo11n.pt" # From ultralytics, trained on COCO
+    #weightsForTransfer: "yolov8n.pt"
     #weightsFile: "yolo8_12_UL-Old_day2_partlab-I_30Epochs_newAug.pt" # 
     #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_120epochs.pt" #  
     #weightsFile: "yolo8_17_UL-Old_day2_fullLabTopCam_60epochs.pt" #  

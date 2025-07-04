@@ -45,7 +45,6 @@ dataSet = f"{configs['training']['dataSetDir']}/{configs['training']['dataSet']}
 
 # https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/models/
 modelFile = configs['training']['modelsDir'] +'/' + configs['training']['modelFile']
-weightsFile = configs['training']['weightsDir'] +'/' + configs['training']['weightsFile']
 
 #HyperPerams
 epochs = configs['training']['epochs']
@@ -69,8 +68,6 @@ if transLearn:
               if any(x in k for x in freeze):
                      logger.info(f"Freezing layer {k}")
                      v.requires_grad = False
-#elif configs['training']['transLearn']:
-       #yoloModel = YOLO(weightsFile)
 else:
        yoloModel = YOLO(modelFile)
 
