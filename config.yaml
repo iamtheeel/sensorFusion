@@ -62,7 +62,7 @@ training:
     imageSize: [480, 640] #h, w
 
     #HyperPerams
-    epochs: 60
+    epochs: 30
 
 runTime:
     ## Inference Source
