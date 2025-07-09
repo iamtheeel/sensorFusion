@@ -1,0 +1,25 @@
+# Raspberry Pi 5 Requirements
+# Optimized for ARM architecture
+
+# Core dependencies
+numpy>=1.21.0
+opencv-python>=4.5.0
+tqdm>=4.60.0
+pyyaml>=5.4.0
+
+# TensorFlow Lite Runtime (optimized for ARM)
+tflite-runtime>=2.9.0
+
+# ONNX Runtime (alternative inference engine)
+onnxruntime>=1.12.0
+
+# Optional: OpenVINO for GPU acceleration
+# openvino>=2022.1.0
+
+# Optional: PyTorch for training (if needed)
+# torch>=1.12.0
+# torchvision>=0.13.0
+
+# Additional utilities
+Pillow>=8.0.0
+matplotlib>=3.5.0 
