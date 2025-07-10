@@ -39,8 +39,21 @@ if debug == False:
 machine = platform.machine()
 logger.info(f"machine: {machine}")
 
+# Check if we're on Raspberry Pi
+def is_raspberry_pi():
+    try:
+        with open('/proc/cpuinfo', 'r') as f:
+            return 'Raspberry Pi' in f.read()
+    except:
+        return False
+
 if machine == "aarch64":
-    device = "tpu"
+    if is_raspberry_pi():
+        device = "rpi"
+        logger.info("Detected Raspberry Pi 5")
+    else:
+        device = "tpu"
+        logger.info("Detected Coral Dev Board (TPU)")
 else:
     import torch
     device = "cpu" 
